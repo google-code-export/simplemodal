@@ -55,7 +55,6 @@
         overlay: 50, // opacity
         overlayId: 'modalOverlay',
         containerId: 'modalContainer',
-        iframeClass: 'modalIframe',
         close: true,
         closeClass: 'modalClose',
         closeTitle: 'Close'
@@ -118,7 +117,7 @@
 
             // fix z-index issue with select boxes
             $('<iframe src="javascript:false;"></iframe>')
-                .addClass(this.opts.iframeClass)
+                .addClass('modalIframe')
                 .css({opacity: 0})
                 .appendTo('body');
         },
@@ -130,7 +129,7 @@
             overlay = null;
 
             if($.browser.msie && ($.browser.version < 7)) {
-                $('iframe.' + this.opts.iframeClass).remove();
+                $('iframe.modalIframe').remove();
             }
 
         }

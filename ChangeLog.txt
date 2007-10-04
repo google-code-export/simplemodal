@@ -1,5 +1,10 @@
 ==== SimpleModal ChangeLog ====
 
+== 1.0.1 ==
+
+ * Fixed iframe removal for IE < 6
+
+
 == 1.0 ==
 
  * Initial 'beta' Release
