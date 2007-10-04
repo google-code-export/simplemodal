@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> SimpleModal Test </title>
+
+<meta name='author' content='Eric Martin' />
+<meta name='copyright' content='2007 - Eric Martin' />
+<meta name='description' content='SimpleModal is a lightweight jQuery plugin that provides a simple interface to create a modal dialog.' />
+<meta name='keywords' content='simplemodal jquery plugin modal dialog css javascript dom' />
+
+<script src='http://code.jquery.com/jquery-latest.js' type='text/javascript'></script>
+<script src='http://simplemodal.googlecode.com/svn/trunk/jquery.simplemodal.js' type='text/javascript'></script>
+<script src='js/simplemodal.js' type='text/javascript'></script>
+
+<style type='text/css'>
+	@import "css/simplemodal.css";
+</style>
+
+<!--[if lt IE 7]>
+<style type='text/css'>
+	@import "css/simplemodal-ie.css";
+</style><![endif]-->
+
+</head>
+<body>
+<div id='container'>
+	<div id='header'><h1>Header</h1></div>
+	<div id='menu'>Option1 :: Option2 :: Option3 :: Option4 :: Option5 :: Option6</div>
+	<div id='content'>
+	<p><a href='#' class='modalFunction'>Function $(content).modal()</a></p>
+	<p><a href='#' class='modalStatic'>Static $.modal(content)</a></p>
+	<div class='form'>
+	<form>
+	<textarea rows='5' cols='30'></textarea><br/>
+	<select>
+	  <option>option1</option>
+	  <option>option2</option>
+	  <option>option3</option>
+	  <option>option4</option>
+	  <option>option5</option>
+	</select><br/>
+	<input type='text'/><br/>
+	<input type='button' value='button'/><br/>
+	<input type='submit' name='submit'/>
+	</form>
+	</div>
+	<p>
+	Sed et erat non sem hendrerit ultricies. Aenean at pede in lacus posuere feugiat. Vestibulum suscipit lacus cursus nunc sagittis semper. Donec mi. Donec ac libero sit amet orci dignissim egestas. Sed ornare urna non nisl. Morbi mauris nibh, facilisis id, eleifend sed, ornare quis, metus. Aliquam viverra metus vitae nulla. Sed at diam ut lacus volutpat ornare. Phasellus laoreet, augue nec semper iaculis, quam velit condimentum ipsum, in semper orci ante sed metus. Fusce blandit pretium ante. Duis tincidunt massa nec quam. Nam sit amet nisl in est facilisis rhoncus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Ut tincidunt. Phasellus a orci. Aenean leo. Etiam ornare.
+	</p>
+	<p>
+	Phasellus in eros. Quisque neque. In aliquam nulla vel mi cursus laoreet. Aliquam varius adipiscing nunc. Fusce accumsan luctus nisi. In consectetuer justo a turpis. Nunc felis ipsum, imperdiet et, blandit at, lacinia ut, turpis. Vestibulum posuere ligula eget leo. In hac habitasse platea dictumst. Aenean ultrices porttitor metus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Pellentesque lorem nibh, posuere id, imperdiet eu, eleifend non, quam. Sed ultrices, nisi a euismod placerat, odio erat ornare nulla, a mattis velit dui pretium sem. Proin et tellus in purus egestas posuere. Etiam lobortis, urna nec congue rhoncus, elit ligula porta mi, a molestie nulla diam sed libero.
+	</p>
+	<p>
+	Duis eget arcu nec arcu ornare bibendum. Nulla eget dui. Aliquam pretium sapien sed risus. Pellentesque ipsum nisl, pellentesque id, consequat id, congue nec, ante. Donec magna. Nunc pede est, convallis eu, lobortis sit amet, vehicula vitae, nulla. Ut interdum. Nullam in massa nec sem dictum consequat. In vulputate erat convallis orci. Phasellus erat nulla, iaculis nec, tempor nec, porttitor placerat, quam. Aliquam vel ante in mauris molestie viverra.
+	</p>
+	<div class='form'>
+	<form>
+	<textarea rows='5' cols='30'></textarea><br/>
+	<select>
+	  <option>option1</option>
+	  <option>option2</option>
+	  <option>option3</option>
+	  <option>option4</option>
+	  <option>option5</option>
+	</select><br/>
+	<input type='text'/><br/>
+	<input type='button' value='button'/><br/>
+	<input type='submit' name='submit'/>
+	</form>
+	</div>
+	<p>
+	Quisque tristique sagittis lacus. Suspendisse viverra eleifend dolor. Sed ultrices. Etiam porttitor. Suspendisse tincidunt dolor in lorem. Proin accumsan dolor ut est. Sed pharetra fringilla arcu. Nulla sollicitudin neque at diam. Curabitur odio turpis, lacinia sed, ultricies sit amet, placerat nec, diam. Proin leo neque, vestibulum ac, viverra non, adipiscing in, nunc. Nullam neque sapien, dignissim ut, dictum id, ultrices eget, turpis.
+	</p>
+	</div>
+</div>
+<br/>
+<div id='modalContent' style='display:none'>
+  <form>
+	<textarea rows='5' cols='30'></textarea><br/>
+	<select>
+	  <option>option1</option>
+	  <option>option2</option>
+	  <option>option3</option>
+	  <option>option4</option>
+	  <option>option5</option>
+	</select><br/>
+	<input type='text'/><br/>
+	<input type='button' value='button'/><br/>
+	<input type='submit' name='submit'/>
+  </form>
+</div>
+</body>
+</html>
