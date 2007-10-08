@@ -7,4 +7,6 @@
  * Revision: $Id$
  *
  */
+
+/* fix png display in IE < 7 */
 a.modalClose{background:none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, src='img/x.png',sizingMethod='scale');}
