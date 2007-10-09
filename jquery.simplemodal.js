@@ -24,12 +24,12 @@
  *
  * As a jQuery chained function, SimpleModal accepts a jQuery object.
  * 
- * As a standalone function, SimpleModal accepts a jQuery object or a 
+ * As a stand-alone function, SimpleModal accepts a jQuery object or a 
  * string, which can contain plain text or HTML.
  * 
  * A SimpleModal call can contain multiple elements, but only one modal 
  * dialog can be created at a time. That means that all of the matched
- * elements will be dislayed within the modal container.
+ * elements will be displayed within the modal container.
  * 
  * The styling for SimpleModal is done mostly through external stylesheets, 
  * providing maximum control over the look and feel.
@@ -41,18 +41,15 @@
  */
 (function ($) {
 	$.fn.modal = function (settings) {
-		$.modal.impl.init(this, settings);
-		return this;
+		return $.modal.impl.init(this, settings);
 	};
 
 	$.modal = function (data, settings) {
-		$.modal.impl.init(data, settings);
-		return this;
+		return $.modal.impl.init(data, settings);
 	};
-	
+
 	$.modal.close = function () {
-		$.modal.impl.close();
-		return this;
+		return $.modal.impl.close();
 	};
 
 	$.modal.defaults = {
@@ -105,6 +102,8 @@
 			if (this.opts.onShow) {
 				this.opts.onShow(this.dialog);
 			}
+
+            return this;
 		},
 		/**
 		 * Add the modal overlay to the page
@@ -205,10 +204,12 @@
 		},
 		/**
 		 * Close the modal dialog
-		 * - Hides then removes the element from the DOM
+		 * - Hides [and removes] the elements from the DOM
 		 * - Use the onClose callback, if provided
 		 * - Sets modal dialog to null
 		 * - Removes the IE iframe, if necessary
+         * - If you use an onClose callback, you must remove the 
+         *   elements manually (overlay and container)
 		 */
 		close: function () {
 			if (this.opts.onClose) {
@@ -218,10 +219,14 @@
 				this.dialog.container.hide().remove();
 				this.dialog.overlay.hide().remove();
 			}
-			this.dialog = {};
-			if ($.browser.msie && ($.browser.version < 7)) {
+
+            this.dialog = {};
+			
+            if ($.browser.msie && ($.browser.version < 7)) {
 				$('iframe.modalIframe').remove();
 			}
+
+            return this;
 		},
 		/**
 		 * Builds the modal dialog 'close' link element
