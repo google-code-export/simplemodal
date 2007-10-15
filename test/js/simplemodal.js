@@ -62,7 +62,7 @@ $(function(){
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
 		dialog.container.fadeIn('slow', function () {
-			dialog.content.slideDown('slow');   
+			dialog.content.slideDown('slow');
 		});
 	});
 }
@@ -80,7 +80,9 @@ function modalOpen (dialog) {
 function modalClose (dialog) {
 	dialog.content.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
-			dialog.overlay.slideUp('slow');
+			dialog.overlay.slideUp('slow', function () {
+				if(dialog.iframe){dialog.iframe.remove();}
+			});
 		});
 	})
 }

@@ -33,20 +33,20 @@
 	<div id='header'><h1>SimpleModal</h1></div>
 	<div id='content'>
 	<ul>
-	  <li><a href='#' id='test1'>Chained Function - default settings</a> <p><pre><code>$('#modalContentTest').modal();</code></pre></p></li>
-	  <li><a href='#' id='test2'>Modal Function w/ jQuery element - default settings</a> <p><pre><code>$.modal($('#modalContentTest'));</code></pre></p></li>
-	  <li><a href='#' id='test3'>Modal Function w/ string/HTML - default settings</a> <p><pre><code>$.modal("&lt;div&gt;\
-	    &lt;h1&gt;Sample Content&lt;/h1&gt;\
-	    &lt;p&gt;This can be complex HTML containing &lt;a href=&#39;#&#39;&gt;links&lt;/a&gt;,\
-	    &lt;input type=&#39;text&#39; value=&#39;input boxes&#39; size=&#39;8&#39;/&gt;, etc...&lt;/p&gt;\
+		<li><a href='#' id='test1'>Chained Function - default settings</a> <p><pre><code>$('#modalContentTest').modal();</code></pre></p></li>
+		<li><a href='#' id='test2'>Modal Function w/ jQuery element - default settings</a> <p><pre><code>$.modal($('#modalContentTest'));</code></pre></p></li>
+		<li><a href='#' id='test3'>Modal Function w/ string/HTML - default settings</a> <p><pre><code>$.modal("&lt;div&gt;\
+		&lt;h1&gt;Sample Content&lt;/h1&gt;\
+		&lt;p&gt;This can be complex HTML containing &lt;a href=&#39;#&#39;&gt;links&lt;/a&gt;,\
+		&lt;input type=&#39;text&#39; value=&#39;input boxes&#39; size=&#39;8&#39;/&gt;, etc...&lt;/p&gt;\
 	 &lt;/div&gt;");</code></pre></p></li>
-	  <li><a href='#' id='test4'>Modal Function w/ string/HTML - close: false</a> <p><pre><code>$.modal("&lt;div&gt;\
-	    &lt;h1&gt;Sample Content&lt;/h1&gt;\
-	    &lt;p&gt;This example uses a custom close.&lt;/p&gt;\
-	    &lt;p&gt;&lt;a href=&#39;#&#39; class=&#39;modalClose&#39;&gt;Close&lt;/a&gt;&lt;/p&gt;\
+		<li><a href='#' id='test4'>Modal Function w/ string/HTML - close: false</a> <p><pre><code>$.modal("&lt;div&gt;\
+		&lt;h1&gt;Sample Content&lt;/h1&gt;\
+		&lt;p&gt;This example uses a custom close.&lt;/p&gt;\
+		&lt;p&gt;&lt;a href=&#39;#&#39; class=&#39;modalClose&#39;&gt;Close&lt;/a&gt;&lt;/p&gt;\
 	 &lt;/div&gt;", {close: false});</code></pre></p></li>
-	  <li><a href='#' id='test5'>onOpen callback function - onOpen: function</a> <p><pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre></p>
-    <p><pre><code>/**
+		<li><a href='#' id='test5'>onOpen callback function - onOpen: function</a> <p><pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre></p>
+	<p><pre><code>/**
  * When the open event is called, this function will be used to &#39;open&#39;
  * the overlay, container and content portions of the modal dialog.
  *
@@ -56,12 +56,12 @@
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn(&#39;slow&#39;, function () {
 		dialog.container.fadeIn(&#39;slow&#39;, function () {
-			dialog.content.slideDown(&#39;slow&#39;);   
+			dialog.content.slideDown(&#39;slow&#39;);	 
 		});
 	});
 }</code></pre></p></li>
-	  <li><a href='#' id='test6'>onClose callback function - onClose: function</a> <p><pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre></p>
-    <p><pre><code>/**
+		<li><a href='#' id='test6'>onClose callback function - onClose: function</a> <p><pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre></p>
+	<p><pre><code>/**
  * When the close event is called, this function will be used to &#39;close&#39;
  * the overlay, container and content portions of the modal dialog.
  *
@@ -74,12 +74,14 @@ function modalOpen (dialog) {
 function modalClose (dialog) {
 	dialog.content.fadeOut(&#39;slow&#39;, function () {
 		dialog.container.hide(&#39;slow&#39;, function () {
-			dialog.overlay.slideUp(&#39;slow&#39;);
+			dialog.overlay.slideUp(&#39;slow&#39;, function () {
+				if(dialog.iframe){dialog.iframe.remove();}
+			});
 		});
 	})
 }</code></pre></p></li>
-	  <li><a href='#' id='test7'>onShow callback function - onShow: function</a> <p><pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre></p>
-    <p><pre><code>/**
+		<li><a href='#' id='test7'>onShow callback function - onShow: function</a> <p><pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre></p>
+	<p><pre><code>/**
  * After the dialog is show, this callback will bind some effects
  * to the content when the &#39;button&#39; button is clicked.
  *
@@ -93,37 +95,37 @@ function modalShow (dialog) {
 		});
 	});
 }</code></pre></p></li>
-    <li><a href='#' id='test8'>IE SELECT bleed test</a>
-    <p>Make sure the select options do not bleed through the modal dialog.</p>
+	<li><a href='#' id='test8'>IE SELECT bleed test</a>
+	<p>Make sure the select options do not bleed through the modal dialog.</p>
 	</ul>
-  <div style='text-align:center;'>
-    <form>
-    <select>
-      <option>option1</option>
-      <option>option2</option>
-      <option>option3</option>
-      <option>option4</option>
-      <option>option5</option>
-    </select>
-    </form>
-  </div>
-  <div style='height:200px;'>&nbsp;</div>
-  </div>
+	<div style='text-align:center;'>
+	<form>
+	<select>
+		<option>option1</option>
+		<option>option2</option>
+		<option>option3</option>
+		<option>option4</option>
+		<option>option5</option>
+	</select>
+	</form>
+	</div>
+	<div style='height:200px;'>&nbsp;</div>
+	</div>
 </div>
 <div id='modalContentTest' style='display:none'>
-  <form>
+	<form>
 	<textarea rows='5' cols='30'></textarea><br/>
 	<select>
-	  <option>option1</option>
-	  <option>option2</option>
-	  <option>option3</option>
-	  <option>option4</option>
-	  <option>option5</option>
+		<option>option1</option>
+		<option>option2</option>
+		<option>option3</option>
+		<option>option4</option>
+		<option>option5</option>
 	</select><br/>
 	<input type='text'/><br/>
 	<input type='button' value='button' class='animate'/><br/>
 	<input type='button' value='close' class='modalClose'/><br/>
-  </form>
+	</form>
 </div>
 <div style='height:200px;'>&nbsp;</div>
 </body>
