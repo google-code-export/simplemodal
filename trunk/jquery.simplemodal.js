@@ -57,6 +57,7 @@
 		overlayId: 'modalOverlay',		   // overlay element id
 		containerId: 'modalContainer',	   // container element id
 		contentId: 'modalContent',		   // content element id
+		iframeId: 'modalIframe',		   // iframe element id
 		close: true,					   // show the window close icon?
 		closeClass: 'modalClose',		   // close link class
 		closeTitle: 'Close',			   // close link title
@@ -84,83 +85,83 @@
 		 * - Handle passed in onOpen callback
 		 */
 		init: function (data, settings) {
+			this.data = data;
+
 			this.opts = $.extend({},
 				$.modal.defaults,
 				settings
 			);
+
 			if (this.dialog.overlay) {
 				return false;
 			}
-			this.createOverlay();
-			this.createContainer();
-			this.addContent(data);
+
+			this.create();
 			this.open();
-			this.bindEvents();
 
 			// Called after the modal window has been displayed
 			// Useful for adding custom events to the modal dialog/content
-			if (this.opts.onShow) {
-				this.opts.onShow(this.dialog);
+			if ($.isFunction(this.opts.onShow)) {
+				this.opts.onShow.apply(this, [this.dialog]);
 			}
 
-            return this;
+			return this;
 		},
 		/**
 		 * Add the modal overlay to the page
 		 * - Set the overlay id and append to the page
 		 * - Set the opacity of the overlay
 		 * - Show the overlay
+		 * Add the modal container to the page
+		 * - Set the container id and append to the page
+		 * - Perform IE fixes, if necessary
+		 * - Show the container and reset top position
+		 * Add the modal content data to the container
+		 * - Set the content id and append to the container
+		 * - Handle string data as well as jQuery element(s)
+		 * - Add the data
 		 */
-		createOverlay: function () {
+		create: function () {
 			this.dialog.overlay = $('<div></div>')
 				.attr('id', this.opts.overlayId)
 				.css({opacity: this.opts.overlay / 100})
 				.hide()
 				.appendTo('body');
-		},
-		/**
-		 * Add the modal container to the page
-		 * - Set the container id and append to the page
-		 * - Perform IE fixes, if necessary
-		 * - Show the container and reset top position
-		 */
-		createContainer: function () {
+
+			if ($.browser.msie && ($.browser.version < 7)) {
+				this.fixIE();
+			}
+
 			this.dialog.container = $('<div></div>')
 				.attr('id', this.opts.containerId)
-				.append(this.closeLink())
+				.append(this.opts.close 
+					? '<a class="modalCloseImg ' 
+						+ this.opts.closeClass 
+						+ '" title="' 
+						+ this.opts.closeTitle + '"></a>'
+					: '')
 				.appendTo('body');
 
 			// fix the top position, relative to the viewport, then hide
 			this.containerTop();
 			this.dialog.container.hide();
 
-			if ($.browser.msie && ($.browser.version < 7)) {
-				this.fixIE();
-			}
-		},
-		/**
-		 * Add the modal content data to the container
-		 * - Set the content id and append to the container
-		 * - Handle string data as well as jQuery element(s)
-		 * - Add the data
-		 */
-		addContent: function (data) {
 			this.dialog.content = $('<div></div>')
 				.attr('id', this.opts.contentId)
 				.hide()
 				.appendTo(this.dialog.container);
 
-			if (typeof data === 'string') {
-				this.dialog.content.append(data);
+			if (typeof this.data === 'string') {
+				this.dialog.content.append(this.data);
 			}
-			else if (data.jquery) {
+			else if (this.data.jquery) {
 				// If we don't clone the element, it will be removed
 				// from the DOM when the modal dialog is closed
 				if (this.opts.cloneData) {
-					data.clone().show().appendTo(this.dialog.content);
+					this.data.clone().show().appendTo(this.dialog.content);
 				}
 				else {
-					data.show().appendTo(this.dialog.content);
+					this.data.show().appendTo(this.dialog.content);
 				}
 			}
 		},
@@ -175,6 +176,9 @@
 				$.modal.close();
 			});
 		},
+		unbindEvents: function () {
+			$('.' + this.opts.closeClass).unbind('click');
+		},
 		/**
 		 * Fix issues in IE6
 		 * - Simulate position:fixed and make sure the overlay height is 100%
@@ -182,9 +186,10 @@
 		 */
 		fixIE: function () {
 			this.dialog.overlay.css({position: 'absolute', height: $(document).height() + 'px'});
-			$('<iframe src="javascript:false;"></iframe>')
-				.addClass('modalIframe')
+			this.dialog.iframe = $('<iframe src="javascript:false;"></iframe>')
+				.attr('id', this.opts.iframeId)
 				.css({opacity: 0})
+				.hide()
 				.appendTo('body');
 		},
 		/**
@@ -193,48 +198,46 @@
 		 * - Use the onOpen callback, if provided
 		 */
 		open: function () {
-			if (this.opts.onOpen) {
-				this.opts.onOpen(this.dialog);
+			if (this.dialog.iframe) {
+				this.dialog.iframe.show();
+			}
+
+			if ($.isFunction(this.opts.onOpen)) {
+				this.opts.onOpen.apply(this, [this.dialog]);
 			}
 			else {
 				this.dialog.overlay.show();
 				this.dialog.container.show();
 				this.dialog.content.show();
 			}
+
+			this.bindEvents();
 		},
 		/**
 		 * Close the modal dialog
 		 * - Hides [and removes] the elements from the DOM
 		 * - Use the onClose callback, if provided
-		 * - Sets modal dialog to null
-		 * - Removes the IE iframe, if necessary
-         * - If you use an onClose callback, you must remove the 
-         *   elements manually (overlay and container)
+	 	 * - Sets modal dialog to null
+		 * - If you use an onClose callback, you must remove the 
+		 *   elements manually (overlay, container and iframe)
 		 */
 		close: function () {
-			if (this.opts.onClose) {
-				this.opts.onClose(this.dialog);
+			if ($.isFunction(this.opts.onClose)) {
+				this.opts.onClose.apply(this, [this.dialog]);
 			}
 			else {
 				this.dialog.container.hide().remove();
 				this.dialog.overlay.hide().remove();
+				if (this.dialog.iframe) {
+					this.dialog.iframe.hide().remove();
+				}
 			}
 
-            this.dialog = {};
+			this.dialog = {};
 			
-            if ($.browser.msie && ($.browser.version < 7)) {
-				$('iframe.modalIframe').remove();
-			}
-
-            return this;
-		},
-		/**
-		 * Builds the modal dialog 'close' link element
-		 * - Currently only returns an empty A element
-		 * - Returns an empty string if opts.close is false
-		 */
-		closeLink: function () {
-			return this.opts.close ? '<a class="modalCloseImg ' + this.opts.closeClass + '" title="' + this.opts.closeTitle + '"/>' : '';
+			this.unbindEvents();
+			
+			return this;
 		},
 		/**
 		 * Determines the top value for the modal container
