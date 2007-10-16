@@ -11,14 +11,16 @@ $(function(){
 	$('a#test1').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal();
-
 	});
 	$('a#test2').click(function (e) {
 		e.preventDefault();
 		$.modal($('#modalContentTest'));
-
 	});
 	$('a#test3').click(function (e) {
+		e.preventDefault();
+		$.modal(document.getElementById('modalContentTest'));
+	});
+	$('a#test4').click(function (e) {
 		e.preventDefault();
 		$.modal("<div>\
 					<h1>Sample Content</h1>\
@@ -26,7 +28,7 @@ $(function(){
 					<input type='text' value='input boxes' size='8'/>, etc...</p>\
 				</div>");
 	});
-	$('a#test4').click(function (e) {
+	$('a#test5').click(function (e) {
 		e.preventDefault();
 		$.modal("<div>\
 					<h1>Sample Content</h1>\
@@ -34,19 +36,19 @@ $(function(){
 					<p><a href='#' class='modalClose'>Close</a></p>\
 				</div>", {close:false});
 	});
-	$('a#test5').click(function (e) {
+	$('a#test6').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal({onOpen: modalOpen});
 	});
-	$('a#test6').click(function (e) {
+	$('a#test7').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal({onClose: modalClose});
 	});
-	$('a#test7').click(function (e) {
+	$('a#test8').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal({onShow: modalShow});
 	});
-	$('a#test8').click(function (e) {
+	$('a#test9').click(function (e) {
 		e.preventDefault();
 		$.modal('<h1>IE SELECT bleed test</h1>');
 	});
