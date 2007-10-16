@@ -188,7 +188,7 @@
 			this.dialog.overlay.css({position: 'absolute', height: $(document).height() + 'px'});
 			this.dialog.iframe = $('<iframe src="javascript:false;"></iframe>')
 				.attr('id', this.opts.iframeId)
-				.css({opacity: 0})
+				.css({opacity: 0, position: 'absolute', height: $(document).height() + 'px'})
 				.hide()
 				.appendTo('body');
 		},
