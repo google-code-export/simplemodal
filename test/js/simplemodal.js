@@ -22,7 +22,7 @@ $(function(){
 	});
 	$('a#test4').click(function (e) {
 		e.preventDefault();
-		$.modal("<div>\
+		$.modal("<div class='test'>\
 					<h1>Sample Content</h1>\
 					<p>This can be complex HTML containing <a href='#'>links</a>,\
 					<input type='text' value='input boxes' size='8'/>, etc...</p>\
@@ -30,7 +30,7 @@ $(function(){
 	});
 	$('a#test5').click(function (e) {
 		e.preventDefault();
-		$.modal("<div>\
+		$.modal("<div class='test'>\
 					<h1>Sample Content</h1>\
 					<p>This example uses a custom close.</p>\
 					<p><a href='#' class='modalClose'>Close</a></p>\
@@ -50,7 +50,7 @@ $(function(){
 	});
 	$('a#test9').click(function (e) {
 		e.preventDefault();
-		$.modal('<h1>IE SELECT bleed test</h1>');
+		$.modal('<div class="test"><h1>IE SELECT bleed test</h1></div>');
 	});
 });
 
@@ -77,7 +77,7 @@ function modalOpen (dialog) {
  * don't need to be handled here.
  *
  * onClose callbacks need to handle 'closing' the overlay, container
- * and content.
+ * content and iframe.
  */
 function modalClose (dialog) {
 	dialog.content.fadeOut('slow', function () {
@@ -97,7 +97,7 @@ function modalClose (dialog) {
  * a matching function.
  */
 function modalShow (dialog) {
-	$('#modalContent input:button.animate').click(function () {
+	$('#modalContentTest input:button.animate').click(function () {
 		dialog.content.slideUp('slow', function () {
 			dialog.content.slideDown('slow');
 		});

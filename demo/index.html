@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title> SimpleModal Demo </title>
+<title> SimpleModal Demos </title>
 
 <meta name='author' content='Eric Martin' />
 <meta name='copyright' content='2007 - Eric Martin' />
@@ -84,9 +84,6 @@ var callback = {
   background-color:#fff; 
   border:3px solid #ccc;
 }
-#modalContent {
-  padding:8px; 
-}
 a.modalCloseImg {
   background:url(img/x.png) no-repeat; 
   width:25px; 
@@ -122,6 +119,13 @@ a.modalCloseImg {
   background-color:#fff; 
   border:3px solid #ccc;
 }
+#contactForm {
+  padding:8px;
+}
+#contactForm h1 {
+  padding:0 0 8px; margin:0;
+}
+
 #contactForm label {
   clear:left;
   display:block;
@@ -149,22 +153,30 @@ a.modalCloseImg{
 
 </head>
 <body>
-<a href='#' id='cf'>contact us</a>
+<div id='container'>
+  <div id='header'><h1>SimpleModal Demos</h1></div>
+  <div id='content'>
+    <ul>
+	  <li>Contact Form: <a href='#' id='cf'>Contact Us</a></li>
+	  <li>&nbsp;</li>
+	</ul>
+  </div>
+</div>
 
 <!-- hidden content -->
 <div id='contactForm' style='display:none'>
   <h1>Contact Us</h1>
   <form action='#'>
     <label for='name'>Name:</label>
-    <input type='text' name='name' size='30'/>
+    <input type='text' id='name' name='name' size='30'/>
     <label for='email'>Email:</label>
-    <input type='text' name='email' size='40'/>
+    <input type='text' id='email' name='email' size='40'/>
     <label for='message'>Message:</label>
-    <textarea name='message' cols='30' rows='5'>
+    <textarea id='message' name='message' cols='30' rows='5'>
     </textarea>
     <br/>
     <label for='submit'>&nbsp;</label>
-    <input type='submit' name='submit' value='Send'/>
+    <input type='submit' id='submit' name='submit' value='Send'/>
     <input type='button' class='modalClose' value='Cancel'/>
   </form>
 </div>
