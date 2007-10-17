@@ -36,46 +36,46 @@
 		<li><a href='#' id='test1'>Chained Function - default settings</a> <pre><code>$('#modalContentTest').modal();</code></pre></li>
 		<li><a href='#' id='test2'>Modal Function w/ jQuery element - default settings</a> <pre><code>$.modal($('#modalContentTest'));</code></pre></li>
 		<li><a href='#' id='test3'>Modal Function w/ DOM element - default settings</a> <pre><code>$.modal(document.getElementById('modalContentTest'));</code></pre></li>
-		<li><a href='#' id='test4'>Modal Function w/ string/HTML - default settings</a> <pre><code>$.modal("&lt;div&gt;\
+		<li><a href='#' id='test4'>Modal Function w/ string/HTML - default settings</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
-		&lt;p&gt;This can be complex HTML containing &lt;a href=&#39;#&#39;&gt;links&lt;/a&gt;,\
-		&lt;input type=&#39;text&#39; value=&#39;input boxes&#39; size=&#39;8&#39;/&gt;, etc...&lt;/p&gt;\
+		&lt;p&gt;This can be complex HTML containing &lt;a href='#'&gt;links&lt;/a&gt;,\
+		&lt;input type='text' value='input boxes' size='8'/&gt;, etc...&lt;/p&gt;\
 	 &lt;/div&gt;");</code></pre></li>
-		<li><a href='#' id='test5'>Modal Function w/ string/HTML - close: false</a> <pre><code>$.modal("&lt;div&gt;\
+		<li><a href='#' id='test5'>Modal Function w/ string/HTML - close: false</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
 		&lt;p&gt;This example uses a custom close.&lt;/p&gt;\
-		&lt;p&gt;&lt;a href=&#39;#&#39; class=&#39;modalClose&#39;&gt;Close&lt;/a&gt;&lt;/p&gt;\
+		&lt;p&gt;&lt;a href='#' class='modalClose'&gt;Close&lt;/a&gt;&lt;/p&gt;\
 	 &lt;/div&gt;", {close: false});</code></pre></li>
 		<li><a href='#' id='test6'>onOpen callback function - onOpen: function</a> <pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre>
 	<pre><code>/**
- * When the open event is called, this function will be used to &#39;open&#39;
+ * When the open event is called, this function will be used to 'open'
  * the overlay, container and content portions of the modal dialog.
  *
- * onOpen callbacks need to handle &#39;opening&#39; the overlay, container
+ * onOpen callbacks need to handle 'opening' the overlay, container
  * and content.
  */
 function modalOpen (dialog) {
-	dialog.overlay.fadeIn(&#39;slow&#39;, function () {
-		dialog.container.fadeIn(&#39;slow&#39;, function () {
-			dialog.content.slideDown(&#39;slow&#39;);	 
+	dialog.overlay.fadeIn('slow', function () {
+		dialog.container.fadeIn('slow', function () {
+			dialog.content.hide().slideDown('slow');	 
 		});
 	});
 }</code></pre></li>
 		<li><a href='#' id='test7'>onClose callback function - onClose: function</a> <pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre>
 	<pre><code>/**
- * When the close event is called, this function will be used to &#39;close&#39;
+ * When the close event is called, this function will be used to 'close'
  * the overlay, container and content portions of the modal dialog.
  *
  * The SimpleModal close function will still perform some actions that
- * don&#39;t need to be handled here.
+ * don't need to be handled here.
  *
- * onClose callbacks need to handle &#39;closing&#39; the overlay, container
+ * onClose callbacks need to handle 'closing' the overlay, container
  * and content.
  */
 function modalClose (dialog) {
-	dialog.content.fadeOut(&#39;slow&#39;, function () {
-		dialog.container.hide(&#39;slow&#39;, function () {
-			dialog.overlay.slideUp(&#39;slow&#39;, function () {
+	dialog.content.fadeOut('slow', function () {
+		dialog.container.hide('slow', function () {
+			dialog.overlay.slideUp('slow', function () {
 				if(dialog.iframe){dialog.iframe.remove();}
 			});
 		});
@@ -84,15 +84,15 @@ function modalClose (dialog) {
 		<li><a href='#' id='test8'>onShow callback function - onShow: function</a> <pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre>
 	<pre><code>/**
  * After the dialog is show, this callback will bind some effects
- * to the content when the &#39;button&#39; button is clicked.
+ * to the content when the 'button' button is clicked.
  *
  * This callback is completely user based; SimpleModal does not have
  * a matching function.
  */
 function modalShow (dialog) {
-	$(&#39;#modalContent input:button.animate&#39;).click(function () {
-		dialog.content.slideUp(&#39;slow&#39;, function () {
-			dialog.content.slideDown(&#39;slow&#39;);
+	$('#modalContentTest input:button.animate').click(function () {
+		dialog.content.slideUp('slow', function () {
+			dialog.content.slideDown('slow');
 		});
 	});
 }</code></pre></li>
@@ -113,7 +113,7 @@ function modalShow (dialog) {
 	<div style='height:200px;'>&nbsp;</div>
 	</div>
 </div>
-<div id='modalContentTest' style='display:none'>
+<div id='modalContentTest' class='test' style='display:none'>
 	<form action='#'>
 	<textarea rows='5' cols='30'></textarea><br/>
 	<select>
