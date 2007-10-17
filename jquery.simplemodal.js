@@ -85,7 +85,6 @@
 	 * overlay: (Number:50) The opacity value, from 0 - 100
 	 * overlaydId: (String:'modalOverlay') The DOM element id for the overlay div 
 	 * containerId: (String:'modalContainer') The DOM element id for the container div
-	 * contentId: (String:'modalContent') The DOM element id for the content div
 	 * iframeId: (String:'modalIframe') The DOM element id for the iframe (IE 6)
 	 * close: (Boolean:true) Show the default window close icon? Uses CSS class modalCloseImg
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
@@ -99,7 +98,6 @@
 		overlay: 50,
 		overlayId: 'modalOverlay',
 		containerId: 'modalContainer',
-		contentId: 'modalContent',
 		iframeId: 'modalIframe',
 		close: true,
 		closeTitle: 'Close',
@@ -117,7 +115,7 @@
 		opts: null,
 		/**
 		 * Object passed to the callback functions
-		 * - Should contain the overlay, container, content and 
+		 * - Should contain the overlay, container and 
 		 *   iframe (for IE 6) objects
 		 */
 		dialog: {},
@@ -128,8 +126,6 @@
 		 * - Handle the onShow callback
 		 */
 		init: function (data, settings) {
-			this.data = data;
-
 			this.opts = $.extend({},
 				$.modal.defaults,
 				settings
@@ -139,6 +135,14 @@
 			if (this.dialog.overlay) {
 				return false;
 			}
+
+			// convert to jQuery object if it isn't already
+			data = data.jquery ? data : $(data);
+
+			// if we don't clone the element, it will be removed
+			// from the DOM when the modal dialog is closed
+			this.dialog.data = this.opts.cloneData ? data.clone() : data;
+			data = null;
 
 			this.create();
 			this.open();
@@ -156,8 +160,7 @@
 		 * Create and add the modal container to the page
 		 * - Add the close icon if close == true
 		 * Set the top value for the modal container
-		 * Add the modal content data to the container
-		 * Add the data to the modal content, based on type
+		 * Add the data to the modal container, based on type
 		 * - Clone the data, if clone == true
 		 */
 		create: function () {
@@ -185,30 +188,8 @@
 			this.containerTop();
 			this.dialog.container.hide();
 
-			this.dialog.content = $('<div></div>')
-				.attr('id', this.opts.contentId)
-				.hide()
-				.appendTo(this.dialog.container);
-
-			// allow strings, DOM elements and jQuery objects
-			if (typeof this.data === 'string') {
-				this.dialog.content.append(this.data);
-			}
-			else if (this.data.jquery || typeof this.data === 'object') {
-				// convert to jQuery object if it isn't already
-				if (!this.data.jquery) {
-					this.data = $(this.data);
-				}
-				
-				// If we don't clone the element, it will be removed
-				// from the DOM when the modal dialog is closed
-				if (this.opts.cloneData) {
-					this.data.clone().show().appendTo(this.dialog.content);
-				}
-				else {
-					this.data.show().appendTo(this.dialog.content);
-				}
-			}
+			// add the data
+			this.dialog.data.appendTo(this.dialog.container);
 		},
 		/**
 		 * Bind events
@@ -244,11 +225,11 @@
 		},
 		/**
 		 * Open the modal dialog
-		 * - Shows the iframe (if necessary), overlay, container and content
+		 * - Shows the iframe (if necessary), overlay and container
 		 * - Calls the onOpen callback, if provided
 		 * - Binds any SimpleModal defined events
 		 * - Note: If you use the onOpen callback, you must show the 
-		 *         overlay, container and content elements manually 
+		 *         overlay and container elements manually 
 		 *         (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
@@ -262,29 +243,31 @@
 			else {
 				this.dialog.overlay.show();
 				this.dialog.container.show();
-				this.dialog.content.show();
+				this.dialog.data.show();
 			}
 
 			this.bindEvents();
 		},
 		/**
 		 * Close the modal dialog
-		 * - Hides (and removes) the iframe (if necessary), overlay and container
+		 * - Removes the iframe (if necessary), overlay and container
+		 * - Removes or hides the data, based on the value of cloneData
 		 * - Calls the onOpen callback, if provided
 	 	 * - Clears the dialog element
 	 	 * - Unbinds any SimpleModal defined events
 		 * - Note: If you use an onClose callback, you must remove the 
-		 *         overlay, container, content and iframe elements manually
+		 *         overlay, container and iframe elements manually
 		 */
 		close: function () {
 			if ($.isFunction(this.opts.onClose)) {
 				this.opts.onClose.apply(this, [this.dialog]);
 			}
 			else {
-				this.dialog.container.hide().remove();
-				this.dialog.overlay.hide().remove();
+				this.opts.cloneData ? this.dialog.data.remove() : this.dialog.data.hide();
+				this.dialog.container.remove();
+				this.dialog.overlay.remove();
 				if (this.dialog.iframe) {
-					this.dialog.iframe.hide().remove();
+					this.dialog.iframe.remove();
 				}
 			}
 			
