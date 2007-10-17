@@ -86,7 +86,7 @@ function modalClose (dialog) {
 				if(dialog.iframe){dialog.iframe.remove();}
 			});
 		});
-	})
+	});
 }
 
 /**
