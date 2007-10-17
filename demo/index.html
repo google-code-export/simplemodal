@@ -21,9 +21,40 @@
 -->
 <script type='text/javascript'>
 $(document).ready(function () {
-
-
+  $('#cf').click(function (e) {
+    e.preventDefault();
+    $('#contactForm').modal({
+      close: false, 
+      containerId: 'cfModalContainer',
+      onOpen: callback.cfOpen,
+      onClose: callback.cfClose
+    });
+  });
 });
+var callback = {
+  cfOpen: function (dialog) {
+    dialog.overlay.fadeIn('slow', function () {
+      dialog.container.slideDown('slow', function () {
+        dialog.content.fadeIn('slow');
+      });
+    });
+  },
+  cfClose: function (dialog) {
+    dialog.content.fadeOut('slow', function () {
+      dialog.container.slideUp('slow', function () {
+        dialog.overlay.fadeOut('slow', function () {
+          if (dialog.iframe) {
+            dialog.iframe.remove();
+          }
+          // remove, for good measure
+          dialog.overlay.remove();
+          dialog.container.remove();
+          dialog.content.remove();
+        });
+      });
+    });
+  }
+};
 </script>
 
 <!-- 
@@ -32,7 +63,7 @@ $(document).ready(function () {
 -->
 <style type='text/css'>
 /* Basic styling */
-#modalOverlay{
+#modalOverlay {
   height:100%; 
   width:100%; 
   position:fixed; 
@@ -42,7 +73,7 @@ $(document).ready(function () {
   background-color:#000; 
   cursor:wait;
 }
-#modalContainer{
+#modalContainer {
   height:400px; 
   width:600px; 
   position:absolute; 
@@ -53,12 +84,11 @@ $(document).ready(function () {
   background-color:#fff; 
   border:3px solid #ccc;
 }
-#modalContent{
+#modalContent {
   padding:8px; 
-  overflow:auto;
 }
-a.modalCloseImg{
-  background:url(../img/x.png) no-repeat; 
+a.modalCloseImg {
+  background:url(img/x.png) no-repeat; 
   width:25px; 
   height:29px; 
   display:inline; 
@@ -70,7 +100,7 @@ a.modalCloseImg{
 }
 
 
-/* IFRAME styling */
+/* IFRAME */
 #modalIframe{
   z-index:1000; 
   position:absolute; 
@@ -80,7 +110,32 @@ a.modalCloseImg{
   left:0;
 }
 
-
+/* Contact form */
+#cfModalContainer {
+  height:280px; 
+  width:420px; 
+  position:absolute; 
+  left:50%; 
+  top:10%; 
+  margin-left:-210px; 
+  z-index:3100; 
+  background-color:#fff; 
+  border:3px solid #ccc;
+}
+#contactForm label {
+  clear:left;
+  display:block;
+  width:100px;
+  float:left;
+  text-align:right;
+  padding-right:4px;
+}
+#contactForm input, 
+#contactForm textarea {
+  float:left;
+  padding:2px;
+  margin:2px;
+}
 </style>
 <!-- IE PNG workaround -->
 <!--[if lt IE 7]>
@@ -94,5 +149,24 @@ a.modalCloseImg{
 
 </head>
 <body>
+<a href='#' id='cf'>contact us</a>
+
+<!-- hidden content -->
+<div id='contactForm' style='display:none'>
+  <h1>Contact Us</h1>
+  <form action='#'>
+    <label for='name'>Name:</label>
+    <input type='text' name='name' size='30'/>
+    <label for='email'>Email:</label>
+    <input type='text' name='email' size='40'/>
+    <label for='message'>Message:</label>
+    <textarea name='message' cols='30' rows='5'>
+    </textarea>
+    <br/>
+    <label for='submit'>&nbsp;</label>
+    <input type='submit' name='submit' value='Send'/>
+    <input type='button' class='modalClose' value='Cancel'/>
+  </form>
+</div>
 </body>
 </html>
