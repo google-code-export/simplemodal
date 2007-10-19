@@ -43,13 +43,7 @@ var callback = {
     dialog.content.fadeOut('slow', function () {
       dialog.container.slideUp('slow', function () {
         dialog.overlay.fadeOut('slow', function () {
-          if (dialog.iframe) {
-            dialog.iframe.remove();
-          }
-          // remove, for good measure
-          dialog.overlay.remove();
-          dialog.container.remove();
-          dialog.content.remove();
+          $.modal.remove(dialog);
         });
       });
     });

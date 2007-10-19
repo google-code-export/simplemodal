@@ -1,5 +1,6 @@
 /*
  * jQuery SimpleModal plugin 1.0
+ * http://www.ericmmartin.com/projects/simplemodal/
  * http://code.google.com/p/simplemodal/
  *
  * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
@@ -67,7 +68,15 @@
 	 * Stand-alone close function to close an open modal dialog.
 	 */
 	$.modal.close = function () {
-		return $.modal.impl.close();
+		$.modal.impl.close();
+	};
+
+	/**
+	 * Stand-alone remove function to remove all of the modal 
+	 * dialog elements from the DOM.
+	 */
+	$.modal.remove = function (dialog) {
+		$.modal.impl.remove(dialog);
 	};
 
 	/**
@@ -273,8 +282,18 @@
 			
 			this.dialog = {};
 			this.unbindEvents();
-			
-			return this;
+		},
+		/**
+		 * Remove the modal dialog elements
+		 * - Removes the iframe (if necessary), overlay container and content
+		 */
+		remove: function (dialog) {
+			dialog.content.remove();
+			dialog.container.remove();
+			dialog.overlay.remove();
+			if (dialog.iframe) {
+				dialog.iframe.remove();
+			}
 		},
 		/**
 		 * Determines the top value for the modal container
