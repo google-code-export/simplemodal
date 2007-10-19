@@ -65,15 +65,10 @@
 	};
 
 	/**
-	 * Stand-alone close function to close an open modal dialog.
-	 */
-	$.modal.close = function () {
-		$.modal.impl.close();
-	};
-
-	/**
 	 * Stand-alone remove function to remove all of the modal 
 	 * dialog elements from the DOM.
+	 * 
+	 * @param {Object} dialog An object containing the modal dialog elements
 	 */
 	$.modal.remove = function (dialog) {
 		$.modal.impl.remove(dialog);
@@ -206,9 +201,10 @@
 		 *   closeClass class
 		 */
 		bindEvents: function () {
+			var modal = this;
 			$('.' + this.opts.closeClass).click(function (e) {
 				e.preventDefault();
-				$.modal.close();
+				modal.close();
 			});
 		},
 		/**
