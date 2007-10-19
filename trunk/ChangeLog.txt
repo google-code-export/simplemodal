@@ -1,6 +1,6 @@
 ==== SimpleModal ChangeLog ====
 
 == 1.0 ==
- * Date: Oct ?, 2007
+ * Date: Oct 19, 2007
  * Initial Release
 

@@ -1,5 +1,6 @@
 /**
  * SimpleModal Test
+ * http://www.ericmmartin.com/projects/simplemodal/
  * http://code.google.com/p/simplemodal/
  *
  * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
@@ -83,7 +84,7 @@ function modalClose (dialog) {
 	dialog.content.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				if(dialog.iframe){dialog.iframe.remove();}
+				$.modal.remove(dialog);
 			});
 		});
 	});
@@ -97,7 +98,7 @@ function modalClose (dialog) {
  * a matching function.
  */
 function modalShow (dialog) {
-	$('#modalContentTest input:button.animate').click(function () {
+	$('input.animate').click(function () {
 		dialog.content.slideUp('slow', function () {
 			dialog.content.slideDown('slow');
 		});
