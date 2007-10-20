@@ -186,11 +186,8 @@
 						+ '" title="' 
 						+ this.opts.closeTitle + '"></a>'
 					: '')
+				.hide()
 				.appendTo('body');
-
-			// fix the top position, relative to the viewport, then hide
-			this.containerTop();
-			this.dialog.container.hide();
 
 			// add the content
 			this.dialog.content.appendTo(this.dialog.container);
@@ -290,23 +287,6 @@
 			if (dialog.iframe) {
 				dialog.iframe.remove();
 			}
-		},
-		/**
-		 * Determines the top value for the modal container
-		 * - Forces the modal dialog to always display in the viewable port
-		 * - Warning: If a top value is not defined in the CSS, the container
-		 *	          will be displayed at the very bottom of the page
-		 */
-		containerTop: function () {
-			var topOffset = 0;
-			if (document.documentElement && document.documentElement.scrollTop) {
-				topOffset = document.documentElement.scrollTop;
-			}
-			else if (document.body) {
-				topOffset = document.body.scrollTop;
-			}
-			var currentOffset = this.dialog.container.offset();
-			this.dialog.container.css({top: (topOffset + currentOffset.top) + 'px'});
 		}
 	};
 
