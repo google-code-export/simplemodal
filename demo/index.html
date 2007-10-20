@@ -12,135 +12,20 @@
 <script src='http://code.jquery.com/jquery-latest.pack.js' type='text/javascript'></script>
 <script src='http://simplemodal.googlecode.com/svn/trunk/jquery.simplemodal.js' type='text/javascript'></script>
 
-<!-- Import the non-SimpleModal styles used for this page -->
+<!-- Import the common styles used for this page -->
 <link type='text/css' href='css/demo.css' rel='stylesheet' media='screen' />
 
-<!-- 
-  For the sake of a demo (and for those not using FireFox), I've
-  embed the JavaScript code into this page.
--->
-<script type='text/javascript'>
-$(document).ready(function () {
-  $('#cf').click(function (e) {
-    e.preventDefault();
-    $('#contactForm').modal({
-      close: false, 
-      containerId: 'cfModalContainer',
-      onOpen: callback.cfOpen,
-      onClose: callback.cfClose
-    });
-  });
-});
-var callback = {
-  cfOpen: function (dialog) {
-    dialog.overlay.fadeIn('slow', function () {
-      dialog.container.slideDown('slow', function () {
-        dialog.content.fadeIn('slow');
-      });
-    });
-  },
-  cfClose: function (dialog) {
-    dialog.content.fadeOut('slow', function () {
-      dialog.container.slideUp('slow', function () {
-        dialog.overlay.fadeOut('slow', function () {
-          $.modal.remove(dialog);
-        });
-      });
-    });
-  }
-};
-</script>
-
-<!-- 
-  For the sake of a demo (and for those not using FireFox), I've
-  embed the CSS code into this page.
--->
-<style type='text/css'>
-/* Basic styling */
-#modalOverlay {
-  height:100%; 
-  width:100%; 
-  position:fixed; 
-  left:0; 
-  top:0; 
-  z-index:3000; 
-  background-color:#000; 
-  cursor:wait;
-}
-#modalContainer {
-  height:400px; 
-  width:600px; 
-  position:absolute; 
-  left:50%; 
-  top:10%; 
-  margin-left:-300px; 
-  z-index:3100; 
-  background-color:#fff; 
-  border:3px solid #ccc;
-}
-a.modalCloseImg {
-  background:url(img/x.png) no-repeat; 
-  width:25px; 
-  height:29px; 
-  display:inline; 
-  z-index:3200; 
-  position:absolute; 
-  top:-14px; 
-  left:588px; 
-  cursor:pointer;
-}
+<!-- Contact Form -->
+<script src='js/contact.js' type='text/javascript'></script>
+<link type='text/css' href='css/contact.css' rel='stylesheet' media='screen' />
 
 
-/* IFRAME */
-#modalIframe{
-  z-index:1000; 
-  position:absolute; 
-  width:100%; 
-  height:100%; 
-  top:0; 
-  left:0;
-}
-
-/* Contact form */
-#cfModalContainer {
-  height:280px; 
-  width:420px; 
-  position:absolute; 
-  left:50%; 
-  top:10%; 
-  margin-left:-210px; 
-  z-index:3100; 
-  background-color:#fff; 
-  border:3px solid #ccc;
-}
-#contactForm {
-  padding:8px;
-}
-#contactForm h1 {
-  padding:0 0 8px; margin:0;
-}
-
-#contactForm label {
-  clear:left;
-  display:block;
-  width:100px;
-  float:left;
-  text-align:right;
-  padding-right:4px;
-}
-#contactForm input, 
-#contactForm textarea {
-  float:left;
-  padding:2px;
-  margin:2px;
-}
-</style>
 <!-- IE PNG workaround -->
 <!--[if lt IE 7]>
 <style type='text/css'>
 a.modalCloseImg{
-  background:none; 
-  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, src='img/x.png',sizingMethod='scale');
+	background:none; 
+	filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, src='img/x.png',sizingMethod='scale');
 }
 </style>
 <![endif]-->
@@ -148,31 +33,15 @@ a.modalCloseImg{
 </head>
 <body>
 <div id='container'>
-  <div id='header'><h1>SimpleModal Demos</h1></div>
-  <div id='content'>
-    <ul>
-	  <li>Contact Form: <a href='#' id='cf'>Contact Us</a></li>
-	  <li>&nbsp;</li>
-	</ul>
-  </div>
+	<div id='header'><h1>SimpleModal Demos</h1></div>
+	<div id='content'>
+		<ul>
+			<li><a href='#' id='contactDemo'>Contact Form</a></li>
+			<p>Displays the contents of #contactForm in a modal dialog. Overrides the close, containerId, onOpen and onClose settings.</p>
+			<li><a href='#' id='jqm'>Contact Form</a></li>
+		</ul>
+	</div>
 </div>
-
-<!-- hidden content -->
-<div id='contactForm' style='display:none'>
-  <h1>Contact Us</h1>
-  <form action='#'>
-    <label for='name'>Name:</label>
-    <input type='text' id='name' name='name' size='30'/>
-    <label for='email'>Email:</label>
-    <input type='text' id='email' name='email' size='40'/>
-    <label for='message'>Message:</label>
-    <textarea id='message' name='message' cols='30' rows='5'>
-    </textarea>
-    <br/>
-    <label for='submit'>&nbsp;</label>
-    <input type='submit' id='submit' name='submit' value='Send'/>
-    <input type='button' class='modalClose' value='Cancel'/>
-  </form>
-</div>
+<div style='height:500px'>&nbsp;</div>
 </body>
 </html>
