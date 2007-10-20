@@ -5,9 +5,9 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 if (empty($action)) {
     echo "<div id='contactForm' style='display:none'>
   <h1>Contact Us</h1>
+  <div class='loading' style='display:none'></div>
+  <div class='message' style='display:none'></div>
   <form action='#'>
-    <div class='loading' style='display:none'></div>
-    <div class='message' style='display:none'></div>
     <label for='name'>Name:</label>
     <input type='text' id='name' name='name' size='30'/>
     <label for='email'>Email:</label>

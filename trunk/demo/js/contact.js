@@ -5,7 +5,6 @@ $(document).ready(function () {
 		$.get("data/contact.php", function(data){
 			// create a modal dialog with the data
 			$(data).modal({
-				close: false, 
 				overlayId: 'contactModalOverlay',
 				containerId: 'contactModalContainer',
 				iframeId: 'contactModalIframe',
@@ -19,8 +18,9 @@ $(document).ready(function () {
 
 var contact = {
 	open: function (dialog) {
+		$('.modalCloseImg').hide();
 		dialog.overlay.fadeIn('slow', function () {
-			dialog.container.slideDown('slow', function () {
+			dialog.container.show('slow', function () {
 				dialog.content.fadeIn('slow');
 			});
 		});
@@ -29,14 +29,21 @@ var contact = {
 		$('#contactModalContainer #submit').click(function (e) {
 			e.preventDefault();
 			$('#contactModalContainer .loading').show();
-			$('#contactModalContainer #submit').attr(disabled, 'disabled');
+			$('#contactModalContainer #submit').attr('disabled', 'disabled');
 			$.ajax({
 				url: 'data/contact.php',
-				data: 'test',
+				data: 'action=send',
 				dataType: 'html',
 				complete: function (xhr) {
-					$('#contactForm .message').html(xhr.responseText).show();
-					$('#contactForm .loading').hide();
+					$('#contactModalContainer form').fadeOut('slow', function () {
+						$('#contactModalContainer').animate({
+							height: '100px'
+						}, function () {
+							$('#contactModalContainer .loading').hide();
+							$('#contactModalContainer .message').html(xhr.responseText).show();	
+							$('.modalCloseImg').fadeIn();
+						});						
+					})
 				},
 				error: contact.error
 			});
@@ -44,7 +51,7 @@ var contact = {
 	},
 	close: function (dialog) {
 		dialog.content.fadeOut('slow', function () {
-			dialog.container.slideUp('slow', function () {
+			dialog.container.hide('slow', function () {
 				dialog.overlay.fadeOut('slow', function () {
 					$.modal.remove(dialog);
 				});
