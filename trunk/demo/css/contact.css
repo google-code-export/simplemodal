@@ -1,0 +1,16 @@
+/* Contact form */
+#contactForm {padding:8px;}
+#contactForm .loading {position:absolute; background:url(img/loading.gif) no-repeat; z-index:8000; height:28px; width:28px; top:10px; right:10px;}
+#contactForm h1 {padding:0 0 6px; margin:0;}
+#contactForm .message {border:1px solid #0066CC; background:#99CCFF; color:#003366; padding:2px; font-size:.8em; margin-bottom:6px;}
+#contactForm label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px;}
+#contactForm input, #contactForm textarea {float:left; padding:2px; margin:2px;}
+
+/* Modal dialog */
+#contactModalOverlay {height:100%; width:100%; position:fixed; left:0; top:0; z-index:3000; background-color:#000; cursor:wait;}
+#contactModalContainer {height:280px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100; background-color:#fff; border:3px solid #ccc;}
+#contactModalContainer a.modalCloseImg {background:url(img/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-14px; left:588px; cursor:pointer;}
+#contactModalIframe{z-index:1000; position:absolute; width:100%; height:100%; top:0; left:0;}
+
+/* IE hacks - will not validate. Use conditional include to validate. */
+* html #contactModalContainer {position: absolute; top:expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(15 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');}
