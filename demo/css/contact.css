@@ -1,18 +1,33 @@
-/* Contact form */
-#contactForm {font-family:'Trebuchet MS', Verdana, Arial;}
-#contactForm div.content {background-color:#333; color:#eee; height:250px;}
-#contactForm h1 {color:#d76300; margin:0 0 12px 12px; font-size:1.2em;}
-#contactForm .loading {position:absolute; background:url(../img/contact/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin-left:170px;}
-#contactForm .message {text-align:center;}
-#contactForm label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px;}
-#contactForm input, #contactForm textarea {float:left; padding:2px; margin:2px;}
-#contactForm div.top {height:13px; background:url(../img/contact/form_top.gif) no-repeat;}
-#contactForm div.bottom {height:13px; background:url(../img/contact/form_bottom.gif) no-repeat;}
+/*
+ * SimpleModal Contact Form
+ * http://www.ericmmartin.com/projects/simplemodal/
+ * http://code.google.com/p/simplemodal/
+ *
+ * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
+ *
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ * Revision: $Id$
+ *
+ */
+ 
+ /* Contact form */
+#contactModalContainer #contactForm {font-family:'Trebuchet MS', Verdana, Arial;}
+#contactModalContainer #contactForm .content {background-color:#333; color:#eee; height:260px;}
+#contactModalContainer #contactForm h1 {color:#d76300; margin:0; padding:0 0 6px 12px; font-size:1.2em;}
+#contactModalContainer #contactForm .loading {position:absolute; background:url(../img/contact/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
+#contactModalContainer #contactForm .message {text-align:center;}
+#contactModalContainer #contactForm .error {width:92%; font-size:.8em; background:#000; border:2px solid #ccc; font-size:0.8em; font-weight:bold; margin:0 auto; padding:2px;}
+#contactModalContainer #contactForm label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px;}
+#contactModalContainer #contactForm input, #contactModalContainer #contactForm textarea {float:left; padding:2px; margin:2px;}
+#contactModalContainer #contactForm div.top {height:13px; background:url(../img/contact/form_top.gif) no-repeat; padding:0; margin:0;}
+#contactModalContainer #contactForm div.bottom {height:13px; background:url(../img/contact/form_bottom.gif) no-repeat;}
 
 /* Modal dialog */
 #contactModalOverlay {height:100%; width:100%; position:fixed; left:0; top:0; z-index:3000; background-color:#000; cursor:wait;}
-#contactModalContainer {height:280px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100;}
-#contactModalContainer a.modalCloseImg {background:url(../img/x.png) no-repeat; width:25px; height:29px; display:inline; z-index:3200; position:absolute; top:-14px; left:408px; cursor:pointer;}
+#contactModalContainer {height:290px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100;}
+#contactModalContainer a.modalCloseImg {background:url(../img/x.png) no-repeat; width:25px; height:29px; z-index:3200; position:absolute; top:-14px; left:408px; cursor:pointer;}
 #contactModalIframe{z-index:1000; position:absolute; width:100%; height:100%; top:0; left:0;}
 
 /* IE hacks - will not validate. Use conditional include to validate. */
