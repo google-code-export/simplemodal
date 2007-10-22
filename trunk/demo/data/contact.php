@@ -15,7 +15,7 @@
  */
 
 // Global settings
-$to = 'youremail@yourdomain.com';
+$to = 'user@domain.com';
 $subject = 'SimpleModal Contact Form';
 
 // Process
@@ -76,7 +76,7 @@ function sendEmail($name, $email, $message) {
 	$body = wordwrap($body, 70);
 
 	// Build header
-	$header = "From: $name <$email>\n";
+	$header = "From: $email\n";
 	$header .= "X-Mailer: PHP/SimpleModal";
 
 	// Send email
