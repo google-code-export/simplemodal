@@ -1,3 +1,17 @@
+/*
+ * SimpleModal Contact Form
+ * http://www.ericmmartin.com/projects/simplemodal/
+ * http://code.google.com/p/simplemodal/
+ *
+ * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
+ *
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ * Revision: $Id$
+ *
+ */
+
 $(document).ready(function () {
 	$('#contactDemo').click(function (e) {
 		e.preventDefault();
@@ -17,44 +31,52 @@ $(document).ready(function () {
 });
 
 var contact = {
+	message: null,
 	open: function (dialog) {
 		dialog.overlay.fadeIn('slow', function () {
 			dialog.container.show('slow', function () {
 				dialog.content.fadeIn('slow');
+				$('#contactModalContainer #name').focus();
 			});
 		});
 	},
 	show: function (dialog) {
 		$('#contactModalContainer #submit').click(function (e) {
 			e.preventDefault();
-			//validate
-			// if valid {
-			$('#contactModalContainer .title').html('Sending...');
-			$('#contactModalContainer form').fadeOut();
-			$('#contactModalContainer .content').animate({
-				height: '80px'
-			}, function () {
-				$('#contactModalContainer .loading').fadeIn(function () {
-					$.ajax({
-						url: 'data/contact.php',
-						data: 'action=send',
-						dataType: 'html',
-						complete: function (xhr) {
-							$('#contactModalContainer .loading').fadeOut(function () {
-								$('#contactModalContainer .title').html('Thank you');
-								$('#contactModalContainer .message').html(xhr.responseText).fadeIn();	
-							});
-						},
-						error: contact.error
+			// validate form
+			if (contact.validate()) {
+				$('#contactModalContainer .message').fadeOut(function () {
+					$('#contactModalContainer .message').removeClass('error').empty();
+				});
+				$('#contactModalContainer .title').html('Sending...');
+				$('#contactModalContainer form').fadeOut();
+				$('#contactModalContainer .content').animate({
+					height: '80px'
+				}, function () {
+					$('#contactModalContainer .loading').fadeIn(function () {
+						$.ajax({
+							url: 'data/contact.php',
+							data: $('#contactModalContainer form').serialize() + '&action=send',
+							dataType: 'html',
+							complete: function (xhr) {
+								$('#contactModalContainer .loading').fadeOut(function () {
+									$('#contactModalContainer .title').html('Thank you!');
+									$('#contactModalContainer .message').html(xhr.responseText).fadeIn();
+								});
+							},
+							error: contact.error
+						});
 					});
 				});
-			});
-
-
-			//$('#contactModalContainer #submit').attr('disabled', 'disabled');
-
-			// else {
-			//
+			}
+			else {
+				$('#contactModalContainer .message').animate({
+					height: '30px'
+				}, function () {
+					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn('slow');
+				});
+				
+			}
 		});
 	},
 	close: function (dialog) {
@@ -68,5 +90,27 @@ var contact = {
 	},
 	error: function (xhr) {
 		alert(xhr.statusText);
+	},
+	validate: function () {
+		contact.message = '';
+		if (!$('#contactModalContainer #name').val()) {
+			contact.message += 'Name is required. ';
+		}
+
+		if (!$('#contactModalContainer #email').val()) {
+			contact.message += 'Email is required. ';
+		}
+
+		if (!$('#contactModalContainer #message').val()) {
+			contact.message += 'Message is required.';
+		}
+
+		if (contact.message.length > 0) {
+			return false;
+		}
+		else {
+			return true;
+		}
+
 	}
 };
