@@ -18,7 +18,6 @@ $(document).ready(function () {
 
 var contact = {
 	open: function (dialog) {
-		$('.modalCloseImg').hide();
 		dialog.overlay.fadeIn('slow', function () {
 			dialog.container.show('slow', function () {
 				dialog.content.fadeIn('slow');
@@ -28,25 +27,34 @@ var contact = {
 	show: function (dialog) {
 		$('#contactModalContainer #submit').click(function (e) {
 			e.preventDefault();
-			$('#contactModalContainer .loading').show();
-			$('#contactModalContainer #submit').attr('disabled', 'disabled');
-			$.ajax({
-				url: 'data/contact.php',
-				data: 'action=send',
-				dataType: 'html',
-				complete: function (xhr) {
-					$('#contactModalContainer form').fadeOut('slow', function () {
-						$('#contactModalContainer').animate({
-							height: '100px'
-						}, function () {
-							$('#contactModalContainer .loading').hide();
-							$('#contactModalContainer .message').html(xhr.responseText).show();	
-							$('.modalCloseImg').fadeIn();
-						});						
-					})
-				},
-				error: contact.error
+			//validate
+			// if valid {
+			$('#contactModalContainer .title').html('Sending...');
+			$('#contactModalContainer form').fadeOut();
+			$('#contactModalContainer .content').animate({
+				height: '80px'
+			}, function () {
+				$('#contactModalContainer .loading').fadeIn(function () {
+					$.ajax({
+						url: 'data/contact.php',
+						data: 'action=send',
+						dataType: 'html',
+						complete: function (xhr) {
+							$('#contactModalContainer .loading').fadeOut(function () {
+								$('#contactModalContainer .title').html('Thank you');
+								$('#contactModalContainer .message').html(xhr.responseText).fadeIn();	
+							});
+						},
+						error: contact.error
+					});
+				});
 			});
+
+
+			//$('#contactModalContainer #submit').attr('disabled', 'disabled');
+
+			// else {
+			//
 		});
 	},
 	close: function (dialog) {
