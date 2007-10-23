@@ -19,6 +19,7 @@ $(document).ready(function () {
 		$.get("data/contact.php", function(data){
 			// create a modal dialog with the data
 			$(data).modal({
+				close: false,
 				overlayId: 'contactModalOverlay',
 				containerId: 'contactModalContainer',
 				iframeId: 'contactModalIframe',
@@ -33,15 +34,15 @@ $(document).ready(function () {
 var contact = {
 	message: null,
 	open: function (dialog) {
-		dialog.overlay.fadeIn('slow', function () {
-			dialog.container.show('slow', function () {
-				dialog.content.fadeIn('slow');
+		dialog.overlay.fadeIn(500, function () {
+			dialog.container.show(500, function () {
+				dialog.content.fadeIn(500);
 				$('#contactModalContainer #name').focus();
 			});
 		});
 	},
 	show: function (dialog) {
-		$('#contactModalContainer #submit').click(function (e) {
+		$('#contactModalContainer .send').click(function (e) {
 			e.preventDefault();
 			// validate form
 			if (contact.validate()) {
@@ -73,16 +74,16 @@ var contact = {
 				$('#contactModalContainer .message').animate({
 					height: '30px'
 				}, function () {
-					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn('slow');
+					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(500);
 				});
 				
 			}
 		});
 	},
 	close: function (dialog) {
-		dialog.content.fadeOut('slow', function () {
-			dialog.container.hide('slow', function () {
-				dialog.overlay.fadeOut('slow', function () {
+		dialog.content.fadeOut(500, function () {
+			dialog.container.hide(500, function () {
+				dialog.overlay.fadeOut(500, function () {
 					$.modal.remove(dialog);
 				});
 			});
