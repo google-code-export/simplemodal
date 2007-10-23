@@ -23,6 +23,7 @@ $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 if (empty($action)) {
 	// Send back the contact form HTML
 	echo "<div id='contactForm' style='display:none'>
+	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
 	<div class='top'></div>
 	<div class='content'>
 		<h1 class='title'>Send us a message:</h1>
@@ -37,8 +38,8 @@ if (empty($action)) {
 			<textarea id='message' name='message' cols='30' rows='5' tabindex='3'></textarea>
 			<br/>
 			<label for='submit'>&nbsp;</label>
-			<input type='submit' id='submit' name='submit' value='Send' tabindex='4'/>
-			<input type='button' class='modalClose' value='Cancel' tabindex='5'/>
+			<img src='img/contact/send.png' alt='Send' class='send' />
+			<img src='img/contact/cancel.png' alt='Cancel' class='cancel modalClose' />
 			<br/>
 		</form>
 	</div>
@@ -71,7 +72,7 @@ function sendEmail($name, $email, $message) {
 	}
 
 	// Set and wordwrap message body
-	$body = "From: $name\n\n";
+	$body = "From:\n$name\n\n";
 	$body .= "Message:\n$message";
 	$body = wordwrap($body, 70);
 
