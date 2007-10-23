@@ -13,7 +13,7 @@
  */
 
 $(document).ready(function () {
-	$('#contactDemo').click(function (e) {
+	$('#contactForm input[name="contact"]').click(function (e) {
 		e.preventDefault();
 		// load the contact form using ajax
 		$.get("data/contact.php", function(data){
@@ -112,6 +112,5 @@ var contact = {
 		else {
 			return true;
 		}
-
 	}
 };

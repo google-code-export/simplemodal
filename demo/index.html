@@ -12,20 +12,17 @@
 <script src='http://code.jquery.com/jquery-latest.pack.js' type='text/javascript'></script>
 <script src='http://simplemodal.googlecode.com/svn/trunk/jquery.simplemodal.js' type='text/javascript'></script>
 
-<!-- Import the common styles used for this page -->
+<!-- Demo specific stuff -->
+<script src='js/demo.js' type='text/javascript'></script>
 <link type='text/css' href='css/demo.css' rel='stylesheet' media='screen' />
 
 <!-- Contact Form -->
 <script src='js/contact.js' type='text/javascript'></script>
 <link type='text/css' href='css/contact.css' rel='stylesheet' media='screen' />
 
-
-<!-- IE PNG workaround -->
+<!-- IE 6 hacks -->
 <!--[if lt IE 7]>
-<style type='text/css'>
-#contactModalContainer #contactForm div.top {background:url(img/contact/form_top_ie.gif) no-repeat;}
-#contactModalContainer a.modalCloseImg{background:none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, src='img/x.png',sizingMethod='scale');}
-</style>
+<link type='text/css' href='css/contact_ie.css' rel='stylesheet' media='screen' />
 <![endif]-->
 
 </head>
@@ -33,13 +30,21 @@
 <div id='container'>
 	<div id='header'><h1>SimpleModal Demos</h1></div>
 	<div id='content'>
-		<ul>
-			<li><a href='#' id='contactDemo'>Contact Form</a></li>
-			<p>Displays the contents of #contactForm in a modal dialog. Overrides the close, containerId, onOpen and onClose settings.</p>
-			<li><a href='#' id='jqm'>Contact Form</a></li>
-		</ul>
+		<div id='contactForm'><h2>Contact Form</h2>
+			<p>A contact form built on SimpleModal. Demonstrates the use of the <code>onOpen</code>, <code>onShow</code> and <code>onClose</code> callbacks, as well as the use of Ajax with SimpleModal.</p>
+			<form action='download/' method='post'>
+			<input type='button' name='contact' value='Demo' class='demo'/><input type='button' name='download' value='Download' class='demo'/>
+			<input type='hidden' name='demo' value='contact'/>
+			</form>
+	</div>
+	<br/>
 	</div>
 </div>
-<div style='height:500px'>&nbsp;</div>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</script>
+<script type="text/javascript">
+_uacct = "UA-2691485-3";
+urchinTracker();
+</script>
 </body>
 </html>

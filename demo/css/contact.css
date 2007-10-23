@@ -12,31 +12,26 @@
  *
  */
  
- /* Contact form */
-#contactModalContainer #contactForm {font-family:'Trebuchet MS', Verdana, Arial;}
-#contactModalContainer #contactForm .content {background-color:#333; color:#ddd; height:260px;}
-#contactModalContainer #contactForm h1 {color:#d76300; margin:0; padding:0 0 6px 12px; font-size:1.2em;}
-#contactModalContainer #contactForm .loading {position:absolute; background:url(../img/contact/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
-#contactModalContainer #contactForm .message {text-align:center;}
-#contactModalContainer #contactForm .error {width:92%; font-size:.8em; background:#000; border:2px solid #ccc; font-size:0.8em; font-weight:bold; margin:0 auto; padding:2px;}
-#contactModalContainer #contactForm label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px;}
-#contactModalContainer #contactForm input, 
-#contactModalContainer #contactForm textarea {float:left; padding:2px; margin:2px; background:#eee; border:1px solid #fff;}
-#contactModalContainer #contactForm div.top {height:13px; background:url(../img/contact/form_top.gif) no-repeat; padding:0; margin:0;}
-#contactModalContainer #contactForm div.bottom {height:13px; background:url(../img/contact/form_bottom.gif) no-repeat;}
-#contactModalContainer #contactForm .send,
-#contactModalContainer #contactForm .cancel {margin:4px 0 0 4px; cursor:pointer;}
-#contactModalContainer #contactForm a.modalCloseX,
-#contactModalContainer #contactForm a.modalCloseX:link,
-#contactModalContainer #contactForm a.modalCloseX:active,
-#contactModalContainer #contactForm a.modalCloseX:visited {text-decoration:none; font-weight:bold; font-size:1.2em; position:absolute; top:-2px; left:400px; color:#999;}
-#contactModalContainer #contactForm a.modalCloseX:hover {color:#ccc;}
-
-/* Modal dialog */
+/* Overlay */
 #contactModalOverlay {height:100%; width:100%; position:fixed; left:0; top:0; z-index:3000; background-color:#000; cursor:wait;}
-#contactModalContainer {height:290px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100;}
-#contactModalContainer a.modalCloseImg {background:url(../img/contact/x.png) no-repeat; width:25px; height:25px; z-index:3200; position:absolute; top:4px; left:400px; cursor:pointer;}
-#contactModalIframe{z-index:1000; position:absolute; width:100%; height:100%; top:0; left:0;}
 
-/* IE hacks - will not validate. Use conditional include to validate. */
-* html #contactModalContainer {position: absolute; top:expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(15 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');}
+/* Container */
+#contactModalContainer {height:290px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100; font-family:'Trebuchet MS', Verdana, Arial;}
+#contactModalContainer .content {background-color:#333; color:#ddd; height:260px;}
+#contactModalContainer h1 {color:#d76300; margin:0; padding:0 0 6px 12px; font-size:1.2em;}
+#contactModalContainer .loading {position:absolute; background:url(../img/contact/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
+#contactModalContainer .message {text-align:center;}
+#contactModalContainer .error {width:92%; font-size:.8em; background:#000; border:2px solid #ccc; font-size:0.8em; font-weight:bold; margin:0 auto; padding:2px;}
+#contactModalContainer label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px; font-weight:bold;}
+#contactModalContainer input, 
+#contactModalContainer textarea {float:left; padding:2px; margin:2px; background:#eee; border:1px solid #fff;}
+#contactModalContainer div.top {height:13px; background:url(../img/contact/form_top.gif) no-repeat; padding:0; margin:0;}
+#contactModalContainer div.bottom {height:13px; background:url(../img/contact/form_bottom.gif) no-repeat;}
+#contactModalContainer .send,
+#contactModalContainer .cancel {margin:4px 0 0 4px; cursor:pointer;}
+#contactModalContainer a.modalCloseImg {background:url(../img/contact/x.png) no-repeat; width:25px; height:25px; z-index:3200; position:absolute; top:4px; left:400px; cursor:pointer;}
+#contactModalContainer a.modalCloseX,
+#contactModalContainer a.modalCloseX:link,
+#contactModalContainer a.modalCloseX:active,
+#contactModalContainer a.modalCloseX:visited {text-decoration:none; font-weight:bold; font-size:1.2em; position:absolute; top:-2px; left:400px; color:#999;}
+#contactModalContainer a.modalCloseX:hover {color:#ccc;}
