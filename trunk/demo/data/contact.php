@@ -22,7 +22,7 @@ $subject = 'SimpleModal Contact Form';
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
 if (empty($action)) {
 	// Send back the contact form HTML
-	echo "<div id='contactForm' style='display:none'>
+	echo "<div style='display:none'>
 	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
 	<div class='top'></div>
 	<div class='content'>
