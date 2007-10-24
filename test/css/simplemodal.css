@@ -9,9 +9,9 @@
  */
 body{font-family:Verdana; padding:0; margin:0; background-color:#eee; height:100%; width:100%;}
 #container{width:800px; margin:0 auto; margin-top:20px; background-color:#fff; border:1px solid #aaa; }
-#header, #content{padding:4px;}
+#header{padding:4px;}
 #header{background:#eee url(../img/header.gif); border-bottom:1px solid #aaa; text-align:center; color:#444;}
-#content{margin:0 auto; width:100%;}
+#content{margin:0 auto; width:100%; padding-top:8px;}
 #content div.form{margin:0 auto; width:50%;}
 .test{padding:8px; overflow:auto;}
 ul{padding-left:18px;}
