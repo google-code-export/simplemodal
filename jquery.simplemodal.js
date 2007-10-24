@@ -51,7 +51,7 @@
  * @requires jQuery v1.2
  * @cat Plugins/SimpleModal
  * @author Eric Martin (eric@ericmmartin.com || http://ericmmartin.com)
- * @version 1.0
+ * @version 1.0.1
  */
 (function ($) {
 	/**
@@ -289,5 +289,4 @@
 			}
 		}
 	};
-
 })(jQuery);
