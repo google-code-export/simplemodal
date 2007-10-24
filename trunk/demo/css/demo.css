@@ -1,5 +1,6 @@
 body {font-family:Verdana; padding:0; margin:0; background-color:#eee; height:100%; width:100%;}
 br {clear:both;}
+#notice {position:relative; width:800px; margin:0 auto; font-weight:bold; font-size:.7em; color:#333; text-align:right; top:16px;}
 #container {width:800px; margin:0 auto; margin-top:20px; background-color:#fff; border:1px solid #aaa; }
 #header {background:#eee url(../img/header.gif); border-bottom:1px solid #aaa; text-align:center; color:#444; padding:4px 0 4px;}
 #content {margin:0 auto; padding:4px;}
