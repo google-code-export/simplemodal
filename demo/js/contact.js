@@ -36,8 +36,9 @@ var contact = {
 	open: function (dialog) {
 		dialog.overlay.fadeIn(500, function () {
 			dialog.container.show(500, function () {
-				dialog.content.fadeIn(500);
-				$('#contactModalContainer #name').focus();
+				dialog.content.fadeIn(500, function () {
+					$('#contactModalContainer #name').focus();
+				});
 			});
 		});
 	},
