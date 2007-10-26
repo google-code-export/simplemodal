@@ -13,3 +13,6 @@ a.modalCloseImg{background:none; width:22px; height:26px; filter: progid:DXImage
 
 /* fix fixed container position in IE < 7 */
 #modalContainer {position: absolute; top: expression((document.documentElement.scrollTop || document.body.scrollTop) + Math.round(15 * (document.documentElement.offsetHeight || document.body.clientHeight) / 100) + 'px');}
+
+/* iframe */
+#modalIframe{z-index:1000; position:absolute; width:100%; height:100%; top:0; left:0;}
