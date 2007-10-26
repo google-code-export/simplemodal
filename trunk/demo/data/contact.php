@@ -14,9 +14,17 @@
  *
  */
 
-// Global settings
-$to = 'user@domain.com';
+// User settings
+$to = 'user@yourdomain.com';
 $subject = 'SimpleModal Contact Form';
+
+// Include extra submitter data?
+// FALSE = do not include
+$extra = array(
+	'ip'         => TRUE,
+	'referer'    => TRUE,
+	'user_agent' => TRUE
+);
 
 // Process
 $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
@@ -58,7 +66,7 @@ else if ($action == 'send') {
 
 // Validate and send email
 function sendEmail($name, $email, $message) {
-	global $to, $subject;
+	global $to, $subject, $extra;
 
 	// Filter name
 	$name = filter($name);
@@ -71,9 +79,20 @@ function sendEmail($name, $email, $message) {
 		$email = $to;
 	}
 
+	// Add additional info to the message
+	if ($extra['ip']) {
+		$message .= "\n\nIP: " . $_SERVER['REMOTE_ADDR'];
+	}
+	if ($extra['referer']) {
+		$message .= "\n\nREFERER: " . $_SERVER['HTTP_REFERER'];
+	}
+	if ($extra['user_agent']) {
+		$message .= "\n\nUSER AGENT: " . $_SERVER['HTTP_USER_AGENT'];
+	}
+
 	// Set and wordwrap message body
-	$body = "From:\n$name\n\n";
-	$body .= "Message:\n$message";
+	$body = "From: $name\n\n";
+	$body .= "Message: $message";
 	$body = wordwrap($body, 70);
 
 	// Build header
@@ -85,14 +104,14 @@ function sendEmail($name, $email, $message) {
 		die('Unfortunately, your message could not be delivered.');
 }
 
-// Remove any un-safe values
+// Remove any un-safe values to prevent email injection
 function filter($value) {
 	$pattern = array("/\n/","/\r/","/content-type:/i","/to:/i", "/from:/i", "/cc:/i");
 	$value = preg_replace($pattern, '', $value);
 	return $value;
 }
 
-// Validate email address format
+// Validate email address format in case client-side validation "fails"
 function validEmail($email) {
 	// Borrowed from http://www.php.net/manual/en/function.eregi.php#52458
 

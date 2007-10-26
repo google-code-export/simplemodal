@@ -10,6 +10,10 @@ $files = array(
 		'index_zip' => $demo . '/index.html',
 		'js' => $dir . '/js/' . $demo . '.js',
 		'js_zip' => $demo . '/js/' . $demo . '.js',
+		'jquery_js' => $dir . '/js/jquery.pack.js',
+		'jquery_js_zip' => $demo . '/js/jquery.pack.js',
+		'simplemodal_js' => $dir . '/js/jquery.simplemodal.pack.js',
+		'simplemodal_js_zip' => $demo . '/js/jquery.simplemodal.pack.js',
 		'css' => $dir . '/css/' . $demo . '.css',
 		'css_zip' => $demo . '/css/' . $demo . '.css',
 		'css_ie' => $dir . '/css/' . $demo . '_ie.css',
@@ -29,6 +33,12 @@ if ($res === TRUE) {
 	}
 	if (file_exists($files['js'])) {
 		$zip->addFile($files['js'], $files['js_zip']);
+	}
+	if (file_exists($files['jquery_js'])) {
+		$zip->addFile($files['jquery_js'], $files['jquery_js_zip']);
+	}
+	if (file_exists($files['simplemodal_js'])) {
+		$zip->addFile($files['simplemodal_js'], $files['simplemodal_js_zip']);
 	}
 	if (file_exists($files['css'])) {
 		$zip->addFile($files['css'], $files['css_zip']);
