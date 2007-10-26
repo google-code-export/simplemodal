@@ -15,6 +15,6 @@
 $(document).ready(function () {
 	$('#basicModal input[name="basic"]').click(function (e) {
 		e.preventDefault();
-		$('<div><h1>Basic Modal Dialog</h1></div>').modal();
+		$('#basicModalContent').modal();
 	});
 });
