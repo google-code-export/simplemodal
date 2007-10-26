@@ -39,6 +39,13 @@ var contact = {
 				dialog.content.fadeIn(200, function () {
 					$('#contactModalContainer #name').focus();
 				});
+				// resize the textarea for safari
+				if ($.browser.safari) {
+					$('#contactModalContainer textarea').attr({
+						cols: '37',
+						rows: '8'
+					});
+				}
 			});
 		});
 	},
@@ -51,19 +58,19 @@ var contact = {
 					$('#contactModalContainer .message').removeClass('error').empty();
 				});
 				$('#contactModalContainer .title').html('Sending...');
-				$('#contactModalContainer form').fadeOut();
+				$('#contactModalContainer form').fadeOut(200);
 				$('#contactModalContainer .content').animate({
 					height: '80px'
 				}, function () {
-					$('#contactModalContainer .loading').fadeIn(function () {
+					$('#contactModalContainer .loading').fadeIn(200, function () {
 						$.ajax({
 							url: 'data/contact.php',
 							data: $('#contactModalContainer form').serialize() + '&action=send',
 							dataType: 'html',
 							complete: function (xhr) {
-								$('#contactModalContainer .loading').fadeOut(function () {
+								$('#contactModalContainer .loading').fadeOut(200, function () {
 									$('#contactModalContainer .title').html('Thank you!');
-									$('#contactModalContainer .message').html(xhr.responseText).fadeIn();
+									$('#contactModalContainer .message').html(xhr.responseText).fadeIn(200);
 								});
 							},
 							error: contact.error
@@ -72,11 +79,18 @@ var contact = {
 				});
 			}
 			else {
-				$('#contactModalContainer .message').animate({
-					height: '30px'
-				}, function () {
-					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(200);
-				});
+				if ($('#contactModalContainer .message:visible').length > 0) {
+					$('#contactModalContainer .message div').fadeOut(200, function () {
+						$('#contactModalContainer .message div').empty();
+						contact.showError();
+						$('#contactModalContainer .message div').fadeIn(200);
+					});
+				}
+				else {
+					$('#contactModalContainer .message').animate({
+						height: '30px'
+					}, contact.showError);
+				}
 				
 			}
 		});
@@ -99,8 +113,16 @@ var contact = {
 			contact.message += 'Name is required. ';
 		}
 
-		if (!$('#contactModalContainer #email').val()) {
+		var email = $('#contactModalContainer #email').val();
+		if (!email) {
 			contact.message += 'Email is required. ';
+		}
+		else {
+			// Regex from: http://regexlib.com/REDetails.aspx?regexp_id=599
+			var filter = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{2,9})$/;
+			if (!filter.test(email)) {
+				contact.message += 'Email is invalid. ';
+			}
 		}
 
 		if (!$('#contactModalContainer #message').val()) {
@@ -113,5 +135,8 @@ var contact = {
 		else {
 			return true;
 		}
+	},
+	showError: function () {
+		$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(200);
 	}
 };
