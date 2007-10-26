@@ -16,10 +16,17 @@
 <script src='js/demo.js' type='text/javascript'></script>
 <link type='text/css' href='css/demo.css' rel='stylesheet' media='screen' />
 
+<!-- Basic Dialog -->
+<script src='js/basic.js' type='text/javascript'></script>
+<link type='text/css' href='css/basic.css' rel='stylesheet' media='screen' />
+<!-- IE 6 hacks -->
+<!--[if lt IE 7]>
+<link type='text/css' href='css/basic_ie.css' rel='stylesheet' media='screen' />
+<![endif]-->
+
 <!-- Contact Form -->
 <script src='js/contact.js' type='text/javascript'></script>
 <link type='text/css' href='css/contact.css' rel='stylesheet' media='screen' />
-
 <!-- IE 6 hacks -->
 <!--[if lt IE 7]>
 <link type='text/css' href='css/contact_ie.css' rel='stylesheet' media='screen' />
@@ -31,16 +38,25 @@
 <div id='container'>
 	<div id='header'><h1>SimpleModal Demos</h1></div>
 	<div id='content'>
+		<div id='basicModal'><h2>Basic Modal Dialog</h2>
+			<p>A basic modal dialog with minimal styling and without any additional settings. There are a few CSS attributes set internally by SimpleModal, however, SimpleModal relies mostly on the developer for the look and feel.</p>
+			<form action='download/' method='post'>
+				<input type='button' name='basic' value='Demo' class='demo'/><input type='button' name='download' value='Download' class='demo'/>
+				<input type='hidden' name='demo' value='basic'/>
+			</form>
+		</div>
+		<br/><hr/>
 		<div id='contactForm'><h2>Contact Form</h2>
 			<p>A contact form built on SimpleModal. Demonstrates the use of the <code>onOpen</code>, <code>onShow</code> and <code>onClose</code> callbacks, as well as the use of Ajax with SimpleModal.</p>
 			<form action='download/' method='post'>
-			<input type='button' name='contact' value='Demo' class='demo'/><input type='button' name='download' value='Download' class='demo'/>
-			<input type='hidden' name='demo' value='contact'/>
+				<input type='button' name='contact' value='Demo' class='demo'/><input type='button' name='download' value='Download' class='demo'/>
+				<input type='hidden' name='demo' value='contact'/>
 			</form>
-	</div>
+		</div>
 	<br/>
 	</div>
 </div>
+<div style='height:400px;'></div>
 <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
 </script>
 <script type="text/javascript">

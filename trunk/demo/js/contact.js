@@ -34,9 +34,9 @@ $(document).ready(function () {
 var contact = {
 	message: null,
 	open: function (dialog) {
-		dialog.overlay.fadeIn(500, function () {
-			dialog.container.show(500, function () {
-				dialog.content.fadeIn(500, function () {
+		dialog.overlay.fadeIn(200, function () {
+			dialog.container.fadeIn(200, function () {
+				dialog.content.fadeIn(200, function () {
 					$('#contactModalContainer #name').focus();
 				});
 			});
@@ -75,16 +75,16 @@ var contact = {
 				$('#contactModalContainer .message').animate({
 					height: '30px'
 				}, function () {
-					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(500);
+					$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(200);
 				});
 				
 			}
 		});
 	},
 	close: function (dialog) {
-		dialog.content.fadeOut(500, function () {
-			dialog.container.hide(500, function () {
-				dialog.overlay.fadeOut(500, function () {
+		dialog.content.fadeOut(200, function () {
+			dialog.container.fadeOut(200, function () {
+				dialog.overlay.fadeOut(200, function () {
 					$.modal.remove(dialog);
 				});
 			});
