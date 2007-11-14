@@ -13,7 +13,7 @@
  */
 
 $(document).ready(function () {
-	$('#contactForm input[name="contact"]').click(function (e) {
+	$('#contactForm input:eq(0)').click(function (e) {
 		e.preventDefault();
 		// load the contact form using ajax
 		$.get("data/contact.php", function(data){
