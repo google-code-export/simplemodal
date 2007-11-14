@@ -13,7 +13,7 @@
  */
 
 $(document).ready(function () {
-	$('#basicModal input[name="basic"]').click(function (e) {
+	$('#basicModal input:eq(0)').click(function (e) {
 		e.preventDefault();
 		$('#basicModalContent').modal();
 	});
