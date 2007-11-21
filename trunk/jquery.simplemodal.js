@@ -145,7 +145,7 @@
 
 			// if we don't clone the element, it will be removed
 			// from the DOM when the modal dialog is closed
-			this.dialog.content = this.opts.cloneContent ? content.clone() : content;
+			this.dialog.content = this.opts.cloneContent ? content.clone(true) : content;
 			content = null;
 
 			this.create();
