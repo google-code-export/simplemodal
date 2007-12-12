@@ -298,7 +298,7 @@
 		 * - Removes the iframe (if necessary), overlay container and content
 		 */
 		remove: function (dialog) {
-			this.opts.cloneContent ? this.dialog.content.remove() : this.dialog.content.hide();
+			this.opts.cloneContent ? dialog.content.remove() : dialog.content.hide();
 			dialog.container.remove();
 			dialog.overlay.remove();
 			if (dialog.iframe) {
