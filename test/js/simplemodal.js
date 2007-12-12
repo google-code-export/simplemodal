@@ -98,7 +98,7 @@ function modalClose (dialog) {
  * a matching function.
  */
 function modalShow (dialog) {
-	$('input.animate').click(function () {
+	$('input.animate').one('click', function () {
 		dialog.content.slideUp('slow', function () {
 			dialog.content.slideDown('slow');
 		});
