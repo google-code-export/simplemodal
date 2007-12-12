@@ -1,5 +1,5 @@
 /*
- * jQuery SimpleModal plugin 1.0
+ * jQuery SimpleModal plugin 1.0.2
  * http://www.ericmmartin.com/projects/simplemodal/
  * http://code.google.com/p/simplemodal/
  *
@@ -16,26 +16,34 @@
  * SimpleModal is a lightweight jQuery plugin that provides a simple
  * interface to create a modal dialog.
  *
- * The goal of SimpleModal is to provide developers with a 
- * cross-browser overlay and container that will be populated with
- * content provided to SimpleModal.
+ * The goal of SimpleModal is to provide developers with a cross-browser 
+ * overlay and container that will be populated with content provided to
+ * SimpleModal.
  *
- * @example $('<div>my content</div>').modal(); // must be a jQuery object
- * @example $.modal('<div>my content</div>'); // can be a string(HTML), DOM element or jQuery Object
+ * There are two ways to call SimpleModal:
+ * 1) As a chained function on a jQuery object, like $('#myDiv).modal();.
+ * This call would place the contents of #myDiv inside a modal dialog.
+ * Chaining requires a jQuery object. An optional options object can be
+ * passed as a parameter.
  *
- * As a jQuery chained function, SimpleModal acts on a jQuery object 
- * and takes an option settings object as a parameter.
+ * @example $('<div>my content</div>').modal({options});
+ * @example $('#myDiv').modal({options});
+ * @example jQueryObject.modal({options});
  *
- * @example $('<div>my content</div>').modal({close:false});
+ * 2) As a stand-alone function, like $.modal(content). The content parameter
+ * is required and an optional options object can be passed as a second
+ * parameter. This method provides more flexibility in the types of content 
+ * that are allowed. The content could be a DOM object, a jQuery object, 
+ * or a string.
  * 
- * As a stand-alone function, SimpleModal takes a jQuery object a DOM 
- * element or a string, which can contain plain text or HTML and an
- * option settings object as parameters.
- *
- * @example $.modal('<div>my content</div>', {close:false});
+ * @example $.modal('<div>my content</div>', {options});
+ * @example $.modal('my content', {options});
+ * @example $.modal($('#myDiv'), {options});
+ * @example $.modal(jQueryObject, {options});
+ * @example $.modal(document.getElementById('myDiv'), {options}); 
  * 
  * A SimpleModal call can contain multiple elements, but only one modal 
- * dialog can be created at a time. That means that all of the matched
+ * dialog can be created at a time. Which means that all of the matched
  * elements will be displayed within the modal container.
  * 
  * The styling for SimpleModal is done mostly through external stylesheets, 
@@ -44,31 +52,32 @@
  * SimpleModal has been tested in the following browsers:
  * - IE 6, 7
  * - Firefox 2
+ * - Opera 9
  * - Safari 3
  *
  * @name SimpleModal
  * @type jQuery
- * @requires jQuery v1.2
- * @cat Plugins/SimpleModal
+ * @requires jQuery v1.1.2
+ * @cat Plugins/Windows and Overlays
  * @author Eric Martin (eric@ericmmartin.com || http://ericmmartin.com)
- * @version 1.0.1
+ * @version 1.0.2
  */
 (function ($) {
 	/**
 	 * Stand-alone function to create a modal dialog.
 	 * 
-	 * @param {String, Object} [content] A string, jQuery object or a DOM object
-	 * @param {Object} settings An optional object containing settings overrides
+	 * @param {string, object} content A string, jQuery object or a DOM object
+	 * @param {object} [options] An optional object containing options overrides
 	 */
-	$.modal = function (content, settings) {
-		return $.modal.impl.init(content, settings);
+	$.modal = function (content, options) {
+		return $.modal.impl.init(content, options);
 	};
 
 	/**
 	 * Stand-alone remove function to remove all of the modal 
 	 * dialog elements from the DOM.
 	 * 
-	 * @param {Object} dialog An object containing the modal dialog elements
+	 * @param {object} dialog An object containing the modal dialog elements
 	 */
 	$.modal.remove = function (dialog) {
 		$.modal.impl.remove(dialog);
@@ -77,23 +86,23 @@
 	/**
 	 * Chained function to create a modal dialog.
 	 * 
-	 * @param {Object} settings An optional object containing settings overrides
+	 * @param {object} options An optional object containing options overrides
 	 */
-	$.fn.modal = function (settings) {
-		return $.modal.impl.init(this, settings);
+	$.fn.modal = function (options) {
+		return $.modal.impl.init(this, options);
 	};
 
 	/**
-	 * SimpleModal default settings
+	 * SimpleModal default options
 	 * 
 	 * overlay: (Number:50) The opacity value, from 0 - 100
-	 * overlaydId: (String:'modalOverlay') The DOM element id for the overlay div 
+	 * overlayId: (String:'modalOverlay') The DOM element id for the overlay div 
 	 * containerId: (String:'modalContainer') The DOM element id for the container div
 	 * iframeId: (String:'modalIframe') The DOM element id for the iframe (IE 6)
 	 * close: (Boolean:true) Show the default window close icon? Uses CSS class modalCloseImg
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
 	 * closeClass: (String:'modalClose') The CSS class used to bind to the close event
-	 * cloneContent: (Boolean:true) If true, SimpleModal will clone the content element
+	 * cloneContent: (Boolean:false) If true, SimpleModal will clone the content element
 	 * onOpen: (Function:null) The callback function used in place of SimpleModal's open
 	 * onShow: (Function:null) The callback function used after the modal dialog has opened
 	 * onClose: (Function:null) The callback function used in place of SimpleModal's close
@@ -106,7 +115,7 @@
 		close: true,
 		closeTitle: 'Close',
 		closeClass: 'modalClose',
-		cloneContent: true,
+		cloneContent: false,
 		onOpen: null,
 		onShow: null,
 		onClose: null
@@ -129,23 +138,29 @@
 		 * - Call the functions to create and open the modal dialog
 		 * - Handle the onShow callback
 		 */
-		init: function (content, settings) {
+		init: function (content, options) {
 			this.opts = $.extend({},
 				$.modal.defaults,
-				settings
+				options
 			);
 
-			// prevents unexpected calls
-			if (this.dialog.overlay) {
-				return false;
+			this.dialog.content = $('<div class="modalContent"></div>');
+
+			if (content instanceof jQuery || typeof content == 'object') {
+				// convert DOM object to a jQuery object
+				content = typeof content == 'object' ? $(content) : content;
+
+				// clone?
+				content = this.opts.cloneContent ? content.clone(true) : content;
+				this.dialog.content.append(content.show());
 			}
-
-			// convert to jQuery object if it isn't already
-			content = content.jquery ? content : $(content);
-
-			// if we don't clone the element, it will be removed
-			// from the DOM when the modal dialog is closed
-			this.dialog.content = this.opts.cloneContent ? content.clone(true) : content;
+			else if (typeof content == 'string') {
+				this.dialog.content.html(content);
+			}
+			else {
+				// not sure what to do... ?!?
+				alert('unknown type: ' + typeof content);
+			}
 			content = null;
 
 			this.create();
@@ -170,6 +185,7 @@
 		create: function () {
 			this.dialog.overlay = $('<div></div>')
 				.attr('id', this.opts.overlayId)
+				.addClass('modalOverlay')
 				.css({opacity: this.opts.overlay / 100})
 				.hide()
 				.appendTo('body');
@@ -180,6 +196,7 @@
 
 			this.dialog.container = $('<div></div>')
 				.attr('id', this.opts.containerId)
+				.addClass('modalContainer')
 				.append(this.opts.close 
 					? '<a class="modalCloseImg ' 
 						+ this.opts.closeClass 
@@ -190,7 +207,7 @@
 				.appendTo('body');
 
 			// add the content
-			this.dialog.content.appendTo(this.dialog.container);
+			this.dialog.container.append(this.dialog.content);
 		},
 		/**
 		 * Bind events
@@ -281,7 +298,7 @@
 		 * - Removes the iframe (if necessary), overlay container and content
 		 */
 		remove: function (dialog) {
-			dialog.content.remove();
+			this.opts.cloneContent ? this.dialog.content.remove() : this.dialog.content.hide();
 			dialog.container.remove();
 			dialog.overlay.remove();
 			if (dialog.iframe) {
