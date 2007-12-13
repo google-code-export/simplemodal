@@ -79,8 +79,8 @@
 	 * 
 	 * @param {object} dialog An object containing the modal dialog elements
 	 */
-	$.modal.remove = function (dialog) {
-		$.modal.impl.remove(dialog);
+	$.modal.remove = function () {
+		$.modal.impl.remove();
 	};
 
 	/**
@@ -288,21 +288,20 @@
 				if (this.dialog.iframe) {
 					this.dialog.iframe.remove();
 				}
+				this.dialog = {};
 			}
-			
-			this.dialog = {};
 			this.unbindEvents();
 		},
 		/**
 		 * Remove the modal dialog elements
 		 * - Removes the iframe (if necessary), overlay container and content
 		 */
-		remove: function (dialog) {
-			this.opts.cloneContent ? dialog.content.remove() : dialog.content.hide();
-			dialog.container.remove();
-			dialog.overlay.remove();
-			if (dialog.iframe) {
-				dialog.iframe.remove();
+		remove: function () {
+			this.opts.cloneContent ? this.dialog.content.remove() : this.dialog.content.hide();
+			this.dialog.container.remove();
+			this.dialog.overlay.remove();
+			if (this.dialog.iframe) {
+				this.dialog.iframe.remove();
 			}
 		}
 	};
