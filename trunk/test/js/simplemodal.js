@@ -29,6 +29,10 @@ $(function(){
 					<input type='text' value='input boxes' size='8'/>, etc...</p>\
 				</div>");
 	});
+	$('a#test4a').click(function (e) {
+		e.preventDefault();
+		$.modal("Sample Content - just a plain 'ol string");
+	});
 	$('a#test5').click(function (e) {
 		e.preventDefault();
 		$.modal("<div class='test'>\
@@ -98,7 +102,7 @@ function modalClose (dialog) {
  * a matching function.
  */
 function modalShow (dialog) {
-	$('input.animate').one('click', function () {
+	dialog.content.find('input.animate').one('click', function () {
 		dialog.content.slideUp('slow', function () {
 			dialog.content.slideDown('slow');
 		});
