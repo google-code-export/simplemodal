@@ -88,7 +88,7 @@ function modalClose (dialog) {
 	dialog.content.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				$.modal.remove(dialog);
+				$.modal.remove();
 			});
 		});
 	});

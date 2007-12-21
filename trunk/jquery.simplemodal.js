@@ -66,7 +66,7 @@
 	/**
 	 * Stand-alone function to create a modal dialog.
 	 * 
-	 * @param {string, object} content A string, jQuery object or a DOM object
+	 * @param {string, object} content A string, jQuery object or DOM object
 	 * @param {object} [options] An optional object containing options overrides
 	 */
 	$.modal = function (content, options) {
@@ -144,17 +144,22 @@
 				options
 			);
 
+			// wrap everything in a div, for safe-keeping =)
 			this.dialog.content = $('<div class="modalContent"></div>');
 
+			// determine how to "insert" the content based on its type
 			if (content instanceof jQuery || typeof content == 'object') {
 				// convert DOM object to a jQuery object
 				content = typeof content == 'object' ? $(content) : content;
 
-				// clone?
+				// clone? - useful existing data that you don't want removed
 				content = this.opts.cloneContent ? content.clone(true) : content;
+
+				// apend the content and make sure it is visible
 				this.dialog.content.append(content.show());
 			}
 			else if (typeof content == 'string') {
+				// just insert the content as innerHTML
 				this.dialog.content.html(content);
 			}
 			else {
@@ -163,10 +168,13 @@
 			}
 			content = null;
 
+			// create the modal overlay, container and, if neccessary, iframe
 			this.create();
+
+			// display the modal dialog
 			this.open();
 
-			// Useful for adding custom events to the modal dialog
+			// useful for adding custom events to the modal dialog
 			if ($.isFunction(this.opts.onShow)) {
 				this.opts.onShow.apply(this, [this.dialog]);
 			}

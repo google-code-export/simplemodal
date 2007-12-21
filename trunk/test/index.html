@@ -20,7 +20,7 @@ $.modal.defaults.cloneContent = true;
 
 <!--[if IE]>
 <style type='text/css'>
-	ul{margin:0;}
+	ul{margin: 0;}
 </style>
 <![endif]-->
 <!--[if lt IE 7]>
@@ -79,7 +79,7 @@ function modalClose (dialog) {
 	dialog.content.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				$.modal.remove(dialog);
+				$.modal.remove();
 			});
 		});
 	})
@@ -100,23 +100,24 @@ function modalShow (dialog) {
 	});
 }</code></pre></li>
 	<li><a href='#' id='test9'>IE SELECT bleed test</a>
-	<p>Make sure the select options do not bleed through the modal dialog.</p></li>
+		<p>Make sure the select options do not bleed through the modal dialog.</p>
+		<div style='text-align: center;'>
+		<form action='#'>
+		<select>
+			<option>option1</option>
+			<option>option2</option>
+			<option>option3</option>
+			<option>option4</option>
+			<option>option5</option>
+		</select>
+		</form>
+		</div>
+	</li>
 	</ul>
-	<div style='text-align:center;'>
-	<form action='#'>
-	<select>
-		<option>option1</option>
-		<option>option2</option>
-		<option>option3</option>
-		<option>option4</option>
-		<option>option5</option>
-	</select>
-	</form>
 	</div>
-	<div style='height:200px;'>&nbsp;</div>
-	</div>
+	<div style='height: 200px;'>&nbsp;</div>
 </div>
-<div id='modalContentTest' class='test' style='display:none'>
+<div id='modalContentTest' style='display: none'>
 	<form action='#'>
 	<textarea rows='5' cols='30'></textarea><br/>
 	<select>
@@ -131,6 +132,6 @@ function modalShow (dialog) {
 	<input type='button' value='close' class='modalClose'/><br/>
 	</form>
 </div>
-<div style='height:200px;'>&nbsp;</div>
+<div style='height: 50px;'>&nbsp;</div>
 </body>
 </html>
