@@ -63,7 +63,7 @@
  * @version 1.0.2
  */
 (function ($) {
-	/**
+	/*
 	 * Stand-alone function to create a modal dialog.
 	 * 
 	 * @param {string, object} content A string, jQuery object or DOM object
@@ -73,7 +73,7 @@
 		return $.modal.impl.init(content, options);
 	};
 
-	/**
+	/*
 	 * Stand-alone remove function to remove all of the modal 
 	 * dialog elements from the DOM.
 	 * 
@@ -83,7 +83,7 @@
 		$.modal.impl.remove();
 	};
 
-	/**
+	/*
 	 * Chained function to create a modal dialog.
 	 * 
 	 * @param {object} options An optional object containing options overrides
@@ -92,7 +92,7 @@
 		return $.modal.impl.init(this, options);
 	};
 
-	/**
+	/*
 	 * SimpleModal default options
 	 * 
 	 * overlay: (Number:50) The opacity value, from 0 - 100
@@ -122,23 +122,29 @@
 	};
 
 	$.modal.impl = {
-		/**
+		/*
 		 * Place holder for the modal dialog elements
 		 */
 		opts: null,
-		/**
+		/*
 		 * Object passed to the callback functions
 		 * - Should contain the overlay, container and 
 		 *   iframe (for IE 6) objects
 		 */
 		dialog: {},
-		/**
+		/*
 		 * Initialize the modal dialog
 		 * - Merge the default options with user defined options
 		 * - Call the functions to create and open the modal dialog
 		 * - Handle the onShow callback
 		 */
 		init: function (content, options) {
+			// prevents unexpected calls
+			if (this.dialog.content) {
+				return false;
+			}
+
+			// load options
 			this.opts = $.extend({},
 				$.modal.defaults,
 				options
@@ -181,7 +187,7 @@
 
 			return this;
 		},
-		/**
+		/*
 		 * Create and add the modal overlay to the page
 		 * For IE 6, call fixIE()
 		 * Create and add the modal container to the page
@@ -217,7 +223,7 @@
 			// add the content
 			this.dialog.container.append(this.dialog.content);
 		},
-		/**
+		/*
 		 * Bind events
 		 * - Bind the close event onClick to any elements with the 
 		 *   closeClass class
@@ -229,14 +235,14 @@
 				modal.close();
 			});
 		},
-		/**
+		/*
 		 * Unbind events
 		 * - Remove any events bound to the closeClass click event
 		 */
 		unbindEvents: function () {
 			$('.' + this.opts.closeClass).unbind('click');
 		},
-		/**
+		/*
 		 * Fix issues in IE 6
 		 * - Simulate position:fixed and make sure the overlay height and iframe
 		 *   height values are set to 100%
@@ -250,7 +256,7 @@
 				.hide()
 				.appendTo('body');
 		},
-		/**
+		/*
 		 * Open the modal dialog
 		 * - Shows the iframe (if necessary), overlay and container
 		 * - Calls the onOpen callback, if provided
@@ -275,7 +281,7 @@
 
 			this.bindEvents();
 		},
-		/**
+		/*
 		 * Close the modal dialog
 		 * - Removes the iframe (if necessary), overlay and container
 		 * - Removes or hides the content, based on the value of cloneContent
@@ -300,7 +306,7 @@
 			}
 			this.unbindEvents();
 		},
-		/**
+		/*
 		 * Remove the modal dialog elements
 		 * - Removes the iframe (if necessary), overlay container and content
 		 */
