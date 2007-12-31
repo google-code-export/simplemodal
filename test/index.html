@@ -11,9 +11,6 @@
 <script src='http://code.jquery.com/jquery-latest.js' type='text/javascript'></script>
 <script src='http://simplemodal.googlecode.com/svn/trunk/jquery.simplemodal.js' type='text/javascript'></script>
 <script src='js/simplemodal.js' type='text/javascript'></script>
-<script type='text/javascript'>
-$.modal.defaults.cloneContent = true;
-</script>
 <style type='text/css'>
 	@import "css/simplemodal.css";
 </style>
@@ -36,20 +33,21 @@ $.modal.defaults.cloneContent = true;
 	<div id='content'>
 	<ul>
 		<li><a href='#' id='test1'>Chained Function - default settings</a> <pre><code>$('#modalContentTest').modal();</code></pre></li>
-		<li><a href='#' id='test2'>Modal Function w/ jQuery element - default settings</a> <pre><code>$.modal($('#modalContentTest'));</code></pre></li>
-		<li><a href='#' id='test3'>Modal Function w/ DOM element - default settings</a> <pre><code>$.modal(document.getElementById('modalContentTest'));</code></pre></li>
-		<li><a href='#' id='test4'>Modal Function w/ HTML - default settings</a> <pre><code>$.modal("&lt;div class='test'&gt;\
+		<li><a href='#' id='test2'>Modal Function w/ jQuery DOM attached element - default settings</a> <pre><code>$.modal($('#modalContentTest'));</code></pre></li>
+		<li><a href='#' id='test3'>Chained Function w/ jQuery DOM unattached element - default settings</a> <pre><code>$('&lt;div&gt;&lt;h1&gt;New DOM Element&lt;/h1&gt;&lt;/div&gt;').modal();</code></pre></li>
+		<li><a href='#' id='test4'>Modal Function w/ DOM element - default settings</a> <pre><code>$.modal(document.getElementById('modalContentTest'));</code></pre></li>
+		<li><a href='#' id='test5'>Modal Function w/ HTML - default settings</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
 		&lt;p&gt;This can be complex HTML containing &lt;a href='#'&gt;links&lt;/a&gt;,\
 		&lt;input type='text' value='input boxes' size='8'/&gt;, etc...&lt;/p&gt;\
 	 &lt;/div&gt;");</code></pre></li>
-		<li><a href='#' id='test4a'>Modal Function w/ string - default settings</a> <pre><code>$.modal("Sample Content - just a plain 'ol string");</code></pre></li>
-		<li><a href='#' id='test5'>Modal Function w/ string/HTML - close: false</a> <pre><code>$.modal("&lt;div class='test'&gt;\
+		<li><a href='#' id='test6'>Modal Function w/ string - default settings</a> <pre><code>$.modal("Sample Content - just a plain 'ol string");</code></pre></li>
+		<li><a href='#' id='test7'>Modal Function w/ string/HTML - close: false</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
 		&lt;p&gt;This example uses a custom close.&lt;/p&gt;\
 		&lt;p&gt;&lt;a href='#' class='modalClose'&gt;Close&lt;/a&gt;&lt;/p&gt;\
 	 &lt;/div&gt;", {close: false});</code></pre></li>
-		<li><a href='#' id='test6'>onOpen callback function - onOpen: function</a> <pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre>
+		<li><a href='#' id='test8'>onOpen callback function - onOpen: function</a> <pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre>
 	<pre><code>/**
  * When the open event is called, this function will be used to 'open'
  * the overlay, container and content portions of the modal dialog.
@@ -64,7 +62,7 @@ function modalOpen (dialog) {
 		});
 	});
 }</code></pre></li>
-		<li><a href='#' id='test7'>onClose callback function - onClose: function</a> <pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre>
+		<li><a href='#' id='test9'>onClose callback function - onClose: function</a> <pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre>
 	<pre><code>/**
  * When the close event is called, this function will be used to 'close'
  * the overlay, container and content portions of the modal dialog.
@@ -84,7 +82,7 @@ function modalClose (dialog) {
 		});
 	});
 }</code></pre></li>
-		<li><a href='#' id='test8'>onShow callback function - onShow: function</a> <pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre>
+		<li><a href='#' id='test10'>onShow callback function - onShow: function</a> <pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre>
 	<pre><code>/**
  * After the dialog is show, this callback will bind some effects
  * to the content when the 'button' button is clicked.
@@ -99,7 +97,7 @@ function modalShow (dialog) {
 		});
 	});
 }</code></pre></li>
-	<li><a href='#' id='test9'>IE SELECT bleed test</a>
+	<li><a href='#' id='test11'>IE SELECT bleed test</a>
 		<p>Make sure the select options do not bleed through the modal dialog.</p>
 		<div style='text-align: center;'>
 		<form action='#'>
