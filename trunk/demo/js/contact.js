@@ -36,7 +36,7 @@ var contact = {
 	open: function (dialog) {
 		dialog.overlay.fadeIn(200, function () {
 			dialog.container.fadeIn(200, function () {
-				dialog.content.fadeIn(200, function () {
+				dialog.data.fadeIn(200, function () {
 					$('#contactModalContainer #name').focus();
 				});
 				// resize the textarea for safari
@@ -96,10 +96,10 @@ var contact = {
 		});
 	},
 	close: function (dialog) {
-		dialog.content.fadeOut(200, function () {
+		dialog.data.fadeOut(200, function () {
 			dialog.container.fadeOut(200, function () {
 				dialog.overlay.fadeOut(200, function () {
-					$.modal.remove(dialog);
+					$.modal.close();
 				});
 			});
 		});

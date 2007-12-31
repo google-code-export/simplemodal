@@ -18,27 +18,27 @@
  * interface to create a modal dialog.
  *
  * The goal of SimpleModal is to provide developers with a cross-browser 
- * overlay and container that will be populated with content provided to
+ * overlay and container that will be populated with data provided to
  * SimpleModal.
  *
  * There are two ways to call SimpleModal:
- * 1) As a chained function on a jQuery object, like $('#myDiv).modal();.
- * This call would place the contents of #myDiv inside a modal dialog.
+ * 1) As a chained function on a jQuery object, like $('#myDiv').modal();.
+ * This call would place the DOM object, #myDiv, inside a modal dialog.
  * Chaining requires a jQuery object. An optional options object can be
  * passed as a parameter.
  *
- * @example $('<div>my content</div>').modal({options});
+ * @example $('<div>my data</div>').modal({options});
  * @example $('#myDiv').modal({options});
  * @example jQueryObject.modal({options});
  *
- * 2) As a stand-alone function, like $.modal(content). The content parameter
+ * 2) As a stand-alone function, like $.modal(data). The data parameter
  * is required and an optional options object can be passed as a second
- * parameter. This method provides more flexibility in the types of content 
- * that are allowed. The content could be a DOM object, a jQuery object, 
+ * parameter. This method provides more flexibility in the types of data 
+ * that are allowed. The data could be a DOM object, a jQuery object, HTML
  * or a string.
  * 
- * @example $.modal('<div>my content</div>', {options});
- * @example $.modal('my content', {options});
+ * @example $.modal('<div>my data</div>', {options});
+ * @example $.modal('my data', {options});
  * @example $.modal($('#myDiv'), {options});
  * @example $.modal(jQueryObject, {options});
  * @example $.modal(document.getElementById('myDiv'), {options}); 
@@ -60,28 +60,25 @@
  * @type jQuery
  * @requires jQuery v1.1.2
  * @cat Plugins/Windows and Overlays
- * @author Eric Martin (eric@ericmmartin.com || http://ericmmartin.com)
+ * @author Eric Martin (http://ericmmartin.com)
  * @version @VERSION
  */
 (function ($) {
 	/*
 	 * Stand-alone function to create a modal dialog.
 	 * 
-	 * @param {string, object} content A string, jQuery object or DOM object
+	 * @param {string, object} data A string, jQuery object or DOM object
 	 * @param {object} [options] An optional object containing options overrides
 	 */
-	$.modal = function (content, options) {
-		return $.modal.impl.init(content, options);
+	$.modal = function (data, options) {
+		return $.modal.impl.init(data, options);
 	};
 
 	/*
-	 * Stand-alone remove function to remove all of the modal 
-	 * dialog elements from the DOM.
-	 * 
-	 * @param {object} dialog An object containing the modal dialog elements
+	 * Stand-alone close function to close the modal dialog
 	 */
-	$.modal.remove = function () {
-		$.modal.impl.remove();
+	$.modal.close = function () {
+		$.modal.impl.close(true);
 	};
 
 	/*
@@ -103,6 +100,9 @@
 	 * close: (Boolean:true) Show the default window close icon? Uses CSS class modalCloseImg
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
 	 * closeClass: (String:'modalClose') The CSS class used to bind to the close event
+	 * persist: (Boolean:false) Persist the data accross modal calls? Only used for existing
+	            DOM elements. If true, the data will be maintained across modal calls, if false,
+				the data will be reverted to its original state.
 	 * onOpen: (Function:null) The callback function used in place of SimpleModal's open
 	 * onShow: (Function:null) The callback function used after the modal dialog has opened
 	 * onClose: (Function:null) The callback function used in place of SimpleModal's close
@@ -115,6 +115,7 @@
 		close: true,
 		closeTitle: 'Close',
 		closeClass: 'modalClose',
+		persist: false,
 		onOpen: null,
 		onShow: null,
 		onClose: null
@@ -122,50 +123,55 @@
 
 	$.modal.impl = {
 		/*
-		 * Place holder for the modal dialog elements
+		 * Modal dialog options
 		 */
 		opts: null,
 		/*
-		 * Object passed to the callback functions
-		 * - Should contain the overlay, container and 
-		 *   iframe (for IE 6) objects
+		 * Place holder for the modal dialog elements
+		 * This is also the object passed back to the callback functions
+		 * - Should contain the overlay, container and data elements, and
+		 *   can also contain the parentNode, original and iframe (for IE 6)
+		 *   elements
 		 */
 		dialog: {},
 		/*
 		 * Initialize the modal dialog
-		 * - Merge the default options with user defined options
-		 * - Call the functions to create and open the modal dialog
-		 * - Handle the onShow callback
 		 */
-		init: function (content, options) {
-			// prevent unexpected calls
-			if (this.dialog.content) {
+		init: function (data, options) {
+			// don't allow multiple calls
+			if (this.dialog.data) {
 				return false;
 			}
 
-			// load options
+			// merge defaults and user options
 			this.opts = $.extend({}, $.modal.defaults, options);
 
-			// determine how to handle the content based on its type
-			if (typeof content == 'object') {
+			// determine how to handle the data based on its type
+			if (typeof data == 'object') {
 				// convert DOM object to a jQuery object
-				content = content instanceof jQuery ? content : $(content);
+				data = data instanceof jQuery ? data : $(data);
 
 				// if the object came from the DOM, keep track of its parent
-				this.dialog.parentNode = content.parent().parent().size() > 0 
-					? content.parent() 
-					: null;
+				// and optionally its original state
+				if (data.parent().parent().size() > 0) {
+					this.dialog.parentNode = data.parent();
+
+					if (!this.opts.persist) {
+						this.dialog.original = data.clone(true);
+					}
+				}
 			}
-			else if (typeof content == 'string') {
-				// just insert the content as innerHTML
-				content = $('<div>').html(content);
+			else if (typeof data == 'string' || typeof data == 'number') {
+				// just insert the data as innerHTML
+				data = $('<div>').html(data);
 			}
 			else {
-				// not sure what to do... ?!?
-				alert('unknown type: ' + typeof content);
+				// unknown type...not sure what to do!
+				alert('SimpleModal Error: Invalid data type: ' + typeof data);
+				return false;
 			}
-			this.dialog.content = content;
-			content = null;
+			this.dialog.data = data;
+			data = null;
 
 			// create the modal overlay, container and, if neccessary, iframe
 			this.create();
@@ -186,7 +192,7 @@
 		 * Create and add the modal container to the page
 		 * - Add the close icon if close == true
 		 * Set the top value for the modal container
-		 * Add the content to the modal container, based on type
+		 * Add the data to the modal container, based on type
 		 */
 		create: function () {
 			this.dialog.overlay = $('<div>')
@@ -212,13 +218,13 @@
 				.hide()
 				.appendTo('body');
 
-			// add the content
-			this.dialog.container.append(this.dialog.content);
+			// add the data
+			this.dialog.container.append(this.dialog.data);
 		},
 		/*
 		 * Bind events
 		 * - Bind the close event onClick to any elements with the 
-		 *   closeClass class
+		 *   closeClass CSS class
 		 */
 		bindEvents: function () {
 			var modal = this;
@@ -261,34 +267,50 @@
 			if (this.dialog.iframe) {
 				this.dialog.iframe.show();
 			}
-
 			if ($.isFunction(this.opts.onOpen)) {
 				this.opts.onOpen.apply(this, [this.dialog]);
 			}
 			else {
 				this.dialog.overlay.show();
 				this.dialog.container.show();
-				this.dialog.content.show();
+				this.dialog.data.show();
 			}
-
 			this.bindEvents();
 		},
 		/*
 		 * Close the modal dialog
 		 * - Removes the iframe (if necessary), overlay and container
-		 * - Removes or hides the content, based on the content type
+		 * - Removes or hides the data, based on the data type
 		 * - Calls the onOpen callback, if provided
 	 	 * - Clears the dialog element
 	 	 * - Unbinds any SimpleModal defined events
 		 * - Note: If you use an onClose callback, you must remove the 
 		 *         overlay, container and iframe elements manually
 		 */
-		close: function () {
-			if ($.isFunction(this.opts.onClose)) {
+		close: function (external) {
+			if ($.isFunction(this.opts.onClose) && !external) {
 				this.opts.onClose.apply(this, [this.dialog]);
 			}
 			else {
-				this.dialog.parentNode ? this.dialog.content.hide().appendTo(this.dialog.parentNode) : this.dialog.content.remove();
+				// if the data came from the DOM, put it back
+				if (this.dialog.parentNode) {
+					// save changes to the data?
+					if (this.opts.persist) {
+						// insert the (possibly) modified data back into the DOM
+						this.dialog.data.hide().appendTo(this.dialog.parentNode);
+					}
+					else {
+						// remove the current and insert the original, 
+						// unmodified data back into the DOM
+						this.dialog.data.remove();
+						this.dialog.original.appendTo(this.dialog.parentNode);
+					}
+				}
+				else {
+					// otherwise, remove it
+					this.dialog.data.remove();
+				}
+
 				this.dialog.container.remove();
 				this.dialog.overlay.remove();
 				if (this.dialog.iframe) {
@@ -297,19 +319,6 @@
 				this.dialog = {};
 			}
 			this.unbindEvents();
-		},
-		/*
-		 * Remove the modal dialog elements
-		 * - Removes the iframe (if necessary), overlay container and content
-		 */
-		remove: function () {
-			this.dialog.parentNode ? this.dialog.content.hide().appendTo(this.dialog.parentNode) : this.dialog.content.remove();
-			this.dialog.container.remove();
-			this.dialog.overlay.remove();
-			if (this.dialog.iframe) {
-				this.dialog.iframe.remove();
-			}
-			this.dialog = {};
 		}
 	};
 })(jQuery);

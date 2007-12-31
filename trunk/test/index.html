@@ -32,49 +32,50 @@
 	<div id='header'><h1>SimpleModal Tests</h1></div>
 	<div id='content'>
 	<ul>
-		<li><a href='#' id='test1'>Chained Function - default settings</a> <pre><code>$('#modalContentTest').modal();</code></pre></li>
-		<li><a href='#' id='test2'>Modal Function w/ jQuery DOM attached element - default settings</a> <pre><code>$.modal($('#modalContentTest'));</code></pre></li>
-		<li><a href='#' id='test3'>Chained Function w/ jQuery DOM unattached element - default settings</a> <pre><code>$('&lt;div&gt;&lt;h1&gt;New DOM Element&lt;/h1&gt;&lt;/div&gt;').modal();</code></pre></li>
-		<li><a href='#' id='test4'>Modal Function w/ DOM element - default settings</a> <pre><code>$.modal(document.getElementById('modalContentTest'));</code></pre></li>
-		<li><a href='#' id='test5'>Modal Function w/ HTML - default settings</a> <pre><code>$.modal("&lt;div class='test'&gt;\
+		<li><a href='#' id='test1'>Chained Function - default options</a> <pre><code>$('#modalContentTest').modal();</code></pre></li>
+		<li><a href='#' id='test2'>Modal Function w/ jQuery DOM attached element - default options</a> <pre><code>$.modal($('#modalContentTest'));</code></pre></li>
+		<li><a href='#' id='test3'>Chained Function w/ jQuery DOM unattached element - default options</a> <pre><code>$('&lt;div&gt;&lt;h1&gt;New DOM Element&lt;/h1&gt;&lt;/div&gt;').modal();</code></pre></li>
+		<li><a href='#' id='test4'>Modal Function w/ DOM element - default options</a> <pre><code>$.modal(document.getElementById('modalContentTest'));</code></pre></li>
+		<li><a href='#' id='test5'>Modal Function w/ HTML - default options</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
 		&lt;p&gt;This can be complex HTML containing &lt;a href='#'&gt;links&lt;/a&gt;,\
 		&lt;input type='text' value='input boxes' size='8'/&gt;, etc...&lt;/p&gt;\
 	 &lt;/div&gt;");</code></pre></li>
-		<li><a href='#' id='test6'>Modal Function w/ string - default settings</a> <pre><code>$.modal("Sample Content - just a plain 'ol string");</code></pre></li>
+		<li><a href='#' id='test6'>Modal Function w/ string - default options</a> <pre><code>$.modal("Sample Content - just a plain 'ol string");</code></pre></li>
 		<li><a href='#' id='test7'>Modal Function w/ string/HTML - close: false</a> <pre><code>$.modal("&lt;div class='test'&gt;\
 		&lt;h1&gt;Sample Content&lt;/h1&gt;\
 		&lt;p&gt;This example uses a custom close.&lt;/p&gt;\
 		&lt;p&gt;&lt;a href='#' class='modalClose'&gt;Close&lt;/a&gt;&lt;/p&gt;\
 	 &lt;/div&gt;", {close: false});</code></pre></li>
-		<li><a href='#' id='test8'>onOpen callback function - onOpen: function</a> <pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre>
+		<li><a href='#' id='test8'>Chained Function w/ DOM element - persist: true</a> <pre><code>$('#modalContentPersistTest').modal({persist: true});</code></pre></li>
+		<li><a href='#' id='test9'>onOpen callback function - onOpen: function</a> <pre><code>$('#modalContentTest').modal({onOpen: modalOpen});</code></pre>
 	<pre><code>/**
  * When the open event is called, this function will be used to 'open'
- * the overlay, container and content portions of the modal dialog.
+ * the overlay, container and data portions of the modal dialog.
  *
  * onOpen callbacks need to handle 'opening' the overlay, container
- * and content.
+ * and data.
  */
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
 		dialog.container.fadeIn('slow', function () {
-			dialog.content.hide().slideDown('slow');	 
+			dialog.data.hide().slideDown('slow');	 
 		});
 	});
 }</code></pre></li>
-		<li><a href='#' id='test9'>onClose callback function - onClose: function</a> <pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre>
+		<li><a href='#' id='test10'>onClose callback function - onClose: function</a> <pre><code>$('#modalContentTest').modal({onClose: modalClose});</code></pre>
 	<pre><code>/**
  * When the close event is called, this function will be used to 'close'
- * the overlay, container and content portions of the modal dialog.
+ * the overlay, container and data portions of the modal dialog.
  *
  * The SimpleModal close function will still perform some actions that
  * don't need to be handled here.
  *
  * onClose callbacks need to handle 'closing' the overlay, container
- * and content.
+ * and data.
  */
 function modalClose (dialog) {
-	dialog.content.fadeOut('slow', function () {
+	dialog.data.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
 				$.modal.remove();
@@ -82,22 +83,22 @@ function modalClose (dialog) {
 		});
 	});
 }</code></pre></li>
-		<li><a href='#' id='test10'>onShow callback function - onShow: function</a> <pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre>
+		<li><a href='#' id='test11'>onShow callback function - onShow: function</a> <pre><code>$('#modalContentTest').modal({onShow: modalShow});</code></pre>
 	<pre><code>/**
  * After the dialog is show, this callback will bind some effects
- * to the content when the 'button' button is clicked.
+ * to the data when the 'button' button is clicked.
  *
  * This callback is completely user based; SimpleModal does not have
  * a matching function.
  */
 function modalShow (dialog) {
 	$('input.animate').one('click', function () {
-		dialog.content.slideUp('slow', function () {
-			dialog.content.slideDown('slow');
+		dialog.data.slideUp('slow', function () {
+			dialog.data.slideDown('slow');
 		});
 	});
 }</code></pre></li>
-	<li><a href='#' id='test11'>IE SELECT bleed test</a>
+	<li><a href='#' id='test12'>IE SELECT bleed test</a>
 		<p>Make sure the select options do not bleed through the modal dialog.</p>
 		<div style='text-align: center;'>
 		<form action='#'>
@@ -127,6 +128,15 @@ function modalShow (dialog) {
 	</select><br/>
 	<input type='text'/><br/>
 	<input type='button' value='button' class='animate'/><br/>
+	<input type='button' value='close' class='modalClose'/><br/>
+	</form>
+</div>
+<div id='modalContentPersistTest' style='display: none'>
+	<p>Enter values in the textarea and text field, then close the dialog. When you re-run the test, the data will still be there.</p>
+	<form action='#'>
+	<textarea rows='5' cols='30'></textarea><br/>
+	<br/>
+	<input type='text'/><br/>
 	<input type='button' value='close' class='modalClose'/><br/>
 	</form>
 </div>

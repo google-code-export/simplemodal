@@ -8,6 +8,7 @@
  * Revision: $Id$
  *
  */
+function eric() {}
 $(function(){
 	$('a#test1').click(function (e) {
 		e.preventDefault();
@@ -47,17 +48,21 @@ $(function(){
 	});
 	$('a#test8').click(function (e) {
 		e.preventDefault();
-		$('#modalContentTest').modal({onOpen: modalOpen});
+		$('#modalContentPersistTest').modal({persist: true});
 	});
 	$('a#test9').click(function (e) {
 		e.preventDefault();
-		$('#modalContentTest').modal({onClose: modalClose});
+		$('#modalContentTest').modal({onOpen: modalOpen});
 	});
 	$('a#test10').click(function (e) {
 		e.preventDefault();
-		$('#modalContentTest').modal({onShow: modalShow});
+		$('#modalContentTest').modal({onClose: modalClose});
 	});
 	$('a#test11').click(function (e) {
+		e.preventDefault();
+		$('#modalContentTest').modal({onShow: modalShow});
+	});
+	$('a#test12').click(function (e) {
 		e.preventDefault();
 		$.modal('<div class="test"><h1>IE SELECT bleed test</h1></div>');
 	});
@@ -65,34 +70,34 @@ $(function(){
 
 /**
  * When the open event is called, this function will be used to 'open'
- * the overlay, container and content portions of the modal dialog.
+ * the overlay, container and data portions of the modal dialog.
  *
  * onOpen callbacks need to handle 'opening' the overlay, container
- * and content.
+ * and data.
  */
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
 		dialog.container.fadeIn('slow', function () {
-			dialog.content.slideDown('slow');
+			dialog.data.slideDown('slow');
 		});
 	});
 }
 
 /**
  * When the close event is called, this function will be used to 'close'
- * the overlay, container and content portions of the modal dialog.
+ * the overlay, container and data portions of the modal dialog.
  *
  * The SimpleModal close function will still perform some actions that
  * don't need to be handled here.
  *
  * onClose callbacks need to handle 'closing' the overlay, container
- * content and iframe.
+ * data and iframe.
  */
 function modalClose (dialog) {
-	dialog.content.fadeOut('slow', function () {
+	dialog.data.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				$.modal.remove();
+				$.modal.close();
 			});
 		});
 	});
@@ -100,15 +105,15 @@ function modalClose (dialog) {
 
 /**
  * After the dialog is show, this callback will bind some effects
- * to the content when the 'button' button is clicked.
+ * to the data when the 'button' button is clicked.
  *
  * This callback is completely user based; SimpleModal does not have
  * a matching function.
  */
 function modalShow (dialog) {
-	dialog.content.find('input.animate').one('click', function () {
-		dialog.content.slideUp('slow', function () {
-			dialog.content.slideDown('slow');
+	dialog.data.find('input.animate').one('click', function () {
+		dialog.data.slideUp('slow', function () {
+			dialog.data.slideDown('slow');
 		});
 	});
 }
