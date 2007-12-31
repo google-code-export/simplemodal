@@ -1,12 +1,13 @@
 /*
- * jQuery SimpleModal plugin 1.1
+ * SimpleModal @VERSION - jQuery Plugin
  * http://www.ericmmartin.com/projects/simplemodal/
+ * http://plugins.jquery.com/project/SimpleModal
  * http://code.google.com/p/simplemodal/
  *
  * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
  *
- * Licensed under the MIT license:
- *   http://www.opensource.org/licenses/mit-license.php
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
  *
  * Revision: $Id$
  *
@@ -60,7 +61,7 @@
  * @requires jQuery v1.1.2
  * @cat Plugins/Windows and Overlays
  * @author Eric Martin (eric@ericmmartin.com || http://ericmmartin.com)
- * @version 1.1
+ * @version @VERSION
  */
 (function ($) {
 	/*
