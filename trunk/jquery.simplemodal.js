@@ -1,5 +1,5 @@
 /*
- * jQuery SimpleModal plugin 1.0.2
+ * jQuery SimpleModal plugin 1.1
  * http://www.ericmmartin.com/projects/simplemodal/
  * http://code.google.com/p/simplemodal/
  *
@@ -60,7 +60,7 @@
  * @requires jQuery v1.1.2
  * @cat Plugins/Windows and Overlays
  * @author Eric Martin (eric@ericmmartin.com || http://ericmmartin.com)
- * @version 1.0.2
+ * @version 1.1
  */
 (function ($) {
 	/*
@@ -102,7 +102,6 @@
 	 * close: (Boolean:true) Show the default window close icon? Uses CSS class modalCloseImg
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
 	 * closeClass: (String:'modalClose') The CSS class used to bind to the close event
-	 * cloneContent: (Boolean:false) If true, SimpleModal will clone the content element
 	 * onOpen: (Function:null) The callback function used in place of SimpleModal's open
 	 * onShow: (Function:null) The callback function used after the modal dialog has opened
 	 * onClose: (Function:null) The callback function used in place of SimpleModal's close
@@ -115,7 +114,6 @@
 		close: true,
 		closeTitle: 'Close',
 		closeClass: 'modalClose',
-		cloneContent: false,
 		onOpen: null,
 		onShow: null,
 		onClose: null
@@ -139,39 +137,33 @@
 		 * - Handle the onShow callback
 		 */
 		init: function (content, options) {
-			// prevents unexpected calls
+			// prevent unexpected calls
 			if (this.dialog.content) {
 				return false;
 			}
 
 			// load options
-			this.opts = $.extend({},
-				$.modal.defaults,
-				options
-			);
+			this.opts = $.extend({}, $.modal.defaults, options);
 
-			// wrap everything in a div, for safe-keeping =)
-			this.dialog.content = $('<div class="modalContent"></div>');
-
-			// determine how to "insert" the content based on its type
-			if (content instanceof jQuery || typeof content == 'object') {
+			// determine how to handle the content based on its type
+			if (typeof content == 'object') {
 				// convert DOM object to a jQuery object
-				content = typeof content == 'object' ? $(content) : content;
+				content = content instanceof jQuery ? content : $(content);
 
-				// clone? - useful existing data that you don't want removed
-				content = this.opts.cloneContent ? content.clone(true) : content;
-
-				// apend the content and make sure it is visible
-				this.dialog.content.append(content.show());
+				// if the object came from the DOM, keep track of its parent
+				this.dialog.parentNode = content.parent().parent().size() > 0 
+					? content.parent() 
+					: null;
 			}
 			else if (typeof content == 'string') {
 				// just insert the content as innerHTML
-				this.dialog.content.html(content);
+				content = $('<div>').html(content);
 			}
 			else {
 				// not sure what to do... ?!?
 				alert('unknown type: ' + typeof content);
 			}
+			this.dialog.content = content;
 			content = null;
 
 			// create the modal overlay, container and, if neccessary, iframe
@@ -194,10 +186,9 @@
 		 * - Add the close icon if close == true
 		 * Set the top value for the modal container
 		 * Add the content to the modal container, based on type
-		 * - Clone the content, if clone == true
 		 */
 		create: function () {
-			this.dialog.overlay = $('<div></div>')
+			this.dialog.overlay = $('<div>')
 				.attr('id', this.opts.overlayId)
 				.addClass('modalOverlay')
 				.css({opacity: this.opts.overlay / 100})
@@ -208,7 +199,7 @@
 				this.fixIE();
 			}
 
-			this.dialog.container = $('<div></div>')
+			this.dialog.container = $('<div>')
 				.attr('id', this.opts.containerId)
 				.addClass('modalContainer')
 				.append(this.opts.close 
@@ -284,7 +275,7 @@
 		/*
 		 * Close the modal dialog
 		 * - Removes the iframe (if necessary), overlay and container
-		 * - Removes or hides the content, based on the value of cloneContent
+		 * - Removes or hides the content, based on the content type
 		 * - Calls the onOpen callback, if provided
 	 	 * - Clears the dialog element
 	 	 * - Unbinds any SimpleModal defined events
@@ -296,7 +287,7 @@
 				this.opts.onClose.apply(this, [this.dialog]);
 			}
 			else {
-				this.opts.cloneContent ? this.dialog.content.remove() : this.dialog.content.hide();
+				this.dialog.parentNode ? this.dialog.content.hide().appendTo(this.dialog.parentNode) : this.dialog.content.remove();
 				this.dialog.container.remove();
 				this.dialog.overlay.remove();
 				if (this.dialog.iframe) {
@@ -311,12 +302,13 @@
 		 * - Removes the iframe (if necessary), overlay container and content
 		 */
 		remove: function () {
-			this.opts.cloneContent ? this.dialog.content.remove() : this.dialog.content.hide();
+			this.dialog.parentNode ? this.dialog.content.hide().appendTo(this.dialog.parentNode) : this.dialog.content.remove();
 			this.dialog.container.remove();
 			this.dialog.overlay.remove();
 			if (this.dialog.iframe) {
 				this.dialog.iframe.remove();
 			}
+			this.dialog = {};
 		}
 	};
 })(jQuery);
