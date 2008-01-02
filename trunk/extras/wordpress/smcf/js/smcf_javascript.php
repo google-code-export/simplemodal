@@ -3,12 +3,12 @@
 var ajax_url = '<?php echo get_bloginfo('wpurl') . SMCF_DIR ?>/smcf_data.php';
 
 // make sure jQuery is loaded
-if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
-	$(document).ready(function () {
-		$('#smcf_link').click(function (e) {
+if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
+	jQuery(document).ready(function () {
+		jQuery('#smcf_link').click(function (e) {
 			e.preventDefault();
 			// display the contact form
-			$('#smcf_content').modal({
+			jQuery('#smcf_content').modal({
 				overlay: 50,
 				close: false,
 				overlayId: 'contactModalOverlay',
@@ -27,40 +27,50 @@ if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
 			dialog.overlay.fadeIn(200, function () {
 				dialog.container.fadeIn(200, function () {
 					dialog.data.fadeIn(200, function () {
-						$('#contactModalContainer #name').focus();
+						jQuery('#contactModalContainer #name').focus();
 					});
 					// resize the textarea for safari
-					if ($.browser.safari) {
-						$('#contactModalContainer textarea').attr({
-							cols: '37',
-							rows: '8'
+					if (jQuery.browser.safari) {
+						jQuery('#contactModalContainer #name, #contactModalContainer #email').css({
+							'font-size': '.9em'
+						}).attr({size: '36'});
+						jQuery('#contactModalContainer textarea').attr({
+							cols: '34',
+							rows: '7'
+						});
+					}
+					// resize the textarea for ie
+					if (jQuery.browser.msie) {
+						jQuery('#contactModalContainer textarea').css({
+							width: '254px',
+							height: '96px'
 						});
 					}
 				});
 			});
 		},
 		show: function (dialog) {
-			$('#contactModalContainer .send').click(function (e) {
+			jQuery('#contactModalContainer .send').click(function (e) {
 				e.preventDefault();
 				// validate form
 				if (contact.validate()) {
-					$('#contactModalContainer .message').fadeOut(function () {
-						$('#contactModalContainer .message').removeClass('error').empty();
+					jQuery('#contactModalContainer .message').fadeOut(function () {
+						jQuery('#contactModalContainer .message').removeClass('error').empty();
 					});
-					$('#contactModalContainer .title').html('Sending...');
-					$('#contactModalContainer form').fadeOut(200);
-					$('#contactModalContainer .content').animate({
+					jQuery('#contactModalContainer .title').html('Sending...');
+					jQuery('#contactModalContainer form').fadeOut(200);
+					jQuery('#contactModalContainer .content').animate({
 						height: '80px'
 					}, function () {
-						$('#contactModalContainer .loading').fadeIn(200, function () {
-							$.ajax({
+						jQuery('#contactModalContainer .loading').fadeIn(200, function () {
+							jQuery.ajax({
 								url: ajax_url,
-								data: $('#contactModalContainer form').serialize() + '&action=send',
+								data: jQuery('#contactModalContainer form').serialize() + '&action=send',
 								dataType: 'html',
 								complete: function (xhr) {
-									$('#contactModalContainer .loading').fadeOut(200, function () {
-										$('#contactModalContainer .title').html('Thank you!');
-										$('#contactModalContainer .message').html(xhr.responseText).fadeIn(200);
+									jQuery('#contactModalContainer .loading').fadeOut(200, function () {
+										jQuery('#contactModalContainer .title').html('Thank you!');
+										jQuery('#contactModalContainer .message').html(xhr.responseText).fadeIn(200);
 									});
 								},
 								error: contact.error
@@ -69,15 +79,15 @@ if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
 					});
 				}
 				else {
-					if ($('#contactModalContainer .message:visible').length > 0) {
-						$('#contactModalContainer .message div').fadeOut(200, function () {
-							$('#contactModalContainer .message div').empty();
+					if (jQuery('#contactModalContainer .message:visible').length > 0) {
+						jQuery('#contactModalContainer .message div').fadeOut(200, function () {
+							jQuery('#contactModalContainer .message div').empty();
 							contact.showError();
-							$('#contactModalContainer .message div').fadeIn(200);
+							jQuery('#contactModalContainer .message div').fadeIn(200);
 						});
 					}
 					else {
-						$('#contactModalContainer .message').animate({
+						jQuery('#contactModalContainer .message').animate({
 							height: '30px'
 						}, contact.showError);
 					}
@@ -89,7 +99,7 @@ if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
 			dialog.data.fadeOut(200, function () {
 				dialog.container.fadeOut(200, function () {
 					dialog.overlay.fadeOut(200, function () {
-						$.modal.close();
+						jQuery.modal.close();
 					});
 				});
 			});
@@ -99,23 +109,21 @@ if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
 		},
 		validate: function () {
 			contact.message = '';
-			if (!$('#contactModalContainer #name').val()) {
+			if (!jQuery('#contactModalContainer #name').val()) {
 				contact.message += 'Name is required. ';
 			}
 
-			var email = $('#contactModalContainer #email').val();
+			var email = jQuery('#contactModalContainer #email').val();
 			if (!email) {
 				contact.message += 'Email is required. ';
 			}
 			else {
-				// Regex from: http://regexlib.com/REDetails.aspx?regexp_id=599
-				var filter = /^([0-9a-zA-Z]([-.\w]*[0-9a-zA-Z])*@(([0-9a-zA-Z])+([-\w]*[0-9a-zA-Z])*\.)+[a-zA-Z]{2,9})$/;
-				if (!filter.test(email)) {
+				if (!contact.validateEmail(email)) {
 					contact.message += 'Email is invalid. ';
 				}
 			}
 
-			if (!$('#contactModalContainer #message').val()) {
+			if (!jQuery('#contactModalContainer #message').val()) {
 				contact.message += 'Message is required.';
 			}
 
@@ -126,8 +134,49 @@ if (typeof jQuery !== "undefined" && typeof $.modal !== "undefined") {
 				return true;
 			}
 		},
+		validateEmail: function (email) {
+			var at = email.lastIndexOf("@");
+
+			// Make sure the at (@) sybmol exists and  
+			// it is not the first or last character
+			if (at < 1 || (at + 1) === email.length)
+				return false;
+
+			// Make sure there aren't multiple periods together
+			if (/(\.{2,})/.test(email))
+				return false;
+
+			// Break up the local and domain portions
+			var local = email.substring(0, at);
+			var domain = email.substring(at + 1);
+
+			// Check lengths
+			if (local.length < 1 || local.length > 64 || domain.length < 4 || domain.length > 255)
+				return false;
+
+			// Make sure local and domain don't start with or end with a period
+			if (/(^\.|\.$)/.test(local) || /(^\.|\.$)/.test(domain))
+				return false;
+
+			// Check for quoted-string addresses
+			// Since almost anything is allowed in a quoted-string address,
+			// we're just going to let them go through
+			if (!/^"(.+)"$/.test(local)) {
+				// It's a dot-string address...check for valid characters
+				if (!/^[-a-zA-Z0-9!#$%*\/?|^{}`~&'+=_\.]*$/.test(local))
+					return false;
+			}
+
+			// Make sure domain contains only valid characters and at least one period
+			if (!/^[-a-zA-Z0-9\.]*$/.test(domain) || domain.indexOf(".") === -1)
+				return false;	
+
+			return true;
+		},
 		showError: function () {
-			$('#contactModalContainer .message').html($('<div class="error"></div>').append(contact.message)).fadeIn(200);
+			jQuery('#contactModalContainer .message')
+				.html(jQuery('<div class="error"></div>').append(contact.message))
+				.fadeIn(200);
 		}
 	};
 }
