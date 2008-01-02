@@ -1,0 +1,16 @@
+/*
+ * SimpleModal 1.1 - jQuery Plugin
+ * http://www.ericmmartin.com/projects/simplemodal/
+ * http://plugins.jquery.com/project/SimpleModal
+ * http://code.google.com/p/simplemodal/
+ *
+ * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
+ *
+ * Dual licensed under the MIT (MIT-LICENSE.txt)
+ * and GPL (GPL-LICENSE.txt) licenses.
+ *
+ * Revision: $Id: jquery.simplemodal.js 54 2007-12-31 21:26:54Z emartin24 $
+ *
+ */
+(function($){$.modal=function(data,options){return $.modal.impl.init(data,options);};$.modal.close=function(){$.modal.impl.close(true);};$.fn.modal=function(options){return $.modal.impl.init(this,options);};$.modal.defaults={overlay:50,overlayId:'modalOverlay',containerId:'modalContainer',iframeId:'modalIframe',close:true,closeTitle:'Close',closeClass:'modalClose',persist:false,onOpen:null,onShow:null,onClose:null};$.modal.impl={opts:null,dialog:{},init:function(data,options){if(this.dialog.data){return false;}this.opts=$.extend({},$.modal.defaults,options);if(typeof data=='object'){data=data instanceof jQuery?data:$(data);if(data.parent().parent().size()>0){this.dialog.parentNode=data.parent();if(!this.opts.persist){this.dialog.original=data.clone(true);}}}else if(typeof data=='string'||typeof data=='number'){data=$('<div>').html(data);}else{alert('SimpleModal Error: Invalid data type: '+typeof data);return false;}this.dialog.data=data;data=null;this.create();this.open();if($.isFunction(this.opts.onShow)){this.opts.onShow.apply(this,[this.dialog]);}return this;},create:function(){this.dialog.overlay=$('<div>').attr('id',this.opts.overlayId).addClass('modalOverlay').css({opacity:this.opts.overlay/100}).hide().appendTo('body');if($.browser.msie&&($.browser.version<7)){this.fixIE();}this.dialog.container=$('<div>').attr('id',this.opts.containerId).addClass('modalContainer').append(this.opts.close?'<a class="modalCloseImg '+this.opts.closeClass
++'" title="'+this.opts.closeTitle+'"></a>':'').hide().appendTo('body');this.dialog.container.append(this.dialog.data);},bindEvents:function(){var modal=this;$('.'+this.opts.closeClass).click(function(e){e.preventDefault();modal.close();});},unbindEvents:function(){$('.'+this.opts.closeClass).unbind('click');},fixIE:function(){this.dialog.overlay.css({position:'absolute',height:$(document).height()+'px'});this.dialog.iframe=$('<iframe src="javascript:false;"></iframe>').attr('id',this.opts.iframeId).css({opacity:0,position:'absolute',height:$(document).height()+'px'}).hide().appendTo('body');},open:function(){if(this.dialog.iframe){this.dialog.iframe.show();}if($.isFunction(this.opts.onOpen)){this.opts.onOpen.apply(this,[this.dialog]);}else{this.dialog.overlay.show();this.dialog.container.show();this.dialog.data.show();}this.bindEvents();},close:function(external){if($.isFunction(this.opts.onClose)&&!external){this.opts.onClose.apply(this,[this.dialog]);}else{if(this.dialog.parentNode){if(this.opts.persist){this.dialog.data.hide().appendTo(this.dialog.parentNode);}else{this.dialog.data.remove();this.dialog.original.appendTo(this.dialog.parentNode);}}else{this.dialog.data.remove();}this.dialog.container.remove();this.dialog.overlay.remove();if(this.dialog.iframe){this.dialog.iframe.remove();}this.dialog={};}this.unbindEvents();}};})(jQuery);
