@@ -14,7 +14,7 @@
 #contactModalContainer input#name,
 #contactModalContainer input#email,
 #contactModalContainer textarea {float:left; padding:2px; margin:2px; background:#eee; border:1px solid #fff; font-family:'Trebuchet MS', Verdana, Arial; width:250px;}
-#contactModalContainer textarea {height:80px;}
+#contactModalContainer textarea {height:84px;}
 #contactModalContainer div.top {height:13px; background:url(../img/form_top.gif) no-repeat; padding:0; margin:0;}
 #contactModalContainer div.bottom {height:13px; background:url(../img/form_bottom.gif) no-repeat; font-size:.7em; text-align:center;}
 #contactModalContainer div.bottom a,

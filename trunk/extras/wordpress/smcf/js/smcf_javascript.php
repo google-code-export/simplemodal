@@ -29,12 +29,8 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 					});
 					// resize the textarea for safari
 					if (jQuery.browser.safari) {
-						jQuery('#contactModalContainer #name, #contactModalContainer #email').css({
+						jQuery('#contactModalContainer #name, #contactModalContainer #email, #contactModalContainer #message').css({
 							'font-size': '.9em'
-						}).attr({size: '36'});
-						jQuery('#contactModalContainer textarea').attr({
-							cols: '34',
-							rows: '7'
 						});
 					}
 				});
