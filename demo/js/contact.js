@@ -22,7 +22,6 @@ $(document).ready(function () {
 				close: false,
 				overlayId: 'contactModalOverlay',
 				containerId: 'contactModalContainer',
-				iframeId: 'contactModalIframe',
 				onOpen: contact.open,
 				onShow: contact.show,
 				onClose: contact.close
