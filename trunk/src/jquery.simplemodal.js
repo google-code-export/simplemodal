@@ -227,8 +227,8 @@
 				this.fixIE();
 			}
 
-			// add the data
-			this.dialog.container.append(this.dialog.data);
+			// hide and add the data
+			this.dialog.container.append(this.dialog.data.hide());
 		},
 		/*
 		 * Bind events
