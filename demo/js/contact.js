@@ -38,14 +38,10 @@ var contact = {
 				dialog.data.fadeIn(200, function () {
 					$('#contactModalContainer #name').focus();
 				});
-				// resize the textarea for safari
+				// input field font size
 				if ($.browser.safari) {
-					$('#contactModalContainer #name, #contactModalContainer #email').css({
+					$('#contactModalContainer #name, #contactModalContainer #email, #contactModalContainer #message').css({
 						'font-size': '.9em'
-					}).attr({size: '36'});
-					$('#contactModalContainer textarea').attr({
-						cols: '34',
-						rows: '7'
 					});
 				}
 			});
