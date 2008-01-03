@@ -8,6 +8,7 @@
 #contactModalContainer .loading {position:absolute; background:url(../img/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
 #contactModalContainer .message {text-align:center;}
 #contactModalContainer .error {width:92%; font-size:.8em; background:#000; border:2px solid #ccc; font-size:0.8em; font-weight:bold; margin:0 auto; padding:2px;}
+#contactModalContainer br {clear:both;}
 #contactModalContainer form {padding:0; margin:0;}
 #contactModalContainer label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px; font-weight:bold;}
 #contactModalContainer input#name,
@@ -28,5 +29,3 @@
 #contactModalContainer a.modalCloseX:active,
 #contactModalContainer a.modalCloseX:visited {text-decoration:none; font-weight:bold; font-size:1.2em; position:absolute; top:-2px; left:400px; color:#999;}
 #contactModalContainer a.modalCloseX:hover {color:#9bb3b3;}
-
-br {clear:both;}
