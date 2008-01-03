@@ -38,15 +38,15 @@ if (empty($action)) {
 		<div class='message' style='display:none'></div>
 		<form action='#'>
 			<label for='name'>Name:</label>
-			<input type='text' id='name' name='name' size='40' tabindex='1'/>
+			<input type='text' id='name' name='name' size='34' tabindex='1001' />
 			<label for='email'>Email:</label>
-			<input type='text' id='email' name='email' size='40' tabindex='2'/>
+			<input type='text' id='email' name='email' size='34' tabindex='1002' />
 			<label for='message'>Message:</label>
-			<textarea id='message' name='message' cols='30' rows='5' tabindex='3'></textarea>
+			<textarea id='message' name='message' cols='38' rows='4' tabindex='1003'></textarea>
 			<br/>
-			<label for='submit'>&nbsp;</label>
-			<img src='img/contact/send.png' alt='Send' class='send' />
-			<img src='img/contact/cancel.png' alt='Cancel' class='cancel modalClose' />
+			<label>&nbsp;</label>
+			<input type='image' src='img/contact/send.png' alt='Send' class='send'  tabindex='1004' />
+			<input type='image' src='img/contact/cancel.png' alt='Cancel' class='cancel modalClose' tabindex='1005' />
 			<br/>
 		</form>
 	</div>

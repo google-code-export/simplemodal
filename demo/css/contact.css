@@ -19,7 +19,7 @@
 #contactModalContainer {height:290px; width:420px; left:50%; top:15%; margin-left:-210px; font-family:'Trebuchet MS', Verdana, Arial; font-size:16px; text-align:left;}
 #contactModalContainer .content {background-color:#333; color:#ddd; height:260px;}
 #contactModalContainer h1 {color:#d76300; margin:0; padding:0 0 6px 12px; font-size:1.2em; text-align:left;}
-#contactModalContainer .loading {position:absolute; background:url(../img/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
+#contactModalContainer .loading {position:absolute; background:url(../img/contact/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
 #contactModalContainer .message {text-align:center;}
 #contactModalContainer .error {width:92%; font-size:.8em; background:#000; border:2px solid #ccc; font-size:0.8em; font-weight:bold; margin:0 auto; padding:2px;}
 #contactModalContainer br {clear:both;}
@@ -27,10 +27,10 @@
 #contactModalContainer label {clear:left; display:block; width:100px; float:left; text-align:right; padding-right:4px; font-weight:bold;}
 #contactModalContainer input#name,
 #contactModalContainer input#email,
-#contactModalContainer textarea {float:left; padding:2px; margin:2px; background:#eee; border:1px solid #fff; font-family:'Trebuchet MS', Verdana, Arial;}
+#contactModalContainer textarea {font-family:'Trebuchet MS', Verdana, Arial; float:left; padding:2px; margin:2px; background:#eee; border:1px solid #fff;}
 #contactModalContainer textarea {font-size:.8em; padding:0;}
-#contactModalContainer div.top {height:13px; background:url(../img/form_top.gif) no-repeat; padding:0; margin:0;}
-#contactModalContainer div.bottom {height:13px; background:url(../img/form_bottom.gif) no-repeat; font-size:.7em; text-align:center;}
+#contactModalContainer div.top {height:13px; background:url(../img/contact/form_top.gif) no-repeat; padding:0; margin:0;}
+#contactModalContainer div.bottom {height:13px; background:url(../img/contact/form_bottom.gif) no-repeat; font-size:.7em; text-align:center;}
 #contactModalContainer div.bottom a,
 #contactModalContainer div.bottom a:link,
 #contactModalContainer div.bottom a:active,
