@@ -1,8 +1,8 @@
 /* Overlay */
-#contactModalOverlay {height:100%; width:100%; position:fixed; left:0; top:0; z-index:3000; background-color:#000; cursor:wait;}
+#contactModalOverlay {background-color:#000; cursor:wait;}
 
 /* Container */
-#contactModalContainer {height:290px; width:420px; position:fixed; left:50%; top:15%; margin-left:-210px; z-index:3100; font-family:'Trebuchet MS', Verdana, Arial; font-size:16px; text-align:left;}
+#contactModalContainer {height:290px; width:420px; left:50%; top:15%; margin-left:-210px; font-family:'Trebuchet MS', Verdana, Arial; font-size:16px; text-align:left;}
 #contactModalContainer .content {background-color:#333; color:#ddd; height:260px;}
 #contactModalContainer h1 {color:#d76300; margin:0; padding:0 0 6px 12px; font-size:1.2em; text-align:left;}
 #contactModalContainer .loading {position:absolute; background:url(../img/loading.gif) no-repeat; z-index:8000; height:55px; width:54px; margin:-14px 0 0 170px; padding:0;}
