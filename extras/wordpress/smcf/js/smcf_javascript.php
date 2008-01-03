@@ -9,11 +9,9 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 			e.preventDefault();
 			// display the contact form
 			jQuery('#smcf_content').modal({
-				overlay: 50,
 				close: false,
 				overlayId: 'contactModalOverlay',
 				containerId: 'contactModalContainer',
-				iframeId: 'contactModalIframe',
 				onOpen: contact.open,
 				onShow: contact.show,
 				onClose: contact.close
@@ -175,7 +173,7 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 		},
 		showError: function () {
 			jQuery('#contactModalContainer .message')
-				.html(jQuery('<div class="error"></div>').append(contact.message))
+				.html(jQuery('<div>').addClass('error').append(contact.message))
 				.fadeIn(200);
 		}
 	};
