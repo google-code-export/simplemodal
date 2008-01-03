@@ -140,9 +140,9 @@ class SimpleModalContactForm {
 		<div class='message' style='display:none'></div>
 		<form action='#'>
 			<label for='name'>Name:</label>
-			<input type='text' id='name' name='name' size='34' tabindex='1001' />
+			<input type='text' id='name' name='name' size='40' tabindex='1001' />
 			<label for='email'>Email:</label>
-			<input type='text' id='email' name='email' size='34' tabindex='1002' />
+			<input type='text' id='email' name='email' size='40' tabindex='1002' />
 			<label for='message'>Message:</label>
 			<textarea id='message' name='message' cols='38' rows='4' tabindex='1003'></textarea>
 			<br/>
