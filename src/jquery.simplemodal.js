@@ -263,10 +263,10 @@
 		 * Fix issues in IE 6
 		 */
 		fixIE: function () {
-			var docHeight = $(document).height() + 'px';
+			var wHeight = $(window).height() + 'px';
 
 			// position hacks
-			this.dialog.overlay.css({position: 'absolute', height: docHeight});
+			this.dialog.overlay.css({position: 'absolute', height: wHeight});
 			this.dialog.container.css({position: 'absolute'});
 
 			// add an iframe to prevent select options from bleeding through
@@ -274,7 +274,7 @@
 				.css($.extend(this.opts.iframeCss, {
 					opacity: 0, 
 					position: 'absolute', 
-					height: docHeight,
+					height: wHeight,
 					zIndex: 1000,
 					width: '100%',
 					top: 0,
