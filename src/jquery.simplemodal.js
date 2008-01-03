@@ -198,17 +198,22 @@
 			this.dialog.overlay = $('<div>')
 				.attr('id', this.opts.overlayId)
 				.addClass('modalOverlay')
-				.css({opacity: this.opts.overlay / 100})
+				.css({
+					opacity: this.opts.overlay / 100,
+					height: '100%',
+					width: '100%',
+					position: 'fixed',
+					left: 0,
+					top: 0,
+					zIndex: 3000
+				})
 				.hide()
 				.appendTo('body');
-
-			if ($.browser.msie && ($.browser.version < 7)) {
-				this.fixIE();
-			}
 
 			this.dialog.container = $('<div>')
 				.attr('id', this.opts.containerId)
 				.addClass('modalContainer')
+				.css({position: 'fixed', zIndex: 3100})
 				.append(this.opts.close 
 					? '<a class="modalCloseImg ' 
 						+ this.opts.closeClass 
@@ -217,6 +222,10 @@
 					: '')
 				.hide()
 				.appendTo('body');
+
+			if ($.browser.msie && ($.browser.version < 7)) {
+				this.fixIE();
+			}
 
 			// add the data
 			this.dialog.container.append(this.dialog.data);
@@ -248,9 +257,18 @@
 		 */
 		fixIE: function () {
 			this.dialog.overlay.css({position: 'absolute', height: $(document).height() + 'px'});
+			this.dialog.container.css({position: 'absolute'});
 			this.dialog.iframe = $('<iframe src="javascript:false;"></iframe>')
 				.attr('id', this.opts.iframeId)
-				.css({opacity: 0, position: 'absolute', height: $(document).height() + 'px'})
+				.css({
+					opacity: 0, 
+					position: 'absolute', 
+					height: $(document).height() + 'px',
+					zIndex: 1000,
+					width: '100%',
+					top: 0,
+					left: 0
+				})
 				.hide()
 				.appendTo('body');
 		},
