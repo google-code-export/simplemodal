@@ -37,13 +37,6 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 							rows: '7'
 						});
 					}
-					// resize the textarea for ie
-					if (jQuery.browser.msie) {
-						jQuery('#contactModalContainer textarea').css({
-							width: '254px',
-							height: '96px'
-						});
-					}
 				});
 			});
 		},
