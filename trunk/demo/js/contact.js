@@ -48,13 +48,6 @@ var contact = {
 						rows: '7'
 					});
 				}
-				// resize the textarea for ie
-				if ($.browser.msie) {
-					$('#contactModalContainer textarea').css({
-						width: '254px',
-						height: '96px'
-					});
-				}
 			});
 		});
 	},
