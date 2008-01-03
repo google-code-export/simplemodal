@@ -22,7 +22,6 @@ $subject = 'SimpleModal Contact Form';
 // FALSE = do not include
 $extra = array(
 	'ip'         => TRUE,
-	'referer'    => TRUE,
 	'user_agent' => TRUE
 );
 
@@ -51,7 +50,7 @@ if (empty($action)) {
 			<br/>
 		</form>
 	</div>
-	<div class='bottom'></div>
+	<div class='bottom'><a href='http://www.ericmmartin.com/projects/smcf/'>Powered by SimpleModal Contact Form</a></div>
 </div>";
 }
 else if ($action == 'send') {
@@ -83,9 +82,6 @@ function sendEmail($name, $email, $message) {
 	if ($extra['ip']) {
 		$message .= "\n\nIP: " . $_SERVER['REMOTE_ADDR'];
 	}
-	if ($extra['referer']) {
-		$message .= "\n\nREFERER: " . $_SERVER['HTTP_REFERER'];
-	}
 	if ($extra['user_agent']) {
 		$message .= "\n\nUSER AGENT: " . $_SERVER['HTTP_USER_AGENT'];
 	}
@@ -97,10 +93,10 @@ function sendEmail($name, $email, $message) {
 
 	// Build header
 	$header = "From: $email\n";
-	$header .= "X-Mailer: PHP/SimpleModal";
+	$header .= "X-Mailer: PHP/SimpleModalContactForm";
 
 	// Send email
-	mail($to, $subject, $body, $header) or 
+	@mail($to, $subject, $body, $header) or 
 		die('Unfortunately, your message could not be delivered.');
 }
 
@@ -112,26 +108,48 @@ function filter($value) {
 }
 
 // Validate email address format in case client-side validation "fails"
-function validEmail($email) {
-	// Borrowed from http://www.php.net/manual/en/function.eregi.php#52458
+// Validate email address format in case client-side validation "fails"
+function validateEmail($email) {
+	$at = strrpos($email, "@");
 
-	// Allowed characters for part before "at" character
-	$atom = '[-a-z0-9!#$%&\'*+/=?^_`{|}~]';
-
-	// Allowed characters for part after "at" character
-	$domain = '([a-z]([-a-z0-9]*[a-z0-9]+)?)'; 
-
-	$regex = '^' . $atom . '+' .	// One or more atom characters.
-	'(\.' . $atom . '+)*' .			// Followed by zero or more dot separated sets of one or more atom characters
-	'@' .							// Followed by an "at" character.
-	'(' . $domain . '{1,63}\.)+' .	// Followed by one or max 63 domain characters (dot separated).
-	$domain . '{2,63}' .			// Must be followed by one set consisting a period of two
-	'$'; 
-	if (eregi($regex, $email)) {
-		return true;
-	} else {
+	// Make sure the at (@) sybmol exists and  
+	// it is not the first or last character
+	if ($at && ($at < 1 || ($at + 1) == strlen($email)))
 		return false;
+
+	// Make sure there aren't multiple periods together
+	if (preg_match('/(\.{2,})/', $email))
+		return false;
+
+	// Break up the local and domain portions
+	$local = substr($email, 0, $at);
+	$domain = substr($email, $at + 1);
+
+
+	// Check lengths
+	$locLen = strlen($local);
+	$domLen = strlen($domain);
+	if ($locLen < 1 || $locLen > 64 || $domLen < 4 || $domLen > 255)
+		return false;
+
+	// Make sure local and domain don't start with or end with a period
+	if (preg_match('/(^\.|\.$)/', $local) || preg_match('/(^\.|\.$)/', $domain))
+		return false;
+
+	// Check for quoted-string addresses
+	// Since almost anything is allowed in a quoted-string address,
+	// we're just going to let them go through
+	if (!preg_match('/^"(.+)"$/', $local)) {
+		// It's a dot-string address...check for valid characters
+		if (!preg_match('/^[-a-zA-Z0-9!#$%*\/?|^{}`~&\'+=_\.]*$/', $local))
+			return false;
 	}
+
+	// Make sure domain contains only valid characters and at least one period
+	if (!preg_match('/^[-a-zA-Z0-9\.]*$/', $domain) || !strpos($domain, "."))
+		return false;	
+
+	return true;
 }
 
 exit;
