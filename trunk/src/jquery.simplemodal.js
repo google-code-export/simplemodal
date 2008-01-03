@@ -47,8 +47,11 @@
  * dialog can be created at a time. Which means that all of the matched
  * elements will be displayed within the modal container.
  * 
- * The styling for SimpleModal is done mostly through external stylesheets, 
- * providing maximum control over the look and feel.
+ * SimpleModal internally sets the CSS needed to display the modal dialog
+ * properly in all browsers, yet provides the developer with the flexibility
+ * to easily control the look and feel. The styling for SimpleModal can be 
+ * done through external stylesheets, or through SimpleModal, using the
+ * overlayCss and/or containerCss options.
  *
  * SimpleModal has been tested in the following browsers:
  * - IE 6, 7
@@ -78,13 +81,14 @@
 	 * Stand-alone close function to close the modal dialog
 	 */
 	$.modal.close = function () {
+		// call close with the external parameter set to true
 		$.modal.impl.close(true);
 	};
 
 	/*
 	 * Chained function to create a modal dialog.
 	 * 
-	 * @param {object} options An optional object containing options overrides
+	 * @param {object} [options] An optional object containing options overrides
 	 */
 	$.fn.modal = function (options) {
 		return $.modal.impl.init(this, options);
@@ -93,14 +97,15 @@
 	/*
 	 * SimpleModal default options
 	 * 
-	 * overlay: (Number:50) The opacity value, from 0 - 100
-	 * overlayId: (String:'modalOverlay') The DOM element id for the overlay div 
+	 * overlay: (Number:50) The overlay div opacity value, from 0 - 100
+	 * overlayId: (String:'modalOverlay') The DOM element id for the overlay div
+	 * overlayCss: (Object:{}) The CSS styling for the overlay div
 	 * containerId: (String:'modalContainer') The DOM element id for the container div
-	 * iframeId: (String:'modalIframe') The DOM element id for the iframe (IE 6)
+	 * containerCss: (Object:{}) The CSS styling for the container div
 	 * close: (Boolean:true) Show the default window close icon? Uses CSS class modalCloseImg
 	 * closeTitle: (String:'Close') The title value of the default close link. Depends on close
 	 * closeClass: (String:'modalClose') The CSS class used to bind to the close event
-	 * persist: (Boolean:false) Persist the data accross modal calls? Only used for existing
+	 * persist: (Boolean:false) Persist the data across modal calls? Only used for existing
 	            DOM elements. If true, the data will be maintained across modal calls, if false,
 				the data will be reverted to its original state.
 	 * onOpen: (Function:null) The callback function used in place of SimpleModal's open
@@ -110,8 +115,9 @@
 	$.modal.defaults = {
 		overlay: 50,
 		overlayId: 'modalOverlay',
+		overlayCss: {},
 		containerId: 'modalContainer',
-		iframeId: 'modalIframe',
+		containerCss: {},
 		close: true,
 		closeTitle: 'Close',
 		closeClass: 'modalClose',
@@ -121,17 +127,17 @@
 		onClose: null
 	};
 
+	/*
+	 * Main modal object
+	 */
 	$.modal.impl = {
 		/*
 		 * Modal dialog options
 		 */
 		opts: null,
 		/*
-		 * Place holder for the modal dialog elements
-		 * This is also the object passed back to the callback functions
-		 * - Should contain the overlay, container and data elements, and
-		 *   can also contain the parentNode, original and iframe (for IE 6)
-		 *   elements
+		 * Contains the modal dialog elements and is the object passed 
+		 * back to the callback (onOpen, onShow, onClose) functions
 		 */
 		dialog: {},
 		/*
@@ -152,10 +158,10 @@
 				data = data instanceof jQuery ? data : $(data);
 
 				// if the object came from the DOM, keep track of its parent
-				// and optionally its original state
 				if (data.parent().parent().size() > 0) {
 					this.dialog.parentNode = data.parent();
 
+					// persist changes? if not, make a clone of the element
 					if (!this.opts.persist) {
 						this.dialog.original = data.clone(true);
 					}
@@ -166,39 +172,38 @@
 				data = $('<div>').html(data);
 			}
 			else {
-				// unknown type...not sure what to do!
-				alert('SimpleModal Error: Invalid data type: ' + typeof data);
+				// unsupported data type!
+				if (console) {
+					console.log('SimpleModal Error: Unsupported data type: ' + typeof data);
+				}
 				return false;
 			}
 			this.dialog.data = data;
 			data = null;
 
-			// create the modal overlay, container and, if neccessary, iframe
+			// create the modal overlay, container and, if necessary, iframe
 			this.create();
 
 			// display the modal dialog
 			this.open();
 
-			// useful for adding custom events to the modal dialog
+			// useful for adding events/manipulating data in the modal dialog
 			if ($.isFunction(this.opts.onShow)) {
 				this.opts.onShow.apply(this, [this.dialog]);
 			}
 
+			// don't break the chain =)
 			return this;
 		},
 		/*
-		 * Create and add the modal overlay to the page
-		 * For IE 6, call fixIE()
-		 * Create and add the modal container to the page
-		 * - Add the close icon if close == true
-		 * Set the top value for the modal container
-		 * Add the data to the modal container, based on type
+		 * Create and add the modal overlay and container to the page
 		 */
 		create: function () {
+			// create the overlay
 			this.dialog.overlay = $('<div>')
 				.attr('id', this.opts.overlayId)
 				.addClass('modalOverlay')
-				.css({
+				.css($.extend(this.opts.overlayCss, {
 					opacity: this.opts.overlay / 100,
 					height: '100%',
 					width: '100%',
@@ -206,14 +211,18 @@
 					left: 0,
 					top: 0,
 					zIndex: 3000
-				})
+				}))
 				.hide()
 				.appendTo('body');
 
+			// create the container
 			this.dialog.container = $('<div>')
 				.attr('id', this.opts.containerId)
 				.addClass('modalContainer')
-				.css({position: 'fixed', zIndex: 3100})
+				.css($.extend(this.opts.containerCss, {
+					position: 'fixed', 
+					zIndex: 3100
+				}))
 				.append(this.opts.close 
 					? '<a class="modalCloseImg ' 
 						+ this.opts.closeClass 
@@ -223,20 +232,21 @@
 				.hide()
 				.appendTo('body');
 
+			// fix issues with IE and create an iframe
 			if ($.browser.msie && ($.browser.version < 7)) {
 				this.fixIE();
 			}
 
-			// hide and add the data
+			// hide the data and add it to the container
 			this.dialog.container.append(this.dialog.data.hide());
 		},
 		/*
 		 * Bind events
-		 * - Bind the close event onClick to any elements with the 
-		 *   closeClass CSS class
 		 */
 		bindEvents: function () {
 			var modal = this;
+
+			// bind the close event to any element with the closeClass class
 			$('.' + this.opts.closeClass).click(function (e) {
 				e.preventDefault();
 				modal.close();
@@ -244,69 +254,73 @@
 		},
 		/*
 		 * Unbind events
-		 * - Remove any events bound to the closeClass click event
 		 */
 		unbindEvents: function () {
+			// remove the close event
 			$('.' + this.opts.closeClass).unbind('click');
 		},
 		/*
 		 * Fix issues in IE 6
-		 * - Simulate position:fixed and make sure the overlay height and iframe
-		 *   height values are set to 100%
-		 * - Add an iframe to prevent select options from bleeding through
 		 */
 		fixIE: function () {
-			this.dialog.overlay.css({position: 'absolute', height: $(document).height() + 'px'});
+			var docHeight = $(document).height() + 'px';
+
+			// position hacks
+			this.dialog.overlay.css({position: 'absolute', height: docHeight});
 			this.dialog.container.css({position: 'absolute'});
+
+			// add an iframe to prevent select options from bleeding through
 			this.dialog.iframe = $('<iframe src="javascript:false;"></iframe>')
-				.attr('id', this.opts.iframeId)
-				.css({
+				.css($.extend(this.opts.iframeCss, {
 					opacity: 0, 
 					position: 'absolute', 
-					height: $(document).height() + 'px',
+					height: docHeight,
 					zIndex: 1000,
 					width: '100%',
 					top: 0,
 					left: 0
-				})
+				}))
 				.hide()
 				.appendTo('body');
 		},
 		/*
-		 * Open the modal dialog
-		 * - Shows the iframe (if necessary), overlay and container
-		 * - Calls the onOpen callback, if provided
-		 * - Binds any SimpleModal defined events
-		 * - Note: If you use the onOpen callback, you must show the 
+		 * Open the modal dialog elements
+		 * - Note: If you use the onOpen callback, you must "show" the 
 		 *         overlay and container elements manually 
 		 *         (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
+			// display the iframe
 			if (this.dialog.iframe) {
 				this.dialog.iframe.show();
 			}
+
 			if ($.isFunction(this.opts.onOpen)) {
+				// execute the onOpen callback 
 				this.opts.onOpen.apply(this, [this.dialog]);
 			}
 			else {
+				// display the remaining elements
 				this.dialog.overlay.show();
 				this.dialog.container.show();
 				this.dialog.data.show();
 			}
+
+			// bind default events
 			this.bindEvents();
 		},
 		/*
 		 * Close the modal dialog
-		 * - Removes the iframe (if necessary), overlay and container
-		 * - Removes or hides the data, based on the data type
-		 * - Calls the onOpen callback, if provided
-	 	 * - Clears the dialog element
-	 	 * - Unbinds any SimpleModal defined events
 		 * - Note: If you use an onClose callback, you must remove the 
 		 *         overlay, container and iframe elements manually
+		 *
+		 * @param {boolean} external Indicates whether the call to this
+		 *     function was internal or external. If it was external, the
+		 *     onClose callback will be ignored
 		 */
 		close: function (external) {
 			if ($.isFunction(this.opts.onClose) && !external) {
+				// execute the onClose callback
 				this.opts.onClose.apply(this, [this.dialog]);
 			}
 			else {
@@ -329,13 +343,18 @@
 					this.dialog.data.remove();
 				}
 
+				// remove the remaining elements
 				this.dialog.container.remove();
 				this.dialog.overlay.remove();
 				if (this.dialog.iframe) {
 					this.dialog.iframe.remove();
 				}
+
+				// reset the dialog object
 				this.dialog = {};
 			}
+
+			// remove the default events
 			this.unbindEvents();
 		}
 	};
