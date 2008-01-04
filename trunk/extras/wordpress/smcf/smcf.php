@@ -144,11 +144,11 @@ class SimpleModalContactForm {
 			<label for='email'>Email:</label>
 			<input type='text' id='email' name='email' tabindex='1002' />
 			<label for='message'>Message:</label>
-			<textarea id='message' name='message' tabindex='1003'></textarea>
+			<textarea id='message' name='message' cols='40' rows='4' tabindex='1003'></textarea>
 			<br/>
 			<label>&nbsp;</label>
-			<input type='image' src='" . get_bloginfo('wpurl') . SMCF_DIR . "/img/send.png' alt='Send' class='send'  tabindex='1004' />
-			<input type='image' src='" . get_bloginfo('wpurl') . SMCF_DIR . "/img/cancel.png' alt='Cancel' class='cancel modalClose' tabindex='1005' />
+			<button type='submit' class='send' tabindex='1004'></button>
+			<button type='submit' class='cancel modalClose' tabindex='1005'></button>
 			<br/>
 		</form>
 	</div>

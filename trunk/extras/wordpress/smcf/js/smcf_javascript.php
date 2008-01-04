@@ -33,6 +33,18 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 							'font-size': '.9em'
 						});
 					}
+					// fix png's for IE 6
+					if (jQuery.browser.msie && jQuery.browser.version < 7) {
+						jQuery('#contactModalContainer .send, #contactModalContainer .cancel').each(function () {
+							if (jQuery(this).css('backgroundImage').match(/^url[("']+(.*\.png)[)"']+$/i)) {
+								var src = RegExp.$1;
+								jQuery(this).css({
+									backgroundImage: 'none',
+									filter: 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' +  src + '", sizingMethod="crop")'
+								});
+							}
+						});
+					}
 				});
 			});
 		},
