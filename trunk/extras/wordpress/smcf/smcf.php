@@ -170,7 +170,7 @@ add_action('wp_footer', array($smcf, 'footer'));
 // Public function to create a link for the contact form
 // This can be called from a page in your theme
 function smcf() {
-	echo "<a href='#' id='smcf_link'>Contact Us</a>";
+	echo "<a href='#' class='smcf_link'>Contact Us</a>";
 }
 
 ?>

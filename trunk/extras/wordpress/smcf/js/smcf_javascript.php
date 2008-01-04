@@ -5,7 +5,7 @@ var ajax_url = '<?php echo get_bloginfo('wpurl') . SMCF_DIR ?>/smcf_data.php';
 // make sure jQuery is loaded
 if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 	jQuery(document).ready(function () {
-		jQuery('#smcf_link').click(function (e) {
+		jQuery('.smcf_link').click(function (e) {
 			e.preventDefault();
 			// display the contact form
 			jQuery('#smcf_content').modal({
