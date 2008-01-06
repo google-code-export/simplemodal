@@ -1,6 +1,6 @@
 <?php require_once('../../../../wp-config.php'); ?>
 
-var ajax_url = '<?php echo get_bloginfo('wpurl') . SMCF_DIR ?>/smcf_data.php';
+var smcf_url = '<?php echo get_bloginfo('wpurl') . SMCF_DIR ?>';
 
 // make sure jQuery is loaded
 if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
@@ -16,6 +16,11 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 				onShow: contact.show,
 				onClose: contact.close
 			});
+		});
+		// preload images
+		var img = ['cancel.png','form_bottom.gif','form_top.gif','form_top_ie.gif','loading.gif','send.png'];
+		jQuery(img).each(function () {
+			jQuery('<img>').attr('src', smcf_url + '/img/' + this);
 		});
 	});
 
@@ -63,7 +68,7 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 					}, function () {
 						jQuery('#contactModalContainer .loading').fadeIn(200, function () {
 							jQuery.ajax({
-								url: ajax_url,
+								url: smcf_url + '/smcf_data.php',
 								data: jQuery('#contactModalContainer form').serialize() + '&action=send',
 								dataType: 'html',
 								complete: function (xhr) {

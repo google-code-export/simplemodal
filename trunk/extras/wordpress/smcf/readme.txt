@@ -20,8 +20,8 @@ Currently, you'd have to edit the plugin file (smcf.php) to change the output of
 1. Unzip SMCF archive and put all files/folders into your "plugins" folder (/wp-content/plugins/). You should end up with /wp-content/plugins/smcf/.
 2. Activate the plugin
 3. Go to Options > SimpleModal Contact Form, adjust the options according to your needs, and save them.
-4. In your theme, a) add an id to an existing Contact link or b) add the smcf function call to dynamically create a "Contact" link
-	a) Example: <a href="/contact" id="smcf_link">Contact</a>
+4. In your theme, a) add a CSS class to an existing Contact link or b) add the smcf function call to dynamically create a "Contact" link
+	a) Example: <a href="/contact" class="smcf_link">Contact</a>
 	b) <?php if () : ?>
 	     <?php smcf() ?>
 	 <?php endif; ?>
