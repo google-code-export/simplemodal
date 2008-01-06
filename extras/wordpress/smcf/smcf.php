@@ -26,6 +26,12 @@ Author URI: http://www.ericmmartin.com
 	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+// Public function to create a link for the contact form
+// This can be called from any file in your theme
+function smcf() {
+	echo "<a href='#' class='smcf_link'>Contact</a>";
+}
+
 define ("SMCF_DIR", "/wp-content/plugins/smcf");
 
 class SimpleModalContactForm {
@@ -135,7 +141,7 @@ class SimpleModalContactForm {
 	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
 	<div class='top'></div>
 	<div class='content'>
-		<h1 class='title'>Send us a message:</h1>
+		<h1 class='title'>Send a message:</h1>
 		<div class='loading' style='display:none'></div>
 		<div class='message' style='display:none'></div>
 		<form action='#'>
@@ -166,11 +172,5 @@ add_action('admin_menu', array($smcf, 'submenu'));
 // Include SimpleModal Contact Form code to a page
 add_action('wp_head', array($smcf, 'head'));
 add_action('wp_footer', array($smcf, 'footer'));
-
-// Public function to create a link for the contact form
-// This can be called from a page in your theme
-function smcf() {
-	echo "<a href='#' class='smcf_link'>Contact Us</a>";
-}
 
 ?>
