@@ -1,4 +1,4 @@
-load("build/js/jsmin.js", "build/js/writeFile.js");
+load("../build/js/jsmin.js", "../build/js/writeFile.js");
 
 // arguments
 var inFile = arguments[0];
