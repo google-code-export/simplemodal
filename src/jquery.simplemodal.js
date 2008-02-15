@@ -39,19 +39,21 @@
          width: '600px',
          marginLeft: '-300px',
          backgroundColor: '#fff',
-         border: '3px solid #ccc',
-         padding: '8px'
+         border: '3px solid #ccc'
       },
+      showTitle: true,
+      title: 'Dialog',
+      titleBarCss: {},
+      showClose: true,
+      close: 'X',
+      closeCss: {},
       dataCss: {
          width: '100%',
          height: '100%',
          overflow: 'auto'
       },
-      closeOption: 'image',
-      closeImageCss: {},
-      closeTitleBarCss: {},
+      contentCss: {},
       persist: false,
-      title: '',
       /* Callback functions */
       onOpen: null,
       onShow: null,
@@ -139,27 +141,30 @@
             .hide()
             .appendTo('body');
 
-         // add close, if desired
-         if (this.options.closeOption === 'image') {
+         // create title bar
+         var titleBar = $('<div/>').addClass('simplemodal-titlebar');
+         if (this.options.showTitle) {
+            titleBar.append($('<span/>')
+               .addClass('simplemodal-title')
+               .css(this.options.titleBarCss)
+               .html(this.options.title));
+         }
+         
+         if (this.options.close) {
+            titleBar.append($('<span/>')
+               .addClass('simplemodal-close simplemodal-close-x')
+               .css(this.options.closeCss)
+               .html(this.options.title));
+         }
+            
+            
+            
             this.container.append(
                $('<a/>')
                   .attr('href', '#')
-                  .addClass('simplemodal-close-image')
+                  .addClass('simplemodal-close simplemodal-close-image')
                   .css(this.options.closeImageCss)
-            );
-         }
-         else if (this.options.closeOption === 'titlebar') {
-            this.container.append(
-               $('<div/>')
-                  .addClass('simplemodal-close-title')
-                  .css(this.options.closeImageCss)
-                  .append(this.options.title)
-                  .append(
-                     $('<a/>')
-                        .attr('href', '#')
-                        .addClass('simplemodal-close-title-x')
-                        .css(this.options.closeImageCss)
-                  )
+                  .html('test')
             );
          }
 

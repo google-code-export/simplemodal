@@ -111,7 +111,7 @@ function modalClose (dialog) {
 	dialog.data.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				dialog.close(true);
+				dialog.close();
 			});
 		});
 	});
