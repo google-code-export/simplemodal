@@ -42,7 +42,7 @@ $(document).ready(function () {
 		$.modal("<div class='test'>\
 					<h1>Sample Content</h1>\
 					<p>This example uses a custom close.</p>\
-					<p><a href='#' class='modalClose'>Close</a></p>\
+					<p><a href='#' class='simplemodal-close'>Close</a></p>\
 				</div>", {close:false});
 	});
 	$('a#test8').click(function (e) {
@@ -65,6 +65,21 @@ $(document).ready(function () {
 		e.preventDefault();
 		$.modal('<div class="test"><h1>IE SELECT bleed test</h1></div>');
 	});
+	$('a#test13').click(function (e) {
+		e.preventDefault();
+		$('#modalContentMultipleTest').modal();
+	});
+	$('a#test13a').click(function (e) {
+		e.preventDefault();
+		$('#modalContentTest').modal({
+			overlayCss: {opacity: 1, backgroundColor: '#fff'},
+			containerCss: {top: '5%', left: '5%', marginLeft: 0}
+		});
+	});
+   $('a#test14').click(function (e) {
+      e.preventDefault();
+      $('#modalContentOverflowTest').modal();
+   });
 });
 
 /**
@@ -96,7 +111,7 @@ function modalClose (dialog) {
 	dialog.data.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				$.modal.close();
+				dialog.close(true);
 			});
 		});
 	});
