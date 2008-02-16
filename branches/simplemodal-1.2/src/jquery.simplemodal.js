@@ -142,31 +142,24 @@
             .appendTo('body');
 
          // create title bar
-         var titleBar = $('<div/>').addClass('simplemodal-titlebar');
+         var titleBar = $('<div/>')
+            .addClass('simplemodal-titlebar')
+            .css(this.options.titleBarCss);
+
          if (this.options.showTitle) {
             titleBar.append($('<span/>')
                .addClass('simplemodal-title')
                .css(this.options.titleBarCss)
                .html(this.options.title));
          }
-         
-         if (this.options.close) {
+
+         if (this.options.showClose) {
             titleBar.append($('<span/>')
                .addClass('simplemodal-close simplemodal-close-x')
                .css(this.options.closeCss)
-               .html(this.options.title));
+               .html(this.options.close));
          }
-            
-            
-            
-            this.container.append(
-               $('<a/>')
-                  .attr('href', '#')
-                  .addClass('simplemodal-close simplemodal-close-image')
-                  .css(this.options.closeImageCss)
-                  .html('test')
-            );
-         }
+         this.container.append(titleBar);
 
          // create data
          this.options.dataId = this.options.dataId || 'simplemodal-data-' + this.guid;         
