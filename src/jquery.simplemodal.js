@@ -1,93 +1,158 @@
 (function () {
-	$.modal = $.modal || {};
-
-	$.fn.extend({
-		modal: function(options) {
-			var args = Array.prototype.slice.call(arguments, 1);
-			return this.each(function() {
-				if (typeof options == "string") {
-					var modal = $.data(this, "simplemodal-dialog");
-					modal[options].apply(modal, args);
-
-				} else if(!$.data(this, "simplemodal-dialog"))
-					new $.modal.dialog(this, options);
-			});
-		}
-	});
-	
-	$.modal.dialog = function(element, options) {
-		this.options = $.extend({}, $.modal.dialog.defaults, options);
-		this.element = element;
-		var self = this;
-		
-		// create the dialog
-		
-		
-	};
-	
-	$.extend($.modal.dialog.prototype, {
-		open: function () {
-		
-		},
-		close: function () {
-		
-		}
-	};
-	
-	$.extend($.modal.dialog, {
-		defaults: {
-			autoOpen: true,
-			bgiframe: false,
-			buttons: [],
-			draggable: true,
-			height: 200,
-			minHeight: 100,
-			minWidth: 150,
-			modal: false,
-			overlay: {},
-			position: 'center',
-			resizable: true,
-			width: 300,
-			zIndex: 1000
-		}
-	}
-});
-
-/*
 	$.fn.modal = function (options) {
-		// "this" will always be a jQuery object
 		return this.each(function () {
-			new $.modal.dialog(this, options);
+			new $.modal.dialog($(this), options);
 		});
 	};
 
-	$.modal = function (content, options) {
+	$.modal = function (obj, options) {
+		var element;
+		
 		// determine the datatype for content and handle accordingly
-		if (typeof content == 'object') {
+		if (typeof obj == 'object') {
 			// convert to a jQuery object, if necessary
-			content = content instanceof jQuery ? content : $(content);
+			element = obj instanceof jQuery ? obj : $(obj);
 		}
-		else if (typeof content == 'string' || typeof content == 'number') {
+		else if (typeof obj == 'string' || typeof obj == 'number') {
 			// just insert the content as innerHTML
-			content = $('<div/>').html(content);
+			element = $('<div/>').html(obj);
 		}
 		else {
-			// unsupported data type!
+			// unsupported data type
 			if (window.console) {
-				console.log('SimpleModal Error: Unsupported data type: ' + typeof content);
+				console.log('SimpleModal Error: Unsupported data type: ' + typeof obj);
 			}
 			return false;
 		}
-		return content.modal(options);
+		return element.modal(options);
+	};
+
+	$.modal.defaults = {
+		onOpen: null,
+		onShow: null,
+		onClose: null,
+		bgiframe: false,
+		zIndex: 2000,
+		overlayCss: {
+			opacity: .5,
+			background: '#000'
+		},
+		containerCss: {
+			background: '#fff',
+			border: '2px solid #ccc'
+		},
+		contentCss: {
+			overflow: 'auto',
+			width: '100%',
+			height: '100%'
+		}
 	};
 	
-	$.modal.dialog = function (content, options) {
+	$.modal.dialog = function (element, options) {
 		this.options = $.extend({}, $.modal.defaults, options);
-	};
-	
-	// instance methods
-	$.modal.dialog.prototype = {
 		
+		this.ie6 = $.browser.msie && $.browser.version < 7 ? true : false;
+		this.id = $.data(this, 'simplemodal-dialog');
+		this.body = {};
+		this.body.height = $('body').css('height') || $('body').height();
+		this.body.width = $('body').css('width') || $('body').width();
+		this.body.overflow = $('body').css('overflow') || 'visible';
+		this.body.scrollOffset = window.pageYOffset || document.body.scrollTop;
+			
+		this.overlay = $('<div/>')
+			.addClass('simplemodal-overlay')
+			.css($.extend(this.options.overlayCss, {
+				height: '100%',
+				width: '100%',
+				position: 'fixed',
+				left: 0,
+				top: 0,
+				zIndex: ++this.options.zIndex
+			}))
+			.hide()
+			.appendTo('body');
+				
+		this.container = $('<div/>')
+			.addClass('simplemodal-container')
+			.css($.extend(this.options.containerCss, {
+				position: 'fixed',
+				zIndex: ++this.options.zIndex
+			}))
+			.hide()
+			.appendTo('body');
+			
+		this.content = $('<div/>')
+			.addClass('simplemodal-content')
+			.css($.extend(this.options.contentCss, {}))
+			.append(element)
+			.appendTo(this.container)
+			.hide();
+			
+		// fix IE 6 issues
+		if (this.ie6) {
+			// add an iframe to fix z-index issues
+			this.options.bgiframe && $.fn.bgiframe 
+				? this.overlay.bgiframe() // use bgiframe, if available
+				: this.iframe = $('<iframe src="javascript:false;">')
+					.addClass('simplemodal-iframe')
+					.css($.extend({}, {
+						opacity: 0, 
+						position: 'absolute',
+						height: '100%',
+						width: '100%',
+						zIndex: this.overlay.css('zIndex') - 1,
+						top: 0,
+						left: 0
+					}))
+					.hide()
+					.appendTo('body');
+		}
+
+		this.open();
+		
+		// increment z-index to ensure uniqueness
+		$.modal.defaults.zIndex += 5;
 	};
-*/
+
+	$.modal.dialog.prototype = {
+		open: function () {
+			$('body').css({
+				overflow: 'hidden',
+				height: $(window).height(),
+				width: $(window).width()
+			});
+			$.isFunction(this.options.onOpen) 
+				? this.options.onOpen.apply(this, [this]) 
+				: this.content.show() 
+					&& this.container.show() 
+					&& this.overlay.show()
+					&& (this.ie6 && this.iframe.show());
+
+			// onShow callback
+			$.isFunction(this.options.onShow) && this.options.onShow.apply(this, [this]);
+			
+			// bind close event(s)
+			var self = this;
+			this.overlay.bind('click.simplemodal-' + this.id, function (e) {
+				e.preventDefault();
+				self.close();
+			});
+		},
+		close: function () {
+			$.isFunction(this.options.onClose) 
+				? this.options.onClose.apply(this, [this]) 
+				: this.content.hide() 
+					&& this.container.hide() 
+					&& this.overlay.hide()
+					&& (this.ie6 && this.iframe.hide());
+					
+			$('body').css({
+				height: this.body.height,
+				width: this.body.width,
+				overflow: this.body.overflow
+			});
+			console.log(this.body.scrollOffset);
+			window.scroll(0, this.body.scrollOffset);
+		}
+	}
 })(jQuery);
