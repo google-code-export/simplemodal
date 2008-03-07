@@ -39,7 +39,9 @@
 		},
 		containerCss: {
 			background: '#fff',
-			border: '2px solid #ccc'
+			border: '2px solid #ccc',
+			top: 0,
+			left: 0
 		},
 		contentCss: {
 			overflow: 'auto',
@@ -57,10 +59,9 @@
 		this.body.height = $('body').css('height') || $('body').height();
 		this.body.width = $('body').css('width') || $('body').width();
 		this.body.overflow = $('body').css('overflow') || 'visible';
-		this.body.scrollOffset = window.pageYOffset || document.body.scrollTop;
+		this.body.scrollOffset = window.pageYOffset || $.boxModel && document.documentElement.scrollTop || document.body.scrollTop;
 			
-		this.overlay = $('<div/>')
-			.addClass('simplemodal-overlay')
+		this.overlay = $('<div class="simplemodal-overlay"/>')
 			.css($.extend(this.options.overlayCss, {
 				height: '100%',
 				width: '100%',
@@ -72,8 +73,7 @@
 			.hide()
 			.appendTo('body');
 				
-		this.container = $('<div/>')
-			.addClass('simplemodal-container')
+		this.container = $('<div class="simplemodal-container"/>')
 			.css($.extend(this.options.containerCss, {
 				position: 'fixed',
 				zIndex: ++this.options.zIndex
@@ -81,8 +81,7 @@
 			.hide()
 			.appendTo('body');
 			
-		this.content = $('<div/>')
-			.addClass('simplemodal-content')
+		this.content = $('<div class="simplemodal-content"/>')
 			.css($.extend(this.options.contentCss, {}))
 			.append(element)
 			.appendTo(this.container)
@@ -93,8 +92,7 @@
 			// add an iframe to fix z-index issues
 			this.options.bgiframe && $.fn.bgiframe 
 				? this.overlay.bgiframe() // use bgiframe, if available
-				: this.iframe = $('<iframe src="javascript:false;">')
-					.addClass('simplemodal-iframe')
+				: this.iframe = $('<iframe src="javascript:false;" class="simplemodal-iframe">')
 					.css($.extend({}, {
 						opacity: 0, 
 						position: 'absolute',
@@ -115,12 +113,22 @@
 	};
 
 	$.modal.dialog.prototype = {
-		open: function () {
+		open: function () {			
 			$('body').css({
-				overflow: 'hidden',
 				height: $(window).height(),
 				width: $(window).width()
 			});
+
+			$('body').contents().wrapAll(
+				$('<div class="simplemodal-body-wrap"/>')
+					.css({
+						overflow: 'hidden',
+						height: $(window).height(),
+						width: $(window).width()
+					})
+			);
+			$('.simplemodal-body-wrap')[0].scrollTop = this.body.scrollOffset;
+
 			$.isFunction(this.options.onOpen) 
 				? this.options.onOpen.apply(this, [this]) 
 				: this.content.show() 
@@ -146,13 +154,22 @@
 					&& this.overlay.hide()
 					&& (this.ie6 && this.iframe.hide());
 					
-			$('body').css({
-				height: this.body.height,
-				width: this.body.width,
-				overflow: this.body.overflow
-			});
-			console.log(this.body.scrollOffset);
+			this.content.remove() 
+					&& this.container.remove() 
+					&& this.overlay.remove()
+					&& (this.ie6 && this.iframe.remove());
+					
+			var wrap = $('.simplemodal-body-wrap');
+			wrap.contents().appendTo(
+				$('body').css({
+					height: this.body.height,
+					width: this.body.width
+				})
+			);
+			wrap.remove();
 			window.scroll(0, this.body.scrollOffset);
+			
+			this.overlay.unbind('click.simplemodal-' + this.id);
 		}
 	}
 })(jQuery);
