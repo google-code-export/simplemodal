@@ -40,8 +40,11 @@
 		containerCss: {
 			background: '#fff',
 			border: '2px solid #ccc',
-			top: 0,
-			left: 0
+			top: '15%',
+			left: '50%',
+			marginLeft: '-200px',
+			height: '400px',
+			width: '400px'
 		},
 		contentCss: {
 			overflow: 'auto',
@@ -145,6 +148,10 @@
 				e.preventDefault();
 				self.close();
 			});
+			$(window).bind('keypress.simplemodal-' + this.id, function (e) {
+				e.preventDefault();
+				e.keyCode == 27 && self.close();
+			});
 		},
 		close: function () {
 			$.isFunction(this.options.onClose) 
@@ -170,6 +177,7 @@
 			window.scroll(0, this.body.scrollOffset);
 			
 			this.overlay.unbind('click.simplemodal-' + this.id);
+			$(window).unbind('keypress.simplemodal-' + this.id);
 		}
 	}
 })(jQuery);

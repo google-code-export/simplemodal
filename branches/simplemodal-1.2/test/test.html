@@ -36,8 +36,12 @@ $(document).ready(function () {
 	}
 	$('a#modal-20').click(function (e) {
 		e.preventDefault();
-		$('<div>test a</div>').modal({onShow: function () {
+		$('<div><a href="#" id="second">second dialog</a></div>').modal({onShow: function () {
 			window.console && console.log('onShow');
+			$('a#second').click(function (e) {
+				e.preventDefault();
+				$('<div>test a</div>').modal();
+			});
 		}});
 	});
 	
