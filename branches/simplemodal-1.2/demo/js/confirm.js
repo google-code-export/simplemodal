@@ -30,16 +30,16 @@ function confirm(message, callback) {
 		overlayId:'confirmModalOverlay',
 		containerId:'confirmModalContainer', 
 		onShow: function (dialog) {
-			dialog.data.find('.message').append(message);
+			dialog.content.find('.message').append(message);
 
 			// if the user clicks "yes"
-			dialog.data.find('.yes').click(function () {
+			dialog.content.find('.yes').click(function () {
 				// call the callback
 				if ($.isFunction(callback)) {
 					callback.apply();
 				}
 				// close the dialog
-				$.modal.close();
+				dialog.close();
 			});
 		}
 	});
