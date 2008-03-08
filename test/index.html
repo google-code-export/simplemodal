@@ -59,7 +59,7 @@
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
 		dialog.container.fadeIn('slow', function () {
-			dialog.data.hide().slideDown('slow');	 
+			dialog.content.hide().slideDown('slow');	 
 		});
 	});
 }</code></pre></li>
@@ -75,10 +75,10 @@ function modalOpen (dialog) {
  * and data.
  */
 function modalClose (dialog) {
-	dialog.data.fadeOut('slow', function () {
+	dialog.content.fadeOut('slow', function () {
 		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				dialog.close();
+				dialog.remove();
 			});
 		});
 	});
@@ -93,8 +93,8 @@ function modalClose (dialog) {
  */
 function modalShow (dialog) {
 	$('input.animate').one('click', function () {
-		dialog.data.slideUp('slow', function () {
-			dialog.data.slideDown('slow');
+		dialog.content.slideUp('slow', function () {
+			dialog.content.slideDown('slow');
 		});
 	});
 }</code></pre></li>
@@ -187,5 +187,18 @@ function modalShow (dialog) {
    mollit anim id est laborum.</p>
 </div>
 <div style='height: 50px;'>&nbsp;</div>
+<script type="text/javascript">
+if (document.location.protocol != 'file:') {
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+}
+</script>
+<script type="text/javascript">
+if (document.location.protocol != 'file:') {
+var pageTracker = _gat._getTracker("UA-2691485-4");
+pageTracker._initData();
+pageTracker._trackPageview();
+}
+</script>
 </body>
 </html>
