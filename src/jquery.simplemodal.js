@@ -279,7 +279,7 @@
 		this.overlay.show();
 		this.container.show();
 		this.content.show();
-		this.content.focus();
+		$(':input:visible:first', this.content).focus();
 	}
 
 	/**
@@ -300,18 +300,19 @@
 		});
 
 		// click to close any element with a class of simplemodal-close
-		this.container.find('.simplemodal-close').bind('click.simplemodal-close-' + this.id, function (e) {
+		$('.simplemodal-close', this.container).bind('click.simplemodal-close-' + this.id, function (e) {
 			e.preventDefault();
 			dialog.close();
 		});
 
-		// watch TAB - used keyup because IE doesn't recognize keypress and keydown fires too early
+		/*watch TAB - used keyup because IE doesn't recognize keypress and keydown fires too early
 		$().bind('keyup.simplemodal-keyup', function (e) {
 			e.keyCode == 9 && _keyWatch.apply(dialog.content, [e]); // tab
-		});
+		});*/
 
 		// watch ESC and ENTER - again, can't use keypress (IE) and keyup fires to late (ENTER)
 		$().bind('keydown.simplemodal-keydown', function (e) {
+			e.keyCode == 9 && _keyWatch.apply(dialog.content, [e]); // tab
 			e.keyCode == 13 && _keyWatch.apply(dialog.content, [e]); // enter
 			e.keyCode == 27 && dialog.close(); // esc
 		});
@@ -322,7 +323,7 @@
 	 */
 	function _unbindEvents () {
 		this.overlay.unbind('click.simplemodal-overlay' + this.id);
-		this.container.find('.simplemodal-close').unbind('click.simplemodal-close' + this.id);
+		$('.simplemodal-close', this.container).unbind('click.simplemodal-close' + this.id);
 		$().unbind('keyup.simplemodal-keyup').unbind('keydown.simplemodal-keydown');
 	}
 
@@ -336,8 +337,8 @@
 	 */
 	function _keyWatch (e) {
 		if (!$(e.target).parents().andSelf().hasClass('simplemodal-content')) {
-			e.preventDefault();
-			this.focus();
+			//e.preventDefault();
+			$(':input:visible:first', this).focus();
 		}
 	}
 
