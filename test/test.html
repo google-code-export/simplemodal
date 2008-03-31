@@ -14,7 +14,16 @@
 <script src='../src/simplemodal.js' type='text/javascript'></script>
 <script type='text/javascript'>
 	$(document).ready(function () {
-		$.modal('<h1>Basid Dialog</h1>');
+		var a,b;
+		$('#basic').click(function (e) {
+			e.preventDefault();
+			$.modal('<h1>Basic Dialog</h1>');
+		});
+		
+		$('#ajax').click(function (e) {
+			e.preventDefault();
+			$.modal({ajax: 'data/ajax.html'});
+		});
 	});
 </script>
 <!--[if IE]>
@@ -34,7 +43,8 @@
 	<div id='header'><h1>SimpleModal Tests</h1></div>
 	<div id='content'>
 		<ul>
-			<li><a href='#' id='basic'>Basic Dialog</a>(&lt;h1&gt;Basic Dialog&lt;/h1&gt;)</li>
+			<li><a href='#' id='basic'>Basic Dialog</a>('&lt;h1&gt;Basic Dialog&lt;/h1&gt;')</li>
+			<li><a href='#' id='ajax'>Ajax Dialog</a>({ajax: 'data/ajax.html'})</li>
 		</ul>
 	</div>
 </div>

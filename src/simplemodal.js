@@ -1,5 +1,9 @@
 (function ($) {
 
+	// private variables
+	var smid = 0;
+	var dialogs = [];
+
 	// action function
 	$.extend($.fn, {
 		modal: function (options) {
@@ -29,27 +33,34 @@
 					},
 					success: function (data) {
 						element = $('<div/>').append(data);
+						
+						// contents/children?
+
+						// call the action function
+						return element.modal(options);
 					}
 				});
 			}
 		}
-
-		// determine the datatype for content and handle accordingly
-		if (typeof obj == 'object') {
-			// convert to a jQuery object, if necessary
-			element = obj instanceof jQuery ? obj : $(obj);
-		}
-		else if (typeof obj == 'string' || typeof obj == 'number') {
-			// just insert the content as innerHTML
-			element = $('<div/>').html(obj);
-		}
 		else {
-			// unsupported data type
-			window.console && console.log('SimpleModal Error: Unsupported data type: ' + typeof obj);
-			return false;
+			// determine the datatype for content and handle accordingly
+			if (typeof obj == 'object') {
+				// convert to a jQuery object, if necessary
+				element = obj instanceof jQuery ? obj : $(obj);
+			}
+			else if (typeof obj == 'string' || typeof obj == 'number') {
+				// just insert the content as innerHTML
+				element = $('<div/>').html(obj);
+			}
+			else {
+				// unsupported data type
+				window.console && console.log('SimpleModal Error: Unsupported data type: ' + typeof obj);
+				return false;
+			}
+
+			// call the action function
+			return element.modal(options);
 		}
-		// call the action function
-		element.modal(options);
 	};
 
 	$.modal.defaults = {
@@ -58,17 +69,51 @@
 		onShow: null,			// called after the dialog is opened - usually used for binding events to the dialog
 		onClose: null,			// called when the close event is fired - usually used for custom closing effects
 		/* Ajax options */
-		ajax: null 				// just a reminder for the options property used for ajax calls
+		ajax: null,				// just a reminder for the options property used for ajax calls
 		cache: false,			// ajax cache (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
 		method: 'GET',			// ajax method (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
 		dataType: 'html',		// ajax dataType (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
 		/* Effect options */
 		effect: null,			// effect options: [slide, fade]
-		speed: null				// effect speed options: [slow, normal, fast, # of milliseconds]
+		speed: null,			// effect speed options: [slow, normal, fast, # of milliseconds]
+		/* Options */
+		autoOpen: true,
+		modal: true,
+		persist: false
+
 	};
 
 	$.modal.dialog = function (element, options) {
 		this.options = $.extend({}, $.modal.defaults, options);
+
+		var self = this;
+
+		this.overlay = $('<div/>')
+			.attr('smid', ++smid)
+			.addClass('simplemodal-overlay')
+			.css({
+				display: 'none'
+			})
+			.appendTo('body');
+
+		this.container = $('<div/>')
+			.attr('smid', smid)
+			.addClass('simplemodal-container')
+			.css({
+				display: 'none'
+			})
+			.appendTo('body');
+
+		this.data = $('<div/>')
+			.attr('smid', smid)
+			.addClass('simplemodal-data')
+			.css({
+				display: 'none'
+			})
+			.appendTo(this.container);
+
+		// add the data and make sure it's visible
+		element.show().appendTo(this.data);
 	};
 
 	$.extend($.modal.dialog.prototype, {
