@@ -209,6 +209,9 @@
 				_addDialog.apply(this);
 			}
 
+			// get a list of tabbable elements
+			this.contentElements = $('a, :input:visible', this.container);
+
 			$.isFunction(this.options.onOpen) 
 				? this.options.onOpen.apply(this, [this]) 
 				: _showDialog.apply(this);
@@ -279,7 +282,8 @@
 		this.overlay.show();
 		this.container.show();
 		this.content.show();
-		$(':input:visible:first', this.content).focus();
+		
+		this.contentElements.length > 0 ? $(':input:visible:first', this.content).focus() : this.content.focus();
 	}
 
 	/**
@@ -305,15 +309,15 @@
 			dialog.close();
 		});
 
-		/*watch TAB - used keyup because IE doesn't recognize keypress and keydown fires too early
+		// watch TAB - used keyup because IE doesn't recognize keypress and keydown fires too early
 		$().bind('keyup.simplemodal-keyup', function (e) {
-			e.keyCode == 9 && _keyWatch.apply(dialog.content, [e]); // tab
-		});*/
+			//e.keyCode == 9 && _keyWatch.apply(dialog, [e]); // tab
+		});
 
 		// watch ESC and ENTER - again, can't use keypress (IE) and keyup fires to late (ENTER)
 		$().bind('keydown.simplemodal-keydown', function (e) {
-			e.keyCode == 9 && _keyWatch.apply(dialog.content, [e]); // tab
-			e.keyCode == 13 && _keyWatch.apply(dialog.content, [e]); // enter
+			e.keyCode == 9 && _keyWatch.apply(dialog, [e]); // tab
+			e.keyCode == 13 && _keyWatch.apply(dialog, [e]); // enter
 			e.keyCode == 27 && dialog.close(); // esc
 		});
 	}
@@ -336,9 +340,18 @@
 	 * @param {Object} e A key* event 
 	 */
 	function _keyWatch (e) {
-		if (!$(e.target).parents().andSelf().hasClass('simplemodal-content')) {
-			//e.preventDefault();
-			$(':input:visible:first', this).focus();
+		var dialog = this;
+		if (this.contentElements.length == 0) {
+			this.content.focus();
+		}
+		else if ((e.shiftKey && e.target == this.contentElements[0]) 
+			|| e.target == this.contentElements[this.contentElements.length - 1]) {
+			$(':input:visible:first', dialog.content).focus();
+			setTimeout(function () {
+				//$(':input:visible:first', dialog.content).focus();
+			}, 1);
+			
+			//return false;
 		}
 	}
 
