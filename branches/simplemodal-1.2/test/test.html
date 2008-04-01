@@ -14,7 +14,7 @@
 <script src='../src/simplemodal.js' type='text/javascript'></script>
 <script type='text/javascript'>
 	$(document).ready(function () {
-		var a,b;
+		$('#action1').modal({autoOpen:false});
 		$('#basic').click(function (e) {
 			e.preventDefault();
 			$.modal('<h1>Basic Dialog</h1>');
@@ -23,6 +23,15 @@
 		$('#ajax').click(function (e) {
 			e.preventDefault();
 			$.modal({ajax: 'data/ajax.html'});
+		});
+		
+		$('#basic1open').click(function (e) {
+			e.preventDefault();
+			$('#action1').modal('open');
+		});
+		$('#basic1close').click(function (e) {
+			e.preventDefault();
+			$('#action1').modal('close');
 		});
 	});
 </script>
@@ -43,10 +52,15 @@
 	<div id='header'><h1>SimpleModal Tests</h1></div>
 	<div id='content'>
 		<ul>
-			<li><a href='#' id='basic'>Basic Dialog</a>('&lt;h1&gt;Basic Dialog&lt;/h1&gt;')</li>
-			<li><a href='#' id='ajax'>Ajax Dialog</a>({ajax: 'data/ajax.html'})</li>
+			<li><a href='#' id='basic'>Basic Dialog</a>$.modal('&lt;h1&gt;Basic Dialog&lt;/h1&gt;')</li>
+			<li><a href='#' id='ajax'>Ajax Dialog</a>$.modal({ajax: 'data/ajax.html'})</li>
+			<li><a href='#' id='basic1open'>Basic Dialog Open</a> :: <a href='#' id='basic1close'>Basic Dialog Close</a> $('#action1').modal()</li>
 		</ul>
 	</div>
+</div>
+<div id='action1' style='display:none'>
+	<h1>This is a DOM element</h1>
+	<p>There's nothing to see here...</p>
 </div>
 </body>
 </html>
