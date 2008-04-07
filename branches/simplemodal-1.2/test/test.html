@@ -33,6 +33,10 @@
 			e.preventDefault();
 			$('#action1').modal('close');
 		});
+		$('#basic1destroy').click(function (e) {
+			e.preventDefault();
+			$('#action1').modal('destroy');
+		});
 	});
 </script>
 <!--[if IE]>
@@ -54,7 +58,7 @@
 		<ul>
 			<li><a href='#' id='basic'>Basic Dialog</a>$.modal('&lt;h1&gt;Basic Dialog&lt;/h1&gt;')</li>
 			<li><a href='#' id='ajax'>Ajax Dialog</a>$.modal({ajax: 'data/ajax.html'})</li>
-			<li><a href='#' id='basic1open'>Basic Dialog Open</a> :: <a href='#' id='basic1close'>Basic Dialog Close</a> $('#action1').modal()</li>
+			<li><a href='#' id='basic1open'>Basic Dialog Open</a> :: <a href='#' id='basic1close'>Basic Dialog Close</a>  :: <a href='#' id='basic1destroy'>Basic Dialog Destroy</a> $('#action1').modal()</li>
 		</ul>
 	</div>
 </div>
