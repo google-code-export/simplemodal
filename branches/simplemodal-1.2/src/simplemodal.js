@@ -35,6 +35,10 @@
 
 	// private variables
 	var smid = 0;
+	var zIndex = 1;
+	var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent);
+	var wHeight = $(window).height();
+	var wWidth = $(window).width();
 
 	// action function
 	$.extend($.fn, {
@@ -120,14 +124,15 @@
 		dataType: 'html',		// ajax dataType (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
 		/* Options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
+		autoCenter: true,		// center the dialog in the browser
 		modal: true,			// modal add overlay and prevents tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
-		zIndex: 3000,
+		zIndex: null,				// the starting z-index value
 		/* Element ID's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
 		//containerId: null,	// if not provided, a unique id (simplemodal-container-#) will be generated
 		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
-		iframeId: null,			// if not provided, a unique id (simplemodal-ifram-#) will be generated
+		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* CSS */
 		overlayCss: null,
 		//containerCss: null,
@@ -139,13 +144,26 @@
 	
 	$.modal.overlayCss = {
 		background: '#000',
-		display: 'none',
 		height: '100%',
 		left: 0,
 		opacity: .6,
 		position: 'fixed',
 		top: 0,
 		width: '100%'
+	};
+	
+	$.modal.dataCss = {
+		background: '#fff',
+		left: 0,
+		position: 'fixed',
+		top: 0
+	};
+	
+	$.modal.iframeCss = {
+		left: 0,
+		opacity: 0,
+		position: 'fixed',
+		top: 0
 	};
 
 	$.modal.dialog = function (element, options) {
@@ -163,13 +181,35 @@
 
 		// get a unique id
 		var uid = ++smid;
+		
+		// set z-index
+		if (!options || (options && !options.zIndex)) {
+			zIndex = uid * 1000;
+		}
+		
+		// create the iframe for ie6
+		if (ie6) {
+			this.iframe = $('<div/>')
+				.attr('id', this.options.iframeId || 'simplemodal-iframe-' + uid)
+				.addClass('simplemodal-iframe')
+				.css($.extend({
+						display: 'none',
+						zIndex: zIndex
+					},
+					$.modal.iframeCss,
+					this.options.iframeCss
+				))
+				.appendTo('body');
+		}
 
 		// create the overlay
 		this.overlay = $('<div/>')
 			.attr('id', this.options.overlayId || 'simplemodal-overlay-' + uid)
 			.addClass('simplemodal-overlay')
-			.css($.extend(
-				{},
+			.css($.extend({
+					display: 'none',
+					zIndex: zIndex + 1
+				},
 				$.modal.overlayCss,
 				this.options.overlayCss
 			))
@@ -199,29 +239,45 @@
 		else {
 			this.data.appendTo('body');
 		}
+
 		// add styling and attributes to the data
 		this.data
 			.attr('id', element.attr('id') || this.options.dataId || 'simplemodal-data-' + uid)
 			.addClass('simplemodal-data')
-			.css({
-				// TODO - styles
-				display: 'none'
-			});
+			.css($.extend({
+					display: 'none',
+					zIndex: zIndex + 2
+				},
+				$.modal.dataCss,
+				this.options.dataCss
+			));
+
+		// TODO - position data element
+		if (this.options.autoCenter) {
+			position(this.data);
+		}
 
 		// open the dialog if autoOpen is true
 		this.options.autoOpen && this.open();
 		
 		// TODO - bind events here?
-		this.overlay.bind('click.simplemodal-overlay', function () {self.close();});
+		this.overlay.bind('click.' + this.overlay.attr('id'), function () {self.close();});
+		
+		// update window size
+		$(window).bind('resize.' + this.overlay.attr('id'), function () {
+			wHeight = $(window).height();
+			wWidth = $(window).width();
+			position(self.data);
+		});
 	};
 
 	$.extend($.modal.dialog.prototype, {
 		open: function () {
 			var self = this;
 			
-			// TODO - ie6 issues - create iframe?
-			
-			// TODO - dialog positioning ?
+			if (ie6) {
+				fixIE([self.iframe, self.overlay, self.data]);
+			}
 
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
@@ -261,6 +317,11 @@
 		},
 		destroy: function () {
 			$.removeData(this.data[0], 'simplemodal');
+
+			// TODO - unbinding events
+			this.overlay.unbind('click.' + this.overlay.attr('id'));
+			$(window).unbind('resize.' + this.overlay.attr('id'));
+			
 			this.iframe && this.iframe.remove();
 			this.overlay.remove();
 			//this.container.remove();
@@ -283,12 +344,21 @@
 				// otherwise, remove it
 				this.data.remove();
 			}
-			
-			// TODO - unbinding events
-			this.overlay.unbind('click.simplemodal-overlay');
 		}
 	});
 	
 	// private functions
+	function position (el) {
+		el.css({
+			left: (wWidth/2) - (el.width()/2),
+			top: (wHeight/2) - (el.height()/2)
+		});
+	}
+	
+	function fixIE (els) {
+		$.each(els, function (i, el) {
+			el.css({position: 'absolute'});
+		});
+	}
 
 })(jQuery);
