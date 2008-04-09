@@ -15,7 +15,7 @@
  * Revision: $Id$
  *
  */
- 
+
  /* TODO -
  *
  * - prevent tabbing for modal dialog
@@ -34,11 +34,9 @@
 (function ($) {
 
 	// private variables
-	var smid = 0;
-	var zIndex = 1;
+	var smid = 0, wProps = [], zIndex = 1;
 	var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent);
-	var wHeight = $(window).height();
-	var wWidth = $(window).width();
+	var ie7qm = $.browser.msie && /MSIE 7.0/.test(navigator.userAgent) && !$.boxModel;
 
 	// action function
 	$.extend($.fn, {
@@ -46,14 +44,11 @@
 			var args = Array.prototype.slice.call(arguments, 1);
 			return this.each(function () {
 				if (typeof options == 'string') {
-					//var elem = $(this).is('.simplemodal-data')
-					//	? this
-					//	: $(this).parents('.simplemodal-container').find('.simplemodal-data')[0];
 					var dialog = $(this).is('.simplemodal-data') ? $.data(this, 'simplemodal') : {};
 					if (dialog[options]) {
 						dialog[options].apply(dialog, args);
 					}
-				} 
+				}
 				else if (!$(this).is('.simplemodal-data')) {
 					new $.modal.dialog($(this), options);
 				}
@@ -63,7 +58,7 @@
 
 	// utility function
 	$.modal = function (obj, options) {
-		var element;
+		var element = null;
 
 		// check for an ajax request - there will only be one argument, which
 		// will actually be the options object and it will contain an ajax property
@@ -83,10 +78,11 @@
 					},
 					success: function (data) {
 						// wrap in a div for safe parsing
+						//element = $('<div/>').append(data).appendTo('body');
 						element = $('<div/>').append(data);
 
 						// call the action function
-						return element.modal(options);
+						return element.hide().modal(options);
 					}
 				});
 			}
@@ -99,6 +95,7 @@
 			}
 			else if (typeof obj == 'string' || typeof obj == 'number') {
 				// just insert the content as innerHTML
+				//element = $('<div/>').html(obj).appendTo('body');
 				element = $('<div/>').html(obj);
 			}
 			else {
@@ -108,7 +105,7 @@
 			}
 
 			// call the action function
-			return element.modal(options);
+			return element.hide().modal(options);
 		}
 	};
 
@@ -117,29 +114,26 @@
 		onOpen: null,			// called after the dialog elements are created - usually used for custom opening effects
 		onShow: null,			// called after the dialog is opened - usually used for binding events to the dialog
 		onClose: null,			// called when the close event is fired - usually used for custom closing effects
-		/* Ajax options */
+		/* Ajax options (see: http://docs.jquery.com/Ajax/jQuery.ajax#options) */
 		ajax: null,				// ajax url
-		cache: false,			// ajax cache (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
-		method: 'GET',			// ajax method (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
-		dataType: 'html',		// ajax dataType (see: http://docs.jquery.com/Ajax/jQuery.ajax#options)
+		cache: false,
+		method: 'GET',
+		dataType: 'html',
 		/* Options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
-		autoCenter: true,		// center the dialog in the browser
+		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
+		position: 'center',	// position of the dialog
 		modal: true,			// modal add overlay and prevents tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
-		zIndex: null,				// the starting z-index value
+		zIndex: null,			// the starting z-index value
 		/* Element ID's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
-		//containerId: null,	// if not provided, a unique id (simplemodal-container-#) will be generated
 		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* CSS */
 		overlayCss: null,
-		//containerCss: null,
 		dataCss: null,
 		iframeCss: null
-		
-
 	};
 	
 	$.modal.overlayCss = {
@@ -162,7 +156,7 @@
 	$.modal.iframeCss = {
 		left: 0,
 		opacity: 0,
-		position: 'fixed',
+		position: 'absolute',
 		top: 0
 	};
 
@@ -187,9 +181,12 @@
 			zIndex = uid * 1000;
 		}
 		
+		// set the window properties
+		wProps = _getDimensions($(window));
+		
 		// create the iframe for ie6
 		if (ie6) {
-			this.iframe = $('<div/>')
+			this.iframe = $('<iframe src="javascript:false;"/>')
 				.attr('id', this.options.iframeId || 'simplemodal-iframe-' + uid)
 				.addClass('simplemodal-iframe')
 				.css($.extend({
@@ -215,29 +212,17 @@
 			))
 			.appendTo('body');
 
-		/* create the container that holds the data
-		this.container = $('<div/>')
-			.attr('id', this.options.containerId || 'simplemodal-container-' + uid)
-			.addClass('simplemodal-container')
-			.css({
-				// TODO - styles
-				display: 'none'
-			})
-			.appendTo('body');
-		*/
-
-		// if the data came from the DOM, keep track of its parent, otherwise, insert it into the DOM
 		this.data = element;
-		if (element.parent().parent().length > 0) {
-			this.parent = element.parent();
+		
+		var a = $('body').find(element[0]);
+		//alert(a);
 
-			// persist changes? if not, make a clone of the element
-			if (!this.options.persist) {
-				this.original = element.clone(true);
-			}
-		}
-		else {
-			this.data.appendTo('body');
+		// keep track of parent element
+		this.parent = element.parent();
+
+		// persist changes? if not, make a clone of the element
+		if (!this.options.persist) {
+			this.original = element.clone(true);
 		}
 
 		// add styling and attributes to the data
@@ -253,9 +238,7 @@
 			));
 
 		// TODO - position data element
-		if (this.options.autoCenter) {
-			position(this.data);
-		}
+		_setPosition(this.options.position, this.data);
 
 		// open the dialog if autoOpen is true
 		this.options.autoOpen && this.open();
@@ -263,11 +246,19 @@
 		// TODO - bind events here?
 		this.overlay.bind('click.' + this.overlay.attr('id'), function () {self.close();});
 		
+		// TODO - handle multiple dialogs?
+		$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {if (e.keyCode == 27) {self.close();}});
+		
 		// update window size
 		$(window).bind('resize.' + this.overlay.attr('id'), function () {
-			wHeight = $(window).height();
-			wWidth = $(window).width();
-			position(self.data);
+			// redetermine the window width/height
+			wProps = _getDimensions($(window));
+			
+			// reposition the dialog
+			_setPosition(self.options.position, self.data);
+			
+			// update the overlay and iframe for ie6
+			ie6 && _fixIE6(self);
 		});
 	};
 
@@ -275,9 +266,11 @@
 		open: function () {
 			var self = this;
 			
-			if (ie6) {
-				fixIE([self.iframe, self.overlay, self.data]);
-			}
+			// perform ie6 fixes
+			ie6 && _fixIE6(self);
+			
+			// perform ie7 quirksmode fixes
+			ie7qm && _fixIE7([self.overlay, self.data]);
 
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
@@ -287,7 +280,6 @@
 			else {
 				self.iframe && self.iframe.show();
 				self.overlay.show();
-				//self.container.show();
 				self.data.show();
 			}
 
@@ -310,9 +302,9 @@
 			}
 			else {
 				self.data.hide();
-				//self.container.hide();
 				self.overlay.hide();
 				self.iframe && self.iframe.hide();
+				self.options.autoDestroy && self.destroy();
 			}
 		},
 		destroy: function () {
@@ -321,44 +313,49 @@
 			// TODO - unbinding events
 			this.overlay.unbind('click.' + this.overlay.attr('id'));
 			$(window).unbind('resize.' + this.overlay.attr('id'));
-			
+			$().unbind('keydown.esc-' + this.overlay.attr('id'));
+
 			this.iframe && this.iframe.remove();
 			this.overlay.remove();
-			//this.container.remove();
 
-			// if the data came from the DOM, put it back
-			if (this.parent) {
-				// save changes to the data?
-				if (this.options.persist) {
-					// insert the (possibly) modified data back into the DOM
-					this.data.appendTo(this.parent);
-				}
-				else {
-					// remove the current and insert the original, 
-					// unmodified data back into the DOM
-					this.data.remove();
-					this.original.appendTo(this.parent);
-				}
+			// save changes to the data?
+			if (this.options.persist) {
+				// insert the (possibly) modified data back into the DOM
+				this.data.appendTo(this.parent);
 			}
 			else {
-				// otherwise, remove it
+				// remove the current and insert the original,
+				// unmodified data back into the DOM
 				this.data.remove();
+				this.original.appendTo(this.parent);
 			}
 		}
 	});
 	
 	// private functions
-	function position (el) {
-		el.css({
-			left: (wWidth/2) - (el.width()/2),
-			top: (wHeight/2) - (el.height()/2)
-		});
+	function _setPosition (pos, el) {
+		if (pos === 'center') {
+			var elProps = _getDimensions(el);
+			el.css({left: (wProps[0]/2) - (elProps[0]/2), top: (wProps[1]/2) - (elProps[1]/2)});
+		}
+		else {
+			el.css({left: pos[0], top: pos[1]});
+		}
 	}
 	
-	function fixIE (els) {
+	function _fixIE6 (dialog) {
+		dialog.iframe.css({height: wProps[1], width: wProps[0]});
+		dialog.overlay.css({height: wProps[1], position: 'absolute', width: wProps[0]});
+		dialog.data.css({position: 'absolute'});
+	}
+	
+	function _fixIE7 (els) {
 		$.each(els, function (i, el) {
 			el.css({position: 'absolute'});
 		});
 	}
-
+	
+	function _getDimensions (el) {
+		return [el.width(), el.height()];
+	}
 })(jQuery);
