@@ -78,11 +78,10 @@
 					},
 					success: function (data) {
 						// wrap in a div for safe parsing
-						//element = $('<div/>').append(data).appendTo('body');
 						element = $('<div/>').append(data);
 
 						// call the action function
-						return element.hide().modal(options);
+						return element.modal(options);
 					}
 				});
 			}
@@ -95,7 +94,6 @@
 			}
 			else if (typeof obj == 'string' || typeof obj == 'number') {
 				// just insert the content as innerHTML
-				//element = $('<div/>').html(obj).appendTo('body');
 				element = $('<div/>').html(obj);
 			}
 			else {
@@ -105,7 +103,7 @@
 			}
 
 			// call the action function
-			return element.hide().modal(options);
+			return element.modal(options);
 		}
 	};
 
@@ -138,12 +136,10 @@
 	
 	$.modal.overlayCss = {
 		background: '#000',
-		height: '100%',
 		left: 0,
 		opacity: .6,
 		position: 'fixed',
-		top: 0,
-		width: '100%'
+		top: 0
 	};
 	
 	$.modal.dataCss = {
@@ -205,6 +201,8 @@
 			.addClass('simplemodal-overlay')
 			.css($.extend({
 					display: 'none',
+					height: wProps[1],
+					width: wProps[0],
 					zIndex: zIndex + 1
 				},
 				$.modal.overlayCss,
@@ -214,15 +212,25 @@
 
 		this.data = element;
 		
-		var a = $('body').find(element[0]);
-		//alert(a);
-
-		// keep track of parent element
-		this.parent = element.parent();
-
-		// persist changes? if not, make a clone of the element
-		if (!this.options.persist) {
-			this.original = element.clone(true);
+		// did the element come from the DOM
+		if (element.show()[0].offsetParent) {
+			// hide it
+			element.hide();
+			
+			// keep track of parent element
+			this.parent = element.parent();
+	
+			// persist changes? if not, make a clone of the element
+			if (!this.options.persist) {
+				this.original = element.clone(true);
+			}
+		}
+		else {
+			// hide the element
+			element.hide();
+			
+			// add it to the dom
+			element.appendTo('body');
 		}
 
 		// add styling and attributes to the data
@@ -244,7 +252,14 @@
 		this.options.autoOpen && this.open();
 		
 		// TODO - bind events here?
-		this.overlay.bind('click.' + this.overlay.attr('id'), function () {self.close();});
+		this.overlay.bind('click.' + this.overlay.attr('id'), function (e) {
+			e.preventDefault();
+			self.close();
+		});
+		this.data.find('.simplemodal-close').bind('click.' + this.data.attr('id'), function (e) {
+			e.preventDefault();
+			self.close();
+		});
 		
 		// TODO - handle multiple dialogs?
 		$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {if (e.keyCode == 27) {self.close();}});
@@ -275,7 +290,7 @@
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
 				self.oocb = true;
-				self.options.onOpen.apply(self, self);
+				self.options.onOpen.apply(self, [self]);
 			}
 			else {
 				self.iframe && self.iframe.show();
@@ -286,7 +301,7 @@
 			// check for onShow callback
 			if ($.isFunction(self.options.onShow) && !self.oscb) {
 				self.oscb = true;
-				self.options.onShow.apply(self, self);
+				self.options.onShow.apply(self, [self]);
 			}
 			else {
 				// TODO - bind events here?
@@ -298,7 +313,7 @@
 			// check for onClose callback
 			if ($.isFunction(self.options.onClose) && !self.occb) {
 				self.occb = true;
-				self.options.onClose.apply(self, self);
+				self.options.onClose.apply(self, [self]);
 			}
 			else {
 				self.data.hide();
@@ -312,6 +327,7 @@
 
 			// TODO - unbinding events
 			this.overlay.unbind('click.' + this.overlay.attr('id'));
+			this.data.find('.simplemodal-close').unbind('click.' + this.data.attr('id'));
 			$(window).unbind('resize.' + this.overlay.attr('id'));
 			$().unbind('keydown.esc-' + this.overlay.attr('id'));
 
@@ -319,15 +335,20 @@
 			this.overlay.remove();
 
 			// save changes to the data?
-			if (this.options.persist) {
-				// insert the (possibly) modified data back into the DOM
-				this.data.appendTo(this.parent);
+			if (this.parent) {
+				if (this.options.persist) {
+					// insert the (possibly) modified data back into the DOM
+					this.data.appendTo(this.parent);
+				}
+				else {
+					// remove the current and insert the original,
+					// unmodified data back into the DOM
+					this.data.remove();
+					this.original.appendTo(this.parent);
+				}
 			}
 			else {
-				// remove the current and insert the original,
-				// unmodified data back into the DOM
 				this.data.remove();
-				this.original.appendTo(this.parent);
 			}
 		}
 	});
