@@ -90,9 +90,9 @@ $(document).ready(function () {
  */
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
-		dialog.container.fadeIn('slow', function () {
-			dialog.content.slideDown('slow');
-		});
+		//dialog.container.fadeIn('slow', function () {
+			dialog.data.slideDown('slow');
+		//});
 	});
 }
 
@@ -107,12 +107,12 @@ function modalOpen (dialog) {
  * content and iframe.
  */
 function modalClose (dialog) {
-	dialog.content.fadeOut('slow', function () {
-		dialog.container.hide('slow', function () {
+	dialog.data.fadeOut('slow', function () {
+		//dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
-				dialog.remove();
+				dialog.close();
 			});
-		});
+		//});
 	});
 }
 
@@ -124,9 +124,9 @@ function modalClose (dialog) {
  * a matching function.
  */
 function modalShow (dialog) {
-	dialog.content.find('input.animate').one('click', function () {
-		dialog.content.slideUp('slow', function () {
-			dialog.content.slideDown('slow');
+	dialog.data.find('input.animate').one('click', function () {
+		dialog.data.slideUp('slow', function () {
+			dialog.data.slideDown('slow');
 		});
 	});
 }
