@@ -126,12 +126,16 @@
 		zIndex: null,			// the starting z-index value
 		/* Element ID's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
+		containerId: null,	// if not provided, a unique id (simplemodal-container-#) will be generated
 		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* CSS */
 		overlayCss: null,
+		containerCss: null,
 		dataCss: null,
-		iframeCss: null
+		iframeCss: null,
+		minHeight: 450,
+		minWidth: 350
 	};
 	
 	$.modal.overlayCss = {
@@ -141,12 +145,15 @@
 		position: 'fixed',
 		top: 0
 	};
-	
-	$.modal.dataCss = {
+
+	$.modal.containerCss = {
 		background: '#fff',
-		left: 0,
+		border: '2px solid #ccc',
 		position: 'fixed',
-		top: 0
+	};
+
+	$.modal.dataCss = {
+		overflow: 'auto'
 	};
 	
 	$.modal.iframeCss = {
@@ -179,7 +186,62 @@
 		
 		// set the window properties
 		wProps = _getDimensions($(window));
-		
+
+		// did the element come from the DOM
+		if (element.show()[0].offsetParent) {
+			// keep track of parent element
+			this.parent = element.parent();
+	
+			// persist changes? if not, make a clone of the element
+			if (!this.options.persist) {
+				this.original = element.clone(true);
+			}
+		}
+		element.hide();
+
+		// add styling and attributes to the data
+		var elProps = _getDimensions(element);
+		this.data = element
+			.attr('id', element.attr('id') || this.options.dataId || 'simplemodal-data-' + uid)
+			.addClass('simplemodal-data')
+			.css($.extend({
+					display: 'none'
+				},
+				$.modal.dataCss,
+				this.options.dataCss
+			));
+
+		// create the container
+		this.container = $('<div/>')
+			.attr('id', this.options.containerId || 'simplemodal-container-' + uid)
+			.addClass('simplemodal-container')
+			.css($.extend({
+					display: 'none',
+					height: Math.max(this.options.minHeight, elProps[0]),
+					zIndex: zIndex + 2,
+					width: Math.max(this.options.minWidth, elProps[1])
+				},
+				$.modal.containerCss,
+				this.options.containerCss
+			))
+			.append(this.data)
+			.appendTo('body');
+
+		// create the overlay
+		this.overlay = $('<div/>')
+			.attr('id', this.options.overlayId || 'simplemodal-overlay-' + uid)
+			.addClass('simplemodal-overlay')
+			.css($.extend({
+					display: 'none',
+					height: wProps[0],
+					width: wProps[1],
+					zIndex: zIndex + 1
+				},
+				$.modal.overlayCss,
+				this.options.overlayCss
+			))
+			.appendTo('body');
+
 		// create the iframe for ie6
 		if (ie6) {
 			this.iframe = $('<iframe src="javascript:false;"/>')
@@ -195,58 +257,8 @@
 				.appendTo('body');
 		}
 
-		// create the overlay
-		this.overlay = $('<div/>')
-			.attr('id', this.options.overlayId || 'simplemodal-overlay-' + uid)
-			.addClass('simplemodal-overlay')
-			.css($.extend({
-					display: 'none',
-					height: wProps[1],
-					width: wProps[0],
-					zIndex: zIndex + 1
-				},
-				$.modal.overlayCss,
-				this.options.overlayCss
-			))
-			.appendTo('body');
-
-		this.data = element;
-		
-		// did the element come from the DOM
-		if (element.show()[0].offsetParent) {
-			// hide it
-			element.hide();
-			
-			// keep track of parent element
-			this.parent = element.parent();
-	
-			// persist changes? if not, make a clone of the element
-			if (!this.options.persist) {
-				this.original = element.clone(true);
-			}
-		}
-		else {
-			// hide the element
-			element.hide();
-			
-			// add it to the dom
-			element.appendTo('body');
-		}
-
-		// add styling and attributes to the data
-		this.data
-			.attr('id', element.attr('id') || this.options.dataId || 'simplemodal-data-' + uid)
-			.addClass('simplemodal-data')
-			.css($.extend({
-					display: 'none',
-					zIndex: zIndex + 2
-				},
-				$.modal.dataCss,
-				this.options.dataCss
-			));
-
-		// TODO - position data element
-		_setPosition(this.options.position, this.data);
+		// position the container
+		_setPosition(this);
 
 		// open the dialog if autoOpen is true
 		this.options.autoOpen && this.open();
@@ -256,7 +268,7 @@
 			e.preventDefault();
 			self.close();
 		});
-		this.data.find('.simplemodal-close').bind('click.' + this.data.attr('id'), function (e) {
+		this.container.find('.simplemodal-close').bind('click.' + this.container.attr('id'), function (e) {
 			e.preventDefault();
 			self.close();
 		});
@@ -268,12 +280,12 @@
 		$(window).bind('resize.' + this.overlay.attr('id'), function () {
 			// redetermine the window width/height
 			wProps = _getDimensions($(window));
-			
+
 			// reposition the dialog
-			_setPosition(self.options.position, self.data);
-			
-			// update the overlay and iframe for ie6
-			ie6 && _fixIE6(self);
+			_setPosition(self);
+
+			// update the overlay and iframe (ie6)
+			ie6 ? _fixIE6(self) : self.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
 		});
 	};
 
@@ -285,7 +297,7 @@
 			ie6 && _fixIE6(self);
 			
 			// perform ie7 quirksmode fixes
-			ie7qm && _fixIE7([self.overlay, self.data]);
+			ie7qm && _fixIE7([self.overlay, self.container]);
 
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
@@ -295,6 +307,7 @@
 			else {
 				self.iframe && self.iframe.show();
 				self.overlay.show();
+				self.container.show();
 				self.data.show();
 			}
 
@@ -317,6 +330,7 @@
 			}
 			else {
 				self.data.hide();
+				self.container.hide();
 				self.overlay.hide();
 				self.iframe && self.iframe.hide();
 				self.options.autoDestroy && self.destroy();
@@ -327,7 +341,7 @@
 
 			// TODO - unbinding events
 			this.overlay.unbind('click.' + this.overlay.attr('id'));
-			this.data.find('.simplemodal-close').unbind('click.' + this.data.attr('id'));
+			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
 			$(window).unbind('resize.' + this.overlay.attr('id'));
 			$().unbind('keydown.esc-' + this.overlay.attr('id'));
 
@@ -350,24 +364,28 @@
 			else {
 				this.data.remove();
 			}
+			this.container.remove();
 		}
 	});
 	
 	// private functions
-	function _setPosition (pos, el) {
-		if (pos === 'center') {
-			var elProps = _getDimensions(el);
-			el.css({left: (wProps[0]/2) - (elProps[0]/2), top: (wProps[1]/2) - (elProps[1]/2)});
-		}
-		else {
-			el.css({left: pos[0], top: pos[1]});
-		}
+	function _setPosition (dialog) {
+		var height = dialog.data.css('height');
+		var width = dialog.data.css('width');
+
+		switch (dialog.options.position) {
+			case 'center':
+				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
+				break;
+			default:
+				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
+		};
 	}
 	
 	function _fixIE6 (dialog) {
-		dialog.iframe.css({height: wProps[1], width: wProps[0]});
-		dialog.overlay.css({height: wProps[1], position: 'absolute', width: wProps[0]});
-		dialog.data.css({position: 'absolute'});
+		dialog.iframe.css({height: wProps[0], width: wProps[1]});
+		dialog.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
+		dialog.container.css({position: 'absolute'});
 	}
 	
 	function _fixIE7 (els) {
@@ -377,6 +395,6 @@
 	}
 	
 	function _getDimensions (el) {
-		return [el.width(), el.height()];
+		return [el.height(), el.width()];
 	}
 })(jQuery);
