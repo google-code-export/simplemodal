@@ -90,9 +90,9 @@ $(document).ready(function () {
  */
 function modalOpen (dialog) {
 	dialog.overlay.fadeIn('slow', function () {
-		//dialog.container.fadeIn('slow', function () {
+		dialog.container.fadeIn('slow', function () {
 			dialog.data.slideDown('slow');
-		//});
+		});
 	});
 }
 
@@ -108,11 +108,11 @@ function modalOpen (dialog) {
  */
 function modalClose (dialog) {
 	dialog.data.fadeOut('slow', function () {
-		//dialog.container.hide('slow', function () {
+		dialog.container.hide('slow', function () {
 			dialog.overlay.slideUp('slow', function () {
 				dialog.close();
 			});
-		//});
+		});
 	});
 }
 

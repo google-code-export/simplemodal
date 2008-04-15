@@ -130,32 +130,32 @@
 		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* CSS */
-		overlayCss: null,
-		containerCss: null,
 		dataCss: null,
+		containerCss: null,
+		overlayCss: null,
 		iframeCss: null,
-		minHeight: 450,
-		minWidth: 350
+		minHeight: 350,
+		minWidth: 450
 	};
-	
+
+	$.modal.dataCss = {
+		overflow: 'auto'
+	};
+
+	$.modal.containerCss = {
+		background: '#fff',
+		border: '2px solid #ccc',
+		position: 'fixed'
+	};
+
 	$.modal.overlayCss = {
 		background: '#000',
 		left: 0,
 		opacity: .6,
 		position: 'fixed',
 		top: 0
-	};
+	};	
 
-	$.modal.containerCss = {
-		background: '#fff',
-		border: '2px solid #ccc',
-		position: 'fixed',
-	};
-
-	$.modal.dataCss = {
-		overflow: 'auto'
-	};
-	
 	$.modal.iframeCss = {
 		left: 0,
 		opacity: 0,
@@ -284,8 +284,8 @@
 			// reposition the dialog
 			_setPosition(self);
 
-			// update the overlay and iframe (ie6)
-			ie6 ? _fixIE6(self) : self.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
+			// update the overlay
+			!ie6 && self.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
 		});
 	};
 
@@ -370,9 +370,13 @@
 	
 	// private functions
 	function _setPosition (dialog) {
-		var height = dialog.data.css('height');
-		var width = dialog.data.css('width');
+		var height = dialog.container.height();
+		var width = dialog.container.width();
 
+		/*if (dialog.options.position.constructor == Array) {
+			top += pos[1];
+			left += pos[0];
+		} else { */
 		switch (dialog.options.position) {
 			case 'center':
 				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
@@ -381,11 +385,20 @@
 				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
 		};
 	}
-	
+
 	function _fixIE6 (dialog) {
-		dialog.iframe.css({height: wProps[0], width: wProps[1]});
-		dialog.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
-		dialog.container.css({position: 'absolute'});
+		// simulate fixed position - borrowed from blockUI
+		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
+			var s = el[0].style;
+			s.position = 'absolute';
+			if (i < 2) {
+				s.setExpression('height','document.body.scrollHeight > document.body.offsetHeight ? document.body.scrollHeight : document.body.offsetHeight + "px"');
+				s.setExpression('width','jQuery.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
+			}
+			else {
+				s.setExpression('top','(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
+			}
+		});
 	}
 	
 	function _fixIE7 (els) {
