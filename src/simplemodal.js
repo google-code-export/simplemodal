@@ -17,20 +17,22 @@
  */
 
  /* TODO -
- *
- * - prevent tabbing for modal dialog
- * - test external calls
- * - test var x = xxx.modal(), etc
- * - styles
- * - IE6 fixes/iframe (bgiframe?)
- * - modal positioning
- * - close button/link?
- * - persistance / save original dom element
- * - iframe support?
- * - click anywhere to close for non-modal dialogs
- * - ajax stuff... load dialog then content?
- * - esc key && dealing w/ multiple dialogs
- */
+  *
+  * - prevent tabbing for modal dialog
+  * - test var x = xxx.modal(), etc
+  * - close button/link?
+  * - iframe support?
+  * - ajax stuff... load dialog then content?
+  *
+  * DONE - 
+  * - test external calls
+  * - modal positioning
+  * - persistance / save original dom element
+  * - esc key && dealing w/ multiple dialogs
+  * - click anywhere to close for non-modal dialogs
+  * - styles
+  * - IE6 fixes/iframe (bgiframe?)
+  */
 (function ($) {
 
 	// private variables
@@ -43,13 +45,14 @@
 		modal: function (options) {
 			var args = Array.prototype.slice.call(arguments, 1);
 			return this.each(function () {
+				var isDialog = $(this).is('.simplemodal-data');
 				if (typeof options == 'string') {
-					var dialog = $(this).is('.simplemodal-data') ? $.data(this, 'simplemodal') : {};
+					var dialog = isDialog ? $.data(this, 'simplemodal') : {};
 					if (dialog[options]) {
 						dialog[options].apply(dialog, args);
 					}
 				}
-				else if (!$(this).is('.simplemodal-data')) {
+				else if (!isDialog) {
 					new $.modal.dialog($(this), options);
 				}
 			});
@@ -120,7 +123,7 @@
 		/* Options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
-		position: 'center',	// position of the dialog
+		position: null,		// position of the dialog - [left, top] or will auto center
 		modal: true,			// modal add overlay and prevents tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		zIndex: null,			// the starting z-index value
@@ -134,13 +137,14 @@
 		containerCss: null,
 		overlayCss: null,
 		iframeCss: null,
-		minHeight: 350,
-		minWidth: 450
+		height: 350,
+		width: 450,
+		/* Event options */
+		overlayClose: true,
+		escClose: true
 	};
 
-	$.modal.dataCss = {
-		overflow: 'auto'
-	};
+	$.modal.dataCss = {};
 
 	$.modal.containerCss = {
 		background: '#fff',
@@ -183,9 +187,6 @@
 		if (!options || (options && !options.zIndex)) {
 			zIndex = uid * 1000;
 		}
-		
-		// set the window properties
-		wProps = _getDimensions($(window));
 
 		// did the element come from the DOM
 		if (element.show()[0].offsetParent) {
@@ -195,52 +196,13 @@
 			// persist changes? if not, make a clone of the element
 			if (!this.options.persist) {
 				this.original = element.clone(true);
+				this.original.hide();
 			}
 		}
 		element.hide();
 
-		// add styling and attributes to the data
-		var elProps = _getDimensions(element);
-		this.data = element
-			.attr('id', element.attr('id') || this.options.dataId || 'simplemodal-data-' + uid)
-			.addClass('simplemodal-data')
-			.css($.extend({
-					display: 'none'
-				},
-				$.modal.dataCss,
-				this.options.dataCss
-			));
-
-		// create the container
-		this.container = $('<div/>')
-			.attr('id', this.options.containerId || 'simplemodal-container-' + uid)
-			.addClass('simplemodal-container')
-			.css($.extend({
-					display: 'none',
-					height: Math.max(this.options.minHeight, elProps[0]),
-					zIndex: zIndex + 2,
-					width: Math.max(this.options.minWidth, elProps[1])
-				},
-				$.modal.containerCss,
-				this.options.containerCss
-			))
-			.append(this.data)
-			.appendTo('body');
-
-		// create the overlay
-		this.overlay = $('<div/>')
-			.attr('id', this.options.overlayId || 'simplemodal-overlay-' + uid)
-			.addClass('simplemodal-overlay')
-			.css($.extend({
-					display: 'none',
-					height: wProps[0],
-					width: wProps[1],
-					zIndex: zIndex + 1
-				},
-				$.modal.overlayCss,
-				this.options.overlayCss
-			))
-			.appendTo('body');
+		// set the window properties
+		wProps = _getDimensions($(window));
 
 		// create the iframe for ie6
 		if (ie6) {
@@ -257,24 +219,76 @@
 				.appendTo('body');
 		}
 
+		// create the overlay
+		this.overlay = $('<div/>')
+			.attr('id', this.options.overlayId || 'simplemodal-overlay-' + uid)
+			.addClass('simplemodal-overlay')
+			.css($.extend({
+					display: 'none',
+					height: wProps[0],
+					width: wProps[1],
+					zIndex: zIndex + 1
+				},
+				$.modal.overlayCss,
+				this.options.overlayCss
+			))
+			.appendTo('body');
+
+		// create the container
+		this.container = $('<div/>')
+			.attr('id', this.options.containerId || 'simplemodal-container-' + uid)
+			.addClass('simplemodal-container')
+			.css($.extend({
+					display: 'none',
+					height: this.options.height,
+					zIndex: zIndex + 2,
+					width: this.options.width
+				},
+				$.modal.containerCss,
+				this.options.containerCss
+			))
+			.appendTo('body');
+
+		// add styling and attributes to the data
+		this.data = element
+			.attr('id', element.attr('id') || this.options.dataId || 'simplemodal-data-' + uid)
+			.addClass('simplemodal-data')
+			.css($.extend({
+					display: 'none'
+				},
+				$.modal.dataCss,
+				this.options.dataCss
+			))
+			.appendTo(this.container);
+
 		// position the container
 		_setPosition(this);
 
 		// open the dialog if autoOpen is true
 		this.options.autoOpen && this.open();
-		
-		// TODO - bind events here?
-		this.overlay.bind('click.' + this.overlay.attr('id'), function (e) {
-			e.preventDefault();
-			self.close();
-		});
+
+		// bind anything with a class of simplemodal-close to the close function
 		this.container.find('.simplemodal-close').bind('click.' + this.container.attr('id'), function (e) {
 			e.preventDefault();
 			self.close();
 		});
-		
-		// TODO - handle multiple dialogs?
-		$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {if (e.keyCode == 27) {self.close();}});
+
+		// bind the overlay click to the close function, if enabled
+		if (this.options.overlayClose) {
+			this.overlay.bind('click.' + this.overlay.attr('id'), function (e) {
+				e.preventDefault();
+				self.close();
+			});
+		}
+
+		// bind ESC key to the close function, if enabled
+		if (this.options.escClose) {
+			$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {
+				if (e.keyCode == 27) {
+					self.close();
+				}
+			});
+		}
 		
 		// update window size
 		$(window).bind('resize.' + this.overlay.attr('id'), function () {
@@ -348,15 +362,14 @@
 			this.iframe && this.iframe.remove();
 			this.overlay.remove();
 
-			// save changes to the data?
+			// save the changes to the data?
 			if (this.parent) {
 				if (this.options.persist) {
 					// insert the (possibly) modified data back into the DOM
-					this.data.appendTo(this.parent);
+					this.data.removeClass('simplemodal-data').appendTo(this.parent);
 				}
 				else {
-					// remove the current and insert the original,
-					// unmodified data back into the DOM
+					// remove the current and insert the original, unmodified data back into the DOM
 					this.data.remove();
 					this.original.appendTo(this.parent);
 				}
@@ -370,24 +383,19 @@
 	
 	// private functions
 	function _setPosition (dialog) {
-		var height = dialog.container.height();
-		var width = dialog.container.width();
-
-		/*if (dialog.options.position.constructor == Array) {
-			top += pos[1];
-			left += pos[0];
-		} else { */
-		switch (dialog.options.position) {
-			case 'center':
-				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
-				break;
-			default:
-				dialog.container.css({left: (wProps[1]/2) - (width/2), top: (wProps[0]/2) - (height/2)});
-		};
+		var top = 0, left = 0;
+		if (dialog.options.position && dialog.options.position.constructor == Array) {
+			top += dialog.options.position[1];
+			left += dialog.options.position[0];
+		} else {
+			top += (wProps[0]/2) - (dialog.container.height()/2)
+			left += (wProps[1]/2) - (dialog.container.width()/2);
+		}
+		dialog.container.css({left: left, top: top});
 	}
 
 	function _fixIE6 (dialog) {
-		// simulate fixed position - borrowed from blockUI
+		// simulate fixed position - adapted from blockUI
 		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
 			var s = el[0].style;
 			s.position = 'absolute';
