@@ -124,7 +124,7 @@
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
 		position: null,		// position of the dialog - [left, top] or will auto center
-		modal: true,			// modal add overlay and prevents tabbing away from dialog
+		modal: true,			// modal prevents click-to-close overlay and tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		zIndex: null,			// the starting z-index value
 		/* Element ID's */
@@ -134,6 +134,7 @@
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* CSS */
 		dataCss: null,
+		closeCss: null,
 		containerCss: null,
 		overlayCss: null,
 		iframeCss: null,
@@ -141,10 +142,19 @@
 		width: 450,
 		/* Event options */
 		overlayClose: true,
-		escClose: true
+		escClose: true,
+		/* Close element */
+		close: true,
+		closeElement: '<div>ESC or <a href="#" class="simplemodal-close">Close</a></div>'
 	};
 
 	$.modal.dataCss = {};
+
+	$.modal.closeCss = {
+		textAlign: 'right',
+		width: '100%'
+		
+	};
 
 	$.modal.containerCss = {
 		background: '#fff',
@@ -158,7 +168,7 @@
 		opacity: .6,
 		position: 'fixed',
 		top: 0
-	};	
+	};
 
 	$.modal.iframeCss = {
 		left: 0,
@@ -248,6 +258,16 @@
 				this.options.containerCss
 			))
 			.appendTo('body');
+		
+		if (this.options.close) {
+			this.container.append(
+				$(this.options.closeElement)
+					.css($.extend({},
+						$.modal.closeCss,
+						this.options.closeCss
+					))
+			);
+		}
 
 		// add styling and attributes to the data
 		this.data = element
