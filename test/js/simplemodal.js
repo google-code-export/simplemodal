@@ -79,6 +79,10 @@ $(document).ready(function () {
       e.preventDefault();
       $('#modalContentOverflowTest').modal();
    });
+   $('a#test15').click(function (e) {
+      e.preventDefault();
+      $.modal({ajax: 'data/ajax.html'});
+   });
 });
 
 /**

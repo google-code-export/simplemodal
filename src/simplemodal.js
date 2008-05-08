@@ -6,7 +6,7 @@
  *
  * Copyright (c) 2008 Eric Martin - http://ericmmartin.com
  * Idea/inspiration/code contributions from:
- *     - jQuery UI Dialog
+ *     - jQuery UI Dialog, BlockUI, jqModal
  *     - Aaron Barker
  *
  * Dual licensed under the MIT (MIT-LICENSE.txt)
@@ -67,27 +67,22 @@
 		// will actually be the options object and it will contain an ajax property
 		if (arguments.length == 1 && obj.ajax) {
 			options = obj;
-			if (!options.ajax && !$.modal.defaults.ajax) {
-				alert('problem');
-			}
-			else {
-				$.ajax({
-					url: options.ajax || $.modal.defaults.ajax,
-					cache: options.cache || $.modal.defaults.cache,
-					method: options.method || $.modal.defaults.method,
-					dataType: options.dataType || $.modal.defaults.dataType,
-					error: function (event, xhr) {
-						alert(xhr.responseText);
-					},
-					success: function (data) {
-						// wrap in a div for safe parsing
-						element = $('<div/>').append(data);
+			$.ajax({
+				url: options.ajax || $.modal.defaults.ajax,
+				cache: options.cache || $.modal.defaults.cache,
+				method: options.method || $.modal.defaults.method,
+				dataType: options.dataType || $.modal.defaults.dataType,
+				error: function (event, xhr) {
+					alert(xhr.responseText);
+				},
+				success: function (data) {
+					// wrap in a div for safe parsing
+					element = $('<div/>').append(data);
 
-						// call the action function
-						return element.modal(options);
-					}
-				});
-			}
+					// call the action function
+					return element.modal(options);
+				}
+			});
 		}
 		else {
 			// determine the datatype for content and handle accordingly
@@ -319,7 +314,7 @@
 			_setPosition(self);
 
 			// update the overlay
-			!ie6 && self.overlay.css({height: wProps[0], position: 'absolute', width: wProps[1]});
+			!ie6 && self.overlay.css({height: wProps[0], width: wProps[1]});
 		});
 	};
 
@@ -415,7 +410,7 @@
 	}
 
 	function _fixIE6 (dialog) {
-		// simulate fixed position - adapted from blockUI
+		// simulate fixed position - adapted from BlockUI
 		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
 			var s = el[0].style;
 			s.position = 'absolute';
