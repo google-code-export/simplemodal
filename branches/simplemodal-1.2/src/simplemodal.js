@@ -105,6 +105,11 @@
 		}
 	};
 
+	// alert call to deprecated function
+	$.modal.close = function () {
+		alert('This function is no longer supported');
+	};
+
 	$.modal.defaults = {
 		/* Callback functions */
 		onOpen: null,			// called after the dialog elements are created - usually used for custom opening effects
@@ -133,8 +138,8 @@
 		containerCss: null,
 		overlayCss: null,
 		iframeCss: null,
-		height: 350,
-		width: 450,
+		height: 400,
+		width: 600,
 		/* Event options */
 		overlayClose: true,
 		escClose: true,
@@ -148,12 +153,9 @@
 	$.modal.closeCss = {
 		textAlign: 'right',
 		width: '100%'
-		
 	};
 
 	$.modal.containerCss = {
-		background: '#fff',
-		border: '2px solid #ccc',
 		position: 'fixed'
 	};
 
@@ -275,6 +277,9 @@
 				this.options.dataCss
 			))
 			.appendTo(this.container);
+
+		// make compatible with code for previous version
+		this.content = this.data;
 
 		// position the container
 		_setPosition(this);

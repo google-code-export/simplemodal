@@ -9,6 +9,15 @@
  *
  */
 $(document).ready(function () {
+	// add common styles
+	$.modal.containerCss = $.extend($.modal.containerCss, {
+		background: '#fff',
+		border: '3px solid #ccc'
+	});
+	$.modal.dataCss = $.extend($.modal.dataCss, {
+		padding: '10px'
+	});
+	
 	$('a#test1').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal();
@@ -77,7 +86,7 @@ $(document).ready(function () {
 	});
    $('a#test14').click(function (e) {
       e.preventDefault();
-      $('#modalContentOverflowTest').modal();
+      $('#modalContentOverflowTest').modal({containerCss: {overflow: 'auto'}});
    });
    $('a#test15').click(function (e) {
       e.preventDefault();
