@@ -4,7 +4,7 @@
  * http://plugins.jquery.com/project/SimpleModal
  * http://code.google.com/p/simplemodal/
  *
- * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2008 Eric Martin - http://ericmmartin.com
  *
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
