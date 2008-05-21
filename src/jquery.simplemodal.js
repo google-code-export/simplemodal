@@ -24,7 +24,7 @@
   * - iframe support?
   * - ajax stuff... load dialog then content?
   *
-  * DONE - 
+  * DONE -
   * - test external calls
   * - modal positioning
   * - persistance / save original dom element
@@ -111,28 +111,29 @@
 	};
 
 	$.modal.defaults = {
-		/* Callback functions */
+		/* callback functions */
 		onOpen: null,			// called after the dialog elements are created - usually used for custom opening effects
 		onShow: null,			// called after the dialog is opened - usually used for binding events to the dialog
 		onClose: null,			// called when the close event is fired - usually used for custom closing effects
-		/* Ajax options (see: http://docs.jquery.com/Ajax/jQuery.ajax#options) */
+		/* ajax options (see: http://docs.jquery.com/Ajax/jQuery.ajax#options) */
 		ajax: null,				// ajax url
 		cache: false,
 		method: 'GET',
 		dataType: 'html',
-		/* Options */
+		/* dialog options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
-		position: null,		// position of the dialog - [left, top] or will auto center
-		modal: true,			// modal prevents click-to-close overlay and tabbing away from dialog
+		focus: true,			// forces focus to remain on the modal dialog
+		//modal: true,			// modal prevents click-to-close overlay and tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
+		position: null,		// position of the dialog - [left, top] or will auto center
 		zIndex: null,			// the starting z-index value
-		/* Element ID's */
+		/* element id's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
 		containerId: null,	// if not provided, a unique id (simplemodal-container-#) will be generated
 		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
-		/* CSS */
+		/* css properties */
 		dataCss: null,
 		closeCss: null,
 		containerCss: null,
@@ -140,10 +141,10 @@
 		iframeCss: null,
 		height: 400,
 		width: 600,
-		/* Event options */
+		/* event options */
 		overlayClose: true,
 		escClose: true,
-		/* Close element */
+		/* close element */
 		close: true,
 		closeElement: '<div>ESC or <a href="#" class="simplemodal-close">Close</a></div>'
 	};
@@ -151,8 +152,9 @@
 	$.modal.dataCss = {};
 
 	$.modal.closeCss = {
-		textAlign: 'right',
-		width: '100%'
+		float: 'right',
+		fontSize: '.8em',
+		padding: '4px'
 	};
 
 	$.modal.containerCss = {
@@ -185,11 +187,11 @@
 		$.data(element[0], 'simplemodal', this);
 
 		// set flags for callbacks - to prevent recursion
-		this.oocb = this.oscb = this.occb = false;
+		this.oocb = false, this.oscb = false, this.occb = false;
 
 		// get a unique id
 		var uid = ++smid;
-		
+
 		// set z-index
 		if (!options || (options && !options.zIndex)) {
 			zIndex = uid * 1000;
@@ -199,7 +201,7 @@
 		if (element.show()[0].offsetParent) {
 			// keep track of parent element
 			this.parent = element.parent();
-	
+
 			// persist changes? if not, make a clone of the element
 			if (!this.options.persist) {
 				this.original = element.clone(true);
@@ -254,10 +256,16 @@
 				$.modal.containerCss,
 				this.options.containerCss
 			))
-			.appendTo('body');
-		
+			.prependTo('body');
+
+		this.wrap = $('<div/>')
+			.addClass('simplemodal-content')
+			.css({height: '100%'})
+			.appendTo(this.container);
+
+		// add the close element, if enabled
 		if (this.options.close) {
-			this.container.append(
+			this.wrap.append(
 				$(this.options.closeElement)
 					.css($.extend({},
 						$.modal.closeCss,
@@ -276,7 +284,7 @@
 				$.modal.dataCss,
 				this.options.dataCss
 			))
-			.appendTo(this.container);
+			.appendTo(this.wrap);
 
 		// make compatible with code for previous version
 		this.content = this.data;
@@ -301,6 +309,20 @@
 			});
 		}
 
+		// bind onfocus event to force focus on modal dialog
+		if (this.options.focus) {
+			//$('html')[0].tabIndex = -1;
+			this.container[0].tabIndex = 0;
+			//this.wrap[0].tabIndex = 0;
+
+			$().bind('focus.simplemodal', function (e) {
+				if($(e.target).is('.simplemodal-content') || !$(e.target).parents('.simplemodal-content')[0]) {
+					//setTimeout(function () {_focus(self);}, 5);
+					_focus(self);
+				}
+			});
+		}
+
 		// bind ESC key to the close function, if enabled
 		if (this.options.escClose) {
 			$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {
@@ -309,7 +331,7 @@
 				}
 			});
 		}
-		
+
 		// update window size
 		$(window).bind('resize.' + this.overlay.attr('id'), function () {
 			// redetermine the window width/height
@@ -326,10 +348,10 @@
 	$.extend($.modal.dialog.prototype, {
 		open: function () {
 			var self = this;
-			
+
 			// perform ie6 fixes
 			ie6 && _fixIE6(self);
-			
+
 			// perform ie7 quirksmode fixes
 			ie7qm && _fixIE7([self.overlay, self.container]);
 
@@ -350,9 +372,8 @@
 				self.oscb = true;
 				self.options.onShow.apply(self, [self]);
 			}
-			else {
-				// TODO - bind events here?
-			}
+			
+			setTimeout(function () {_focus(self);}, 10);
 		},
 		close: function () {
 			var self = this;
@@ -373,11 +394,14 @@
 		destroy: function () {
 			$.removeData(this.data[0], 'simplemodal');
 
-			// TODO - unbinding events
-			this.overlay.unbind('click.' + this.overlay.attr('id'));
+			// unbind events
+			var id = this.overlay.attr('id');
+			this.overlay.unbind('click.' + id);
+			$(window).unbind('resize.' + id);
+			//$().unbind(this.events);
+			$().unbind('focus.simplemodal');
+			$().unbind('keydown.esc-' + id);
 			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
-			$(window).unbind('resize.' + this.overlay.attr('id'));
-			$().unbind('keydown.esc-' + this.overlay.attr('id'));
 
 			this.iframe && this.iframe.remove();
 			this.overlay.remove();
@@ -400,20 +424,8 @@
 			this.container.remove();
 		}
 	});
-	
-	// private functions
-	function _setPosition (dialog) {
-		var top = 0, left = 0;
-		if (dialog.options.position && dialog.options.position.constructor == Array) {
-			top += dialog.options.position[1];
-			left += dialog.options.position[0];
-		} else {
-			top += (wProps[0]/2) - (dialog.container.height()/2)
-			left += (wProps[1]/2) - (dialog.container.width()/2);
-		}
-		dialog.container.css({left: left, top: top});
-	}
 
+	// private functions
 	function _fixIE6 (dialog) {
 		// simulate fixed position - adapted from BlockUI
 		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
@@ -424,18 +436,35 @@
 				s.setExpression('width','jQuery.boxModel && document.documentElement.clientWidth || document.body.clientWidth + "px"');
 			}
 			else {
-				s.setExpression('top','(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
+				s.setExpression('top','(document.documentElement.clientHeight || document.body.clientHeight) / 2 - (this.offsetHeight / 2) + (t = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop) + "px"');
 			}
 		});
 	}
-	
+
 	function _fixIE7 (els) {
 		$.each(els, function (i, el) {
 			el.css({position: 'absolute'});
 		});
 	}
-	
+
+	function _focus (dialog) {
+		//dialog.wrap.focus();
+		dialog.container.focus();
+	}
+
 	function _getDimensions (el) {
 		return [el.height(), el.width()];
+	}
+
+	function _setPosition (dialog) {
+		var top = 0, left = 0;
+		if (dialog.options.position && dialog.options.position.constructor == Array) {
+			top += dialog.options.position[1];
+			left += dialog.options.position[0];
+		} else {
+			top += (wProps[0]/2) - (dialog.container.height()/2);
+			left += (wProps[1]/2) - (dialog.container.width()/2);
+		}
+		dialog.container.css({left: left, top: top});
 	}
 })(jQuery);
