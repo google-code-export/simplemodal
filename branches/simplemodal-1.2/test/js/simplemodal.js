@@ -3,7 +3,7 @@
  * http://www.ericmmartin.com/projects/simplemodal/
  * http://code.google.com/p/simplemodal/
  *
- * Copyright (c) 2007 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2008 Eric Martin - http://ericmmartin.com
  *
  * Revision: $Id$
  *
@@ -11,8 +11,8 @@
 $(document).ready(function () {
 	// add common styles
 	$.modal.containerCss = $.extend($.modal.containerCss, {
-		background: '#fff',
-		border: '3px solid #ccc'
+		background: '#fff'
+		//border: '3px solid #ccc'
 	});
 	$.modal.dataCss = $.extend($.modal.dataCss, {
 		padding: '10px'
