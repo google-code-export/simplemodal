@@ -11,8 +11,8 @@
 $(document).ready(function () {
 	// add common styles
 	$.modal.containerCss = $.extend($.modal.containerCss, {
-		background: '#fff'
-		//border: '3px solid #ccc'
+		background: '#fff',
+		border: '3px solid #ccc'
 	});
 	$.modal.dataCss = $.extend($.modal.dataCss, {
 		padding: '10px'
