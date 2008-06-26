@@ -16,11 +16,29 @@
  *
  */
 
- /* TODO:
-  * - prevent tabbing for modal dialog
-  * - iframe support?
-  * - overlay/iframe override target (body) for appendTo?
-  */
+/*
+TODO:
+  - prevent tabbing for modal dialog
+  - iframe support?
+  - overlay/iframe override target (body) for appendTo?
+*/
+
+/**
+ * TODO: Summary goes here
+ *
+ * SimpleModal has been tested in the following browsers:
+ * - IE 6, 7
+ * - Firefox 2, 3
+ * - Opera 9
+ * - Safari 3
+ *
+ * @name SimpleModal
+ * @type jQuery
+ * @requires jQuery v1.2.3
+ * @cat Plugins/Windows and Overlays
+ * @author Eric Martin (http://ericmmartin.com)
+ * @version @VERSION
+ */
 ;(function ($) {
 
 	// make sure a valid version of jQuery is being used
