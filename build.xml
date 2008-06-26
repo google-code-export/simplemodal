@@ -1,8 +1,6 @@
 <project name="SimpleModal" default="default" basedir=".">
 
-    <!--
-    Adapted from the jQuery build scripts
-    -->
+    <!-- Adapted from the jQuery build scripts -->
 
     <!-- SETUP -->
 
