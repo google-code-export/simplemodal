@@ -16,24 +16,18 @@
  *
  */
 
- /* TODO -
-  *
+ /* TODO:
   * - prevent tabbing for modal dialog
-  * - test var x = xxx.modal(), etc
-  * - close button/link?
   * - iframe support?
-  * - ajax stuff... load dialog then content?
-  *
-  * DONE -
-  * - test external calls
-  * - modal positioning
-  * - persistance / save original dom element
-  * - esc key && dealing w/ multiple dialogs
-  * - click anywhere to close for non-modal dialogs
-  * - styles
-  * - IE6 fixes/iframe (bgiframe?)
+  * - overlay/iframe override target (body) for appendTo?
   */
-(function ($) {
+;(function ($) {
+
+	// make sure a valid version of jQuery is being used
+	if ($.fn.jquery < "1.2.3") {
+		alert('SimpleModal requires jQuery v1.2.3 or higher! You are using v' + $.fn.jquery);
+		return;
+	}
 
 	// private variables
 	var smid = 0, wProps = [], zIndex = 1;
@@ -73,7 +67,11 @@
 				method: options.method || $.modal.defaults.method,
 				dataType: options.dataType || $.modal.defaults.dataType,
 				error: function (event, xhr) {
-					alert(xhr.responseText);
+					// wrap in a div for safe parsing
+					element = $('<div/>').append(xhr.responseText);
+
+					// call the action function
+					return element.modal(options);
 				},
 				success: function (data) {
 					// wrap in a div for safe parsing
@@ -96,8 +94,8 @@
 			}
 			else {
 				// unsupported data type
-				window.console && console.log('SimpleModal Error: Unsupported data type: ' + typeof obj);
-				return false;
+				alert('SimpleModal was called using an unsupported data type: ' + typeof obj);
+				return;
 			}
 
 			// call the action function
@@ -107,7 +105,7 @@
 
 	// alert call to deprecated function
 	$.modal.close = function () {
-		alert('This function is no longer supported');
+		alert('SimpleModal $.modal.close() function has been deprecated.<br/>Please refer to the documentation.');
 	};
 
 	$.modal.defaults = {
@@ -124,7 +122,6 @@
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
 		focus: true,			// forces focus to remain on the modal dialog
-		//modal: true,			// modal prevents click-to-close overlay and tabbing away from dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		position: null,		// position of the dialog - [left, top] or will auto center
 		zIndex: null,			// the starting z-index value
@@ -311,16 +308,7 @@
 
 		// bind onfocus event to force focus on modal dialog
 		if (this.options.focus) {
-			//$('html')[0].tabIndex = -1;
-			this.container[0].tabIndex = 0;
-			//this.wrap[0].tabIndex = 0;
-
-			$().bind('focus.simplemodal', function (e) {
-				if($(e.target).is('.simplemodal-content') || !$(e.target).parents('.simplemodal-content')[0]) {
-					//setTimeout(function () {_focus(self);}, 5);
-					_focus(self);
-				}
-			});
+			// TODO - implement tabbing contraints
 		}
 
 		// bind ESC key to the close function, if enabled
@@ -372,8 +360,6 @@
 				self.oscb = true;
 				self.options.onShow.apply(self, [self]);
 			}
-			
-			setTimeout(function () {_focus(self);}, 10);
 		},
 		close: function () {
 			var self = this;
