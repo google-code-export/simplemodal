@@ -48,9 +48,12 @@ TODO:
 	}
 
 	// private variables
-	var smid = 0, wProps = [], zIndex = 1;
-	var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent);
-	var ie7qm = $.browser.msie && /MSIE 7.0/.test(navigator.userAgent) && !$.boxModel;
+	var ajax = false,
+		ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent),
+		ie7qm = $.browser.msie && /MSIE 7.0/.test(navigator.userAgent) && !$.boxModel,
+		smid = 0,
+		wProps = [],
+		zIndex = 1;
 
 	// action function
 	$.extend($.fn, {
@@ -78,27 +81,7 @@ TODO:
 		// check for an ajax request - there will only be one argument, which
 		// will actually be the options object and it will contain an ajax property
 		if (arguments.length == 1 && obj.ajax) {
-			options = obj;
-			$.ajax({
-				url: options.ajax || $.modal.defaults.ajax,
-				cache: options.cache || $.modal.defaults.cache,
-				method: options.method || $.modal.defaults.method,
-				dataType: options.dataType || $.modal.defaults.dataType,
-				error: function (event, xhr) {
-					// wrap in a div for safe parsing
-					element = $('<div/>').append(xhr.responseText);
-
-					// call the action function
-					return element.modal(options);
-				},
-				success: function (data) {
-					// wrap in a div for safe parsing
-					element = $('<div/>').append(data);
-
-					// call the action function
-					return element.modal(options);
-				}
-			});
+			return $('<div/>').html($.modal.defaults.loadingText).modal($.extend(obj, {ajaxData: true}));
 		}
 		else {
 			// determine the datatype for content and handle accordingly
@@ -136,6 +119,7 @@ TODO:
 		cache: false,
 		method: 'GET',
 		dataType: 'html',
+		loadingText: 'Loading...',
 		/* dialog options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
@@ -156,10 +140,9 @@ TODO:
 		iframeCss: null,
 		height: 400,
 		width: 600,
-		/* event options */
+		/* close options */
 		overlayClose: true,
 		escClose: true,
-		/* close element */
 		close: true,
 		closeElement: '<div>ESC or <a href="#" class="simplemodal-close">Close</a></div>'
 	};
@@ -309,46 +292,6 @@ TODO:
 
 		// open the dialog if autoOpen is true
 		this.options.autoOpen && this.open();
-
-		// bind anything with a class of simplemodal-close to the close function
-		this.container.find('.simplemodal-close').bind('click.' + this.container.attr('id'), function (e) {
-			e.preventDefault();
-			self.close();
-		});
-
-		// bind the overlay click to the close function, if enabled
-		if (this.options.overlayClose) {
-			this.overlay.bind('click.' + this.overlay.attr('id'), function (e) {
-				e.preventDefault();
-				self.close();
-			});
-		}
-
-		// bind onfocus event to force focus on modal dialog
-		if (this.options.focus) {
-			// TODO - implement tabbing contraints
-		}
-
-		// bind ESC key to the close function, if enabled
-		if (this.options.escClose) {
-			$().bind('keydown.esc-' + this.overlay.attr('id'), function (e) {
-				if (e.keyCode == 27) {
-					self.close();
-				}
-			});
-		}
-
-		// update window size
-		$(window).bind('resize.' + this.overlay.attr('id'), function () {
-			// redetermine the window width/height
-			wProps = _getDimensions($(window));
-
-			// reposition the dialog
-			_setPosition(self);
-
-			// update the overlay
-			!ie6 && self.overlay.css({height: wProps[0], width: wProps[1]});
-		});
 	};
 
 	$.extend($.modal.dialog.prototype, {
@@ -372,11 +315,30 @@ TODO:
 				self.container.show();
 				self.data.show();
 			}
-
-			// check for onShow callback
-			if ($.isFunction(self.options.onShow) && !self.oscb) {
-				self.oscb = true;
-				self.options.onShow.apply(self, [self]);
+			
+			// check for ajax content
+			if (self.options.ajaxData) {
+				// make the ajax call
+				$.ajax({
+					url: self.options.ajax,
+					cache: self.options.cache,
+					method: self.options.method,
+					dataType: self.options.dataType,
+					error: function (event, xhr) {
+						// wrap in a div for safe parsing
+						self.data.html($('<div/>').append(xhr.responseText));
+					},
+					success: function (data) {
+						// wrap in a div for safe parsing
+						self.data.html($('<div/>').append(data));
+						_show(self);
+						_bind(self);
+					}
+				});
+			}
+			else {
+				_show(self);
+				_bind(self);
 			}
 		},
 		close: function () {
@@ -430,6 +392,48 @@ TODO:
 	});
 
 	// private functions
+	function _bind (dialog) {
+		// bind anything with a class of simplemodal-close to the close function
+		dialog.container.find('.simplemodal-close').bind('click.' + dialog.container.attr('id'), function (e) {
+			e.preventDefault();
+			dialog.close();
+		});
+
+		// bind the overlay click to the close function, if enabled
+		if (dialog.options.overlayClose) {
+			dialog.overlay.bind('click.' + dialog.overlay.attr('id'), function (e) {
+				e.preventDefault();
+				dialog.close();
+			});
+		}
+
+		// bind onfocus event to force focus on modal dialog
+		if (dialog.options.focus) {
+			// TODO - implement tabbing contraints
+		}
+
+		// bind ESC key to the close function, if enabled
+		if (dialog.options.escClose) {
+			$().bind('keydown.esc-' + dialog.overlay.attr('id'), function (e) {
+				if (e.keyCode == 27) {
+					dialog.close();
+				}
+			});
+		}
+
+		// update window size
+		$(window).bind('resize.' + dialog.overlay.attr('id'), function () {
+			// redetermine the window width/height
+			wProps = _getDimensions($(window));
+
+			// reposition the dialog
+			_setPosition(dialog);
+
+			// update the overlay
+			!ie6 && dialog.overlay.css({height: wProps[0], width: wProps[1]});
+		});
+	}
+
 	function _fixIE6 (dialog) {
 		// simulate fixed position - adapted from BlockUI
 		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
@@ -458,6 +462,14 @@ TODO:
 
 	function _getDimensions (el) {
 		return [el.height(), el.width()];
+	}
+
+	function _show (dialog) {
+		// check for onShow callback
+		if ($.isFunction(dialog.options.onShow) && !dialog.oscb) {
+			dialog.oscb = true;
+			dialog.options.onShow.apply(dialog, [dialog]);
+		}
 	}
 
 	function _setPosition (dialog) {
