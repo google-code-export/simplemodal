@@ -90,7 +90,7 @@ $(document).ready(function () {
    });
    $('a#test15').click(function (e) {
       e.preventDefault();
-      $.modal({ajax: 'data/ajax.html'});
+      $.modal({ajax: 'data/ajax.php'});
    });
 });
 
