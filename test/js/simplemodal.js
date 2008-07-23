@@ -81,7 +81,7 @@ $(document).ready(function () {
 	$('a#test13a').click(function (e) {
 		e.preventDefault();
 		$('#modalContentTest').modal({
-			overlayCss: {opacity: 1, backgroundColor: '#fff'}
+			overlayCss: {opacity: .5, backgroundColor: '#ff0000'}
 		});
 	});
    $('a#test14').click(function (e) {
@@ -90,7 +90,7 @@ $(document).ready(function () {
    });
    $('a#test15').click(function (e) {
       e.preventDefault();
-      $.modal({ajax: 'data/ajax.php'});
+      $('#modalContentTest').modal({target: '#container'});
    });
 });
 
