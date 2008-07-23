@@ -21,6 +21,7 @@ TODO:
   - prevent tabbing for modal dialog
   - iframe support?
   - overlay/iframe override target (body) for appendTo?
+  - check dimensions to make sure dialog does not extend outside viewport
 */
 
 /**
@@ -48,9 +49,8 @@ TODO:
 	}
 
 	// private variables
-	var ajax = false,
-		ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent),
-		ie7qm = $.browser.msie && /MSIE 7.0/.test(navigator.userAgent) && !$.boxModel,
+	var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent),
+		ieQuirks = $.browser.msie && !$.boxModel,
 		smid = 0,
 		wProps = [],
 		zIndex = 1;
@@ -78,30 +78,23 @@ TODO:
 	$.modal = function (obj, options) {
 		var element = null;
 
-		// check for an ajax request - there will only be one argument, which
-		// will actually be the options object and it will contain an ajax property
-		if (arguments.length == 1 && obj.ajax) {
-			return $('<div/>').html($.modal.defaults.loadingText).modal($.extend(obj, {ajaxData: true}));
+		// determine the datatype for content and handle accordingly
+		if (typeof obj == 'object') {
+			// convert to a jQuery object, if necessary
+			element = obj instanceof jQuery ? obj : $(obj);
+		}
+		else if (typeof obj == 'string' || typeof obj == 'number') {
+			// just insert the content as innerHTML
+			element = $('<div/>').html(obj);
 		}
 		else {
-			// determine the datatype for content and handle accordingly
-			if (typeof obj == 'object') {
-				// convert to a jQuery object, if necessary
-				element = obj instanceof jQuery ? obj : $(obj);
-			}
-			else if (typeof obj == 'string' || typeof obj == 'number') {
-				// just insert the content as innerHTML
-				element = $('<div/>').html(obj);
-			}
-			else {
-				// unsupported data type
-				alert('SimpleModal was called using an unsupported data type: ' + typeof obj);
-				return;
-			}
-
-			// call the action function
-			return element.modal(options);
+			// unsupported data type
+			alert('SimpleModal was called using an unsupported data type: ' + typeof obj);
+			return;
 		}
+
+		// call the action function
+		return element.modal(options);
 	};
 
 	// alert call to deprecated function
@@ -114,18 +107,13 @@ TODO:
 		onOpen: null,			// called after the dialog elements are created - usually used for custom opening effects
 		onShow: null,			// called after the dialog is opened - usually used for binding events to the dialog
 		onClose: null,			// called when the close event is fired - usually used for custom closing effects
-		/* ajax options (see: http://docs.jquery.com/Ajax/jQuery.ajax#options) */
-		ajax: null,				// ajax url
-		cache: false,
-		method: 'GET',
-		dataType: 'html',
-		loadingText: 'Loading...',
 		/* dialog options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
 		focus: true,			// forces focus to remain on the modal dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		position: null,		// position of the dialog - [left, top] or will auto center
+		target: 'body',		// the element to which the overlay, container and iframe will be appended
 		zIndex: null,			// the starting z-index value
 		/* element id's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
@@ -148,17 +136,14 @@ TODO:
 	};
 
 	$.modal.dataCss = {};
-
 	$.modal.closeCss = {
 		float: 'right',
 		fontSize: '.8em',
 		padding: '4px'
 	};
-
 	$.modal.containerCss = {
 		position: 'fixed'
 	};
-
 	$.modal.overlayCss = {
 		background: '#000',
 		left: 0,
@@ -166,7 +151,6 @@ TODO:
 		position: 'fixed',
 		top: 0
 	};
-
 	$.modal.iframeCss = {
 		left: 0,
 		opacity: 0,
@@ -180,6 +164,11 @@ TODO:
 
 		// merge user options with the defaults
 		this.options = $.extend({}, $.modal.defaults, options);
+		
+		// if close is false, set overlayClose and escClose to false
+		if (!this.options.close) {
+			this.options.overlayClose = false, this.options.escClose = false;
+		}
 
 		// store this dialog for later use
 		$.data(element[0], 'simplemodal', this);
@@ -192,7 +181,7 @@ TODO:
 
 		// set z-index
 		if (!options || (options && !options.zIndex)) {
-			zIndex = uid * 1000;
+			zIndex = uid * 100;
 		}
 
 		// did the element come from the DOM
@@ -209,7 +198,7 @@ TODO:
 		element.hide();
 
 		// set the window properties
-		wProps = _getDimensions($(window));
+		wProps = _getDimensions($(this.options.target));
 
 		// create the iframe for ie6
 		if (ie6) {
@@ -223,7 +212,7 @@ TODO:
 					$.modal.iframeCss,
 					this.options.iframeCss
 				))
-				.appendTo('body');
+				.appendTo(this.options.target);
 		}
 
 		// create the overlay
@@ -239,7 +228,7 @@ TODO:
 				$.modal.overlayCss,
 				this.options.overlayCss
 			))
-			.appendTo('body');
+			.appendTo(this.options.target);
 
 		// create the container
 		this.container = $('<div/>')
@@ -248,17 +237,18 @@ TODO:
 			.css($.extend({
 					display: 'none',
 					height: this.options.height,
-					zIndex: zIndex + 2,
-					width: this.options.width
+					width: this.options.width,
+					zIndex: zIndex + 2
 				},
 				$.modal.containerCss,
 				this.options.containerCss
 			))
-			.prependTo('body');
+			.appendTo(this.options.target);
 
 		this.wrap = $('<div/>')
+			.attr('tabIndex', -1)
 			.addClass('simplemodal-content')
-			.css({height: '100%'})
+			.css({height: '100%', outline: 0})
 			.appendTo(this.container);
 
 		// add the close element, if enabled
@@ -301,8 +291,8 @@ TODO:
 			// perform ie6 fixes
 			ie6 && _fixIE6(self);
 
-			// perform ie7 quirksmode fixes
-			ie7qm && _fixIE7([self.overlay, self.container]);
+			// perform ie7+ quirksmode fixes
+			(!ie6 && ieQuirks) && _fixIEQuirks([self.overlay, self.container]);
 
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
@@ -315,31 +305,8 @@ TODO:
 				self.container.show();
 				self.data.show();
 			}
-			
-			// check for ajax content
-			if (self.options.ajaxData) {
-				// make the ajax call
-				$.ajax({
-					url: self.options.ajax,
-					cache: self.options.cache,
-					method: self.options.method,
-					dataType: self.options.dataType,
-					error: function (event, xhr) {
-						// wrap in a div for safe parsing
-						self.data.html($('<div/>').append(xhr.responseText));
-					},
-					success: function (data) {
-						// wrap in a div for safe parsing
-						self.data.html($('<div/>').append(data));
-						_show(self);
-						_bind(self);
-					}
-				});
-			}
-			else {
-				_show(self);
-				_bind(self);
-			}
+			_show(self);
+			_bind(self);
 		},
 		close: function () {
 			var self = this;
@@ -424,7 +391,7 @@ TODO:
 		// update window size
 		$(window).bind('resize.' + dialog.overlay.attr('id'), function () {
 			// redetermine the window width/height
-			wProps = _getDimensions($(window));
+			wProps = _getDimensions($(dialog.options.target));
 
 			// reposition the dialog
 			_setPosition(dialog);
@@ -449,15 +416,14 @@ TODO:
 		});
 	}
 
-	function _fixIE7 (els) {
+	function _fixIEQuirks (els) {
 		$.each(els, function (i, el) {
 			el.css({position: 'absolute'});
 		});
 	}
 
 	function _focus (dialog) {
-		//dialog.wrap.focus();
-		dialog.container.focus();
+		dialog.wrap.focus();
 	}
 
 	function _getDimensions (el) {
@@ -470,6 +436,7 @@ TODO:
 			dialog.oscb = true;
 			dialog.options.onShow.apply(dialog, [dialog]);
 		}
+		_focus(dialog);
 	}
 
 	function _setPosition (dialog) {

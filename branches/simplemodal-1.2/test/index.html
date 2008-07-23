@@ -25,7 +25,6 @@
 	@import "css/simplemodal-ie.css";
 </style>
 <![endif]-->
-
 </head>
 <body>
 <div id='container'>
@@ -98,7 +97,7 @@ function modalShow (dialog) {
 		});
 	});
 }</code></pre></li>
-	<li><a href='#' id='test15'>Ajax data</a> <pre><code>$.modal({ajax: 'data/ajax.php'})</code></pre></li>
+   <li><a href='#' id='test15'>Target test</a> <pre><code>$('#modalContentTest').modal({target: '#container'});</code></pre></li>
 	<li><a href='#' id='test13'>Multiple modal dialog test</a> <pre><code>$('#modalContentMultipleTest').modal();</code></pre></li>
    <li><a href='#' id='test14'>Data overflow test</a> <pre><code>$('#modalContentOverflowTest').modal();</code></pre></li>
 	<li><a href='#' id='test12'>IE SELECT bleed test</a>
@@ -129,6 +128,7 @@ function modalShow (dialog) {
 	</li>
 	</ul>
 	</div>
+	<div id='focusLog'></div>
 	<div style='height: 200px;'>&nbsp;</div>
 </div>
 <div id='modalContentTest' style='display: none'>
