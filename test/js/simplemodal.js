@@ -90,7 +90,13 @@ $(document).ready(function () {
    });
    $('a#test15').click(function (e) {
       e.preventDefault();
-      $('#modalContentTest').modal({target: '#container'});
+      $.modal('<iframe src="http://www.ericmmartin.com"/ height="480" width="854" style="border:3px solid #fff;">', {
+      	height:500, 
+      	width:860,
+      	containerCss: {border:0, background:'transparent'},
+      	dataCss: {padding:0},
+      	closeCss: {background:'#fff', paddingRight:0}
+      });
    });
 });
 

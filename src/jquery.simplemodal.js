@@ -19,9 +19,7 @@
 /*
 TODO:
   - prevent tabbing for modal dialog
-  - iframe support?
-  - overlay/iframe override target (body) for appendTo?
-  - check dimensions to make sure dialog does not extend outside viewport
+  - testing in browsers (especially opera)
 */
 
 /**
@@ -113,7 +111,6 @@ TODO:
 		focus: true,			// forces focus to remain on the modal dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		position: null,		// position of the dialog - [left, top] or will auto center
-		target: 'body',		// the element to which the overlay, container and iframe will be appended
 		zIndex: null,			// the starting z-index value
 		/* element id's */
 		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
@@ -198,7 +195,7 @@ TODO:
 		element.hide();
 
 		// set the window properties
-		wProps = _getDimensions($(this.options.target));
+		wProps = _getDimensions();
 
 		// create the iframe for ie6
 		if (ie6) {
@@ -212,7 +209,7 @@ TODO:
 					$.modal.iframeCss,
 					this.options.iframeCss
 				))
-				.appendTo(this.options.target);
+				.appendTo('body');
 		}
 
 		// create the overlay
@@ -228,7 +225,7 @@ TODO:
 				$.modal.overlayCss,
 				this.options.overlayCss
 			))
-			.appendTo(this.options.target);
+			.appendTo('body');
 
 		// create the container
 		this.container = $('<div/>')
@@ -243,7 +240,7 @@ TODO:
 				$.modal.containerCss,
 				this.options.containerCss
 			))
-			.appendTo(this.options.target);
+			.appendTo('body');
 
 		this.wrap = $('<div/>')
 			.attr('tabIndex', -1)
@@ -391,7 +388,7 @@ TODO:
 		// update window size
 		$(window).bind('resize.' + dialog.overlay.attr('id'), function () {
 			// redetermine the window width/height
-			wProps = _getDimensions($(dialog.options.target));
+			wProps = _getDimensions();
 
 			// reposition the dialog
 			_setPosition(dialog);
@@ -426,7 +423,8 @@ TODO:
 		dialog.wrap.focus();
 	}
 
-	function _getDimensions (el) {
+	function _getDimensions () {
+		var el = $(window);
 		return [el.height(), el.width()];
 	}
 
