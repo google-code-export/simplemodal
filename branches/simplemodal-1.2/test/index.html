@@ -97,7 +97,13 @@ function modalShow (dialog) {
 		});
 	});
 }</code></pre></li>
-   <li><a href='#' id='test15'>Target test</a> <pre><code>$('#modalContentTest').modal({target: '#container'});</code></pre></li>
+   <li><a href='#' id='test15'>IFRAME test</a> <pre><code>$.modal('&lt;iframe src="http://www.ericmmartin.com"/ height="480" width="854" style="border:3px solid #fff;"&gt;', {
+	height:500, 
+	width:860,
+	containerCss: {border:0, background:'transparent'},
+	dataCss: {padding:0},
+	closeCss: {background:'#fff', paddingRight:0}
+});</code></pre></li>
 	<li><a href='#' id='test13'>Multiple modal dialog test</a> <pre><code>$('#modalContentMultipleTest').modal();</code></pre></li>
    <li><a href='#' id='test14'>Data overflow test</a> <pre><code>$('#modalContentOverflowTest').modal();</code></pre></li>
 	<li><a href='#' id='test12'>IE SELECT bleed test</a>
