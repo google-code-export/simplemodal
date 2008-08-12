@@ -151,7 +151,7 @@ TODO:
 	$.modal.iframeCss = {
 		left: 0,
 		opacity: 0,
-		position: 'absolute',
+		position: 'fixed',
 		top: 0
 	};
 
@@ -197,20 +197,18 @@ TODO:
 		// set the window properties
 		wProps = _getDimensions();
 
-		// create the iframe for ie6
-		if (ie6) {
-			this.iframe = $('<iframe src="javascript:false;"/>')
-				.attr('id', this.options.iframeId || 'simplemodal-iframe-' + uid)
-				.addClass('simplemodal-iframe')
-				.css($.extend({
-						display: 'none',
-						zIndex: zIndex
-					},
-					$.modal.iframeCss,
-					this.options.iframeCss
-				))
-				.appendTo('body');
-		}
+		// create the iframe
+		this.iframe = $('<iframe src="javascript:false;"/>')
+			.attr('id', this.options.iframeId || 'simplemodal-iframe-' + uid)
+			.addClass('simplemodal-iframe')
+			.css($.extend({
+					display: 'none',
+					zIndex: zIndex
+				},
+				$.modal.iframeCss,
+				this.options.iframeCss
+			))
+			.appendTo('body');
 
 		// create the overlay
 		this.overlay = $('<div/>')
@@ -297,7 +295,7 @@ TODO:
 				self.options.onOpen.apply(self, [self]);
 			}
 			else {
-				self.iframe && self.iframe.show();
+				self.iframe.show();
 				self.overlay.show();
 				self.container.show();
 				self.data.show();
@@ -317,7 +315,7 @@ TODO:
 				self.data.hide();
 				self.container.hide();
 				self.overlay.hide();
-				self.iframe && self.iframe.hide();
+				self.iframe.hide();
 				self.options.autoDestroy && self.destroy();
 			}
 		},
@@ -333,7 +331,7 @@ TODO:
 			$().unbind('keydown.esc-' + id);
 			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
 
-			this.iframe && this.iframe.remove();
+			this.iframe.remove();
 			this.overlay.remove();
 
 			// save the changes to the data?
