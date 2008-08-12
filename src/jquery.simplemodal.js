@@ -5,9 +5,10 @@
  * http://code.google.com/p/simplemodal/
  *
  * Copyright (c) 2008 Eric Martin - http://ericmmartin.com
- * Idea/inspiration/code contributions from:
- *     - jQuery UI Dialog, BlockUI, jqModal
- *     - Aaron Barker
+ * Ideas, inspiration and code contributions from:
+ *		- Myself =)
+ * 	- jQuery UI Dialog, BlockUI, jqModal
+ * 	- Aaron Barker
  *
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
@@ -19,7 +20,6 @@
 /*
 TODO:
   - prevent tabbing for modal dialog
-  - testing in browsers (especially opera)
 */
 
 /**
@@ -28,7 +28,8 @@ TODO:
  * SimpleModal has been tested in the following browsers:
  * - IE 6, 7
  * - Firefox 2, 3
- * - Opera 9
+ * - Flock 1.2
+ * - Opera 9, 9.5
  * - Safari 3
  *
  * @name SimpleModal
@@ -47,7 +48,7 @@ TODO:
 	}
 
 	// private variables
-	var ie6 = $.browser.msie && /MSIE 6.0/.test(navigator.userAgent),
+	var ie6 = $.browser.msie && parseInt($.browser.version) == 6 && !window["XMLHttpRequest"],
 		ieQuirks = $.browser.msie && !$.boxModel,
 		smid = 0,
 		wProps = [],
@@ -161,7 +162,7 @@ TODO:
 
 		// merge user options with the defaults
 		this.options = $.extend({}, $.modal.defaults, options);
-		
+
 		// if close is false, set overlayClose and escClose to false
 		if (!this.options.close) {
 			this.options.overlayClose = false, this.options.escClose = false;
@@ -203,6 +204,8 @@ TODO:
 			.addClass('simplemodal-iframe')
 			.css($.extend({
 					display: 'none',
+					height: wProps[0],
+					width: wProps[1],
 					zIndex: zIndex
 				},
 				$.modal.iframeCss,
@@ -287,7 +290,7 @@ TODO:
 			ie6 && _fixIE6(self);
 
 			// perform ie7+ quirksmode fixes
-			(!ie6 && ieQuirks) && _fixIEQuirks([self.overlay, self.container]);
+			(!ie6 && ieQuirks) && _fixIEQuirks(self);
 
 			// check for onOpen callback
 			if ($.isFunction(self.options.onOpen) && !self.oocb) {
@@ -411,8 +414,8 @@ TODO:
 		});
 	}
 
-	function _fixIEQuirks (els) {
-		$.each(els, function (i, el) {
+	function _fixIEQuirks (dialog) {
+		$.each([dialog.iframe, dialog.overlay, dialog.container], function (i, el) {
 			el.css({position: 'absolute'});
 		});
 	}
@@ -423,7 +426,13 @@ TODO:
 
 	function _getDimensions () {
 		var el = $(window);
-		return [el.height(), el.width()];
+
+		// fix a jQuery/Opera bug with determining the window height
+		var h = $.browser.opera && $.browser.version > "9.5" && $.fn.jquery <= "1.2.6" ?
+			document.documentElement["clientHeight"] : 
+			el.height();
+
+		return [h, el.width()];
 	}
 
 	function _show (dialog) {
