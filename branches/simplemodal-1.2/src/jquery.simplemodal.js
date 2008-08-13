@@ -19,7 +19,7 @@
 
 /*
 TODO:
-  - prevent tabbing for modal dialog
+  - prevent tabbing for modal dialog - not working in IE :P
 */
 
 /**
@@ -42,13 +42,13 @@ TODO:
 ;(function ($) {
 
 	// make sure a valid version of jQuery is being used
-	if ($.fn.jquery < "1.2.3") {
+	if ($.fn.jquery < '1.2.3') {
 		alert('SimpleModal requires jQuery v1.2.3 or higher! You are using v' + $.fn.jquery);
 		return;
 	}
 
 	// private variables
-	var ie6 = $.browser.msie && parseInt($.browser.version) == 6 && !window["XMLHttpRequest"],
+	var ie6 = $.browser.msie && parseInt($.browser.version) == 6 && !window['XMLHttpRequest'],
 		ieQuirks = $.browser.msie && !$.boxModel,
 		smid = 0,
 		wProps = [],
@@ -245,7 +245,7 @@ TODO:
 
 		this.wrap = $('<div/>')
 			.attr('tabIndex', -1)
-			.addClass('simplemodal-content')
+			.addClass('simplemodal-wrap')
 			.css({height: '100%', outline: 0})
 			.appendTo(this.container);
 
@@ -321,17 +321,20 @@ TODO:
 				self.iframe.hide();
 				self.options.autoDestroy && self.destroy();
 			}
+			
+			// to preserve focus and tabbing, check for other open dialogs
+			var wrap = $('.simplemodal-wrap:visible');
+			wrap.length > 0 && (wrap.focus() || $('a:first, :input:enabled:visible:first', wrap).focus());
 		},
 		destroy: function () {
 			$.removeData(this.data[0], 'simplemodal');
 
 			// unbind events
 			var id = this.overlay.attr('id');
+			$.each(['resize.', 'keydown.esc-', 'keydown.tab-'], function (i, event) {
+				$(window).unbind(event + id);
+			});
 			this.overlay.unbind('click.' + id);
-			$(window).unbind('resize.' + id);
-			//$().unbind(this.events);
-			$().unbind('focus.simplemodal');
-			$().unbind('keydown.esc-' + id);
 			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
 
 			this.iframe.remove();
@@ -346,7 +349,7 @@ TODO:
 				else {
 					// remove the current and insert the original, unmodified data back into the DOM
 					this.data.remove();
-					this.original.appendTo(this.parent);
+					this.original.css({display: 'none'}).appendTo(this.parent);
 				}
 			}
 			else {
@@ -374,12 +377,16 @@ TODO:
 
 		// bind onfocus event to force focus on modal dialog
 		if (dialog.options.focus) {
-			// TODO - implement tabbing contraints
+			$(window).bind('keydown.tab-' + dialog.overlay.attr('id'), function (e) {
+				if (e.keyCode == 9) {
+					_watchTab(e, dialog);
+				}
+			});
 		}
 
 		// bind ESC key to the close function, if enabled
 		if (dialog.options.escClose) {
-			$().bind('keydown.esc-' + dialog.overlay.attr('id'), function (e) {
+			$(window).bind('keydown.esc-' + dialog.overlay.attr('id'), function (e) {
 				if (e.keyCode == 27) {
 					dialog.close();
 				}
@@ -397,6 +404,10 @@ TODO:
 			// update the overlay
 			!ie6 && dialog.overlay.css({height: wProps[0], width: wProps[1]});
 		});
+		
+		// save the list of tabbable elements
+		dialog.links = $('a:first, a:last', dialog.wrap);
+		dialog.inputs = $(':input:enabled:visible:first, :input:enabled:visible:last', dialog.wrap);
 	}
 
 	function _fixIE6 (dialog) {
@@ -420,16 +431,19 @@ TODO:
 		});
 	}
 
-	function _focus (dialog) {
-		dialog.wrap.focus();
+	function _focus (dialog, pos) {
+		pos = pos || 'first';
+		// focus on dialog or the first visible/enabled input element
+		var input = $('a:' + pos + ', :input:enabled:visible:' + pos, dialog.wrap);
+		input.length > 0 ? input.focus() : dialog.wrap.focus();
 	}
 
 	function _getDimensions () {
 		var el = $(window);
 
 		// fix a jQuery/Opera bug with determining the window height
-		var h = $.browser.opera && $.browser.version > "9.5" && $.fn.jquery <= "1.2.6" ?
-			document.documentElement["clientHeight"] : 
+		var h = $.browser.opera && $.browser.version > '9.5' && $.fn.jquery <= '1.2.6' ?
+			document.documentElement['clientHeight'] : 
 			el.height();
 
 		return [h, el.width()];
@@ -454,5 +468,24 @@ TODO:
 			left += (wProps[1]/2) - (dialog.container.width()/2);
 		}
 		dialog.container.css({left: left, top: top});
+	}
+	
+	function _watchTab (e, dialog) {
+		if ($(e.target).parents('.simplemodal-container').length > 0) {
+			// if it's the first or last tabbable element, refocus
+			if (!e.shiftKey && e.target == dialog.links[dialog.links.length -1] ||
+					!e.shiftKey && e.target == dialog.inputs[dialog.inputs.length -1] ||
+					e.shiftKey && e.target == dialog.links[0] ||
+					e.shiftKey && e.target == dialog.inputs[0]) {
+				e.preventDefault();
+				var pos = e.shiftKey ? 'last' : 'first';
+				_focus(dialog, pos);
+			}
+		}
+		else {
+			// just to be sure (might be necessary when custom onShow callback is used)
+			e.preventDefault();
+			_focus(dialog);
+		}
 	}
 })(jQuery);
