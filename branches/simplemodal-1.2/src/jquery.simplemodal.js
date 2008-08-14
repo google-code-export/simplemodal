@@ -17,11 +17,6 @@
  *
  */
 
-/*
-TODO:
-  - prevent tabbing for modal dialog - not working in IE :P
-*/
-
 /**
  * TODO: Summary goes here
  *
@@ -126,6 +121,7 @@ TODO:
 		iframeCss: null,
 		height: 400,
 		width: 600,
+		theme: null,
 		/* close options */
 		overlayClose: true,
 		escClose: true,
@@ -155,6 +151,8 @@ TODO:
 		position: 'fixed',
 		top: 0
 	};
+	
+	$.modal.theme = {};
 
 	$.modal.dialog = function (element, options) {
 		// alias this
@@ -163,9 +161,12 @@ TODO:
 		// merge user options with the defaults
 		this.options = $.extend({}, $.modal.defaults, options);
 
+		// load theme
+		this.options.theme && $.modal.theme[this.options.theme] && _loadTheme(self);
+
 		// if close is false, set overlayClose and escClose to false
 		if (!this.options.close) {
-			this.options.overlayClose = false, this.options.escClose = false;
+			this.options.overlayClose = this.options.escClose = false;
 		}
 
 		// store this dialog for later use
@@ -321,22 +322,20 @@ TODO:
 				self.iframe.hide();
 				self.options.autoDestroy && self.destroy();
 			}
-			
+
 			// to preserve focus and tabbing, check for other open dialogs
-			var d = $('.simplemodal-data:visible');
-			if (d.length > 0) {
-				_focus($.data(d[0], 'simplemodal'));
+			var elem = $('.simplemodal-data:visible');
+			if (elem.length > 0) {
+				var d = $.data(elem[0], 'simplemodal');
+				_bind(d); // rebind events
+				_focus(d);
 			}
 		},
 		destroy: function () {
 			$.removeData(this.data[0], 'simplemodal');
 
-			// unbind events
-			var id = this.overlay.attr('id');
-			$(document).unbind('keydown.' + id);
-			$(window).unbind('resize.' + id);
-			this.overlay.unbind('click.' + id);
-			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
+			// remove events
+			_unbind(this);
 
 			this.iframe.remove();
 			this.overlay.remove();
@@ -362,22 +361,25 @@ TODO:
 
 	// private functions
 	function _bind (dialog) {
+		// start with a clean slate
+		_unbind(dialog);
+
 		// bind anything with a class of simplemodal-close to the close function
-		dialog.container.find('.simplemodal-close').bind('click.' + dialog.container.attr('id'), function (e) {
+		dialog.container.find('.simplemodal-close').bind('click.simplemodal', function (e) {
 			e.preventDefault();
 			dialog.close();
 		});
 
 		// bind the overlay click to the close function, if enabled
 		if (dialog.options.overlayClose) {
-			dialog.overlay.bind('click.' + dialog.overlay.attr('id'), function (e) {
+			dialog.overlay.bind('click.simplemodal', function (e) {
 				e.preventDefault();
 				dialog.close();
 			});
 		}
 
 		// bind keydown events
-		$(document).bind('keydown.' + dialog.overlay.attr('id'), function (e) {
+		$(document).bind('keydown.simplemodal', function (e) {
 			if (dialog.options.focus && e.keyCode == 9) { // TAB
 				_watchTab(e, dialog);
 			}
@@ -387,17 +389,18 @@ TODO:
 		});
 
 		// update window size
-		$(window).bind('resize.' + dialog.overlay.attr('id'), function () {
+		$(window).bind('resize.simplemodal', function () {
 			// redetermine the window width/height
 			wProps = _getDimensions();
 
 			// reposition the dialog
 			_setPosition(dialog);
 
-			// update the overlay
-			!ie6 && dialog.overlay.css({height: wProps[0], width: wProps[1]});
+			// update the iframe && overlay
+			!ie6 && dialog.iframe.css({height: wProps[0], width: wProps[1]})
+				&& dialog.overlay.css({height: wProps[0], width: wProps[1]});
 		});
-		
+
 		// save the list of inputs
 		dialog.inputs = $(':input:enabled:visible:first, :input:enabled:visible:last', dialog.wrap);
 	}
@@ -441,13 +444,10 @@ TODO:
 		return [h, el.width()];
 	}
 
-	function _show (dialog) {
-		// check for onShow callback
-		if ($.isFunction(dialog.options.onShow) && !dialog.oscb) {
-			dialog.oscb = true;
-			dialog.options.onShow.apply(dialog, [dialog]);
-		}
-		_focus(dialog);
+	function _loadTheme (dialog) {
+		$.each(['dataCss', 'closeCss', 'containerCss', 'overlayCss', 'iframeCss'], function (i, el) {
+			dialog.options[el] = $.extend(dialog.options[el], $.modal.theme[dialog.options.theme][el]);
+		});
 	}
 
 	function _setPosition (dialog) {
@@ -461,7 +461,23 @@ TODO:
 		}
 		dialog.container.css({left: left, top: top});
 	}
-	
+
+	function _show (dialog) {
+		// check for onShow callback
+		if ($.isFunction(dialog.options.onShow) && !dialog.oscb) {
+			dialog.oscb = true;
+			dialog.options.onShow.apply(dialog, [dialog]);
+		}
+		_focus(dialog);
+	}
+
+	function _unbind (dialog) {
+		$(document).unbind('keydown.simplemodal');
+		$(window).unbind('resize.simplemodal');
+		dialog.overlay.unbind('click.simplemodal');
+		dialog.container.find('.simplemodal-close').unbind('click.simplemodal');
+	}
+
 	function _watchTab (e, dialog) {
 		if ($(e.target).parents('.simplemodal-container').length > 0) {
 			// if it's the first or last tabbable element, refocus
@@ -474,7 +490,7 @@ TODO:
 			}
 		}
 		else {
-			// just to be sure (might be necessary when custom onShow callback is used)
+			// might be necessary when custom onShow callback is used
 			e.preventDefault();
 			setTimeout(function () {_focus(dialog);}, 10);
 		}

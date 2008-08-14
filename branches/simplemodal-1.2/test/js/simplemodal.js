@@ -9,14 +9,41 @@
  *
  */
 $(document).ready(function () {
+	// default theme
+	$.modal.defaults.theme = 'common';
+
 	// add common styles
-	$.modal.containerCss = $.extend($.modal.containerCss, {
-		background: '#fff',
-		border: '3px solid #ccc'
-	});
-	$.modal.dataCss = $.extend($.modal.dataCss, {
-		padding: '10px'
-	});
+	$.modal.theme.common = {
+		containerCss: {
+			background: '#fff',
+			border: '3px solid #ccc'
+		},
+		dataCss: {
+			padding: '10px'
+		}
+	};
+	
+	$.modal.theme.test = {
+		closeCss: {
+			background: '#336699',
+			borderBottom: '1px solid #003366',
+			color: '#fff',
+			marginBottom: '8px',
+			padding: '4px 0',
+			textAlign: 'right',
+			width: '100%'
+		},
+		containerCss: {
+			background: '#eee',
+			border: '3px solid #003366'
+		},
+		dataCss: {
+			padding: '10px'
+		},
+		overlayCss: {
+			background: '#6699cc'
+		}
+	};
 	
 	$('a#test1').click(function (e) {
 		e.preventDefault();
@@ -97,6 +124,10 @@ $(document).ready(function () {
 			dataCss: {padding:0},
 			closeCss: {background:'#fff', paddingRight:0}
 		});
+	});
+   $('a#test16').click(function (e) {
+   	e.preventDefault();
+		$('#modalContentTest').modal({theme: 'test'});
 	});
 });
 
