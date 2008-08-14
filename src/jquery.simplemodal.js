@@ -323,17 +323,18 @@ TODO:
 			}
 			
 			// to preserve focus and tabbing, check for other open dialogs
-			var wrap = $('.simplemodal-wrap:visible');
-			wrap.length > 0 && (wrap.focus() || $('a:first, :input:enabled:visible:first', wrap).focus());
+			var d = $('.simplemodal-data:visible');
+			if (d.length > 0) {
+				_focus($.data(d[0], 'simplemodal'));
+			}
 		},
 		destroy: function () {
 			$.removeData(this.data[0], 'simplemodal');
 
 			// unbind events
 			var id = this.overlay.attr('id');
-			$.each(['resize.', 'keydown.esc-', 'keydown.tab-'], function (i, event) {
-				$(window).unbind(event + id);
-			});
+			$(document).unbind('keydown.' + id);
+			$(window).unbind('resize.' + id);
 			this.overlay.unbind('click.' + id);
 			this.container.find('.simplemodal-close').unbind('click.' + this.container.attr('id'));
 
@@ -375,23 +376,15 @@ TODO:
 			});
 		}
 
-		// bind onfocus event to force focus on modal dialog
-		if (dialog.options.focus) {
-			$(window).bind('keydown.tab-' + dialog.overlay.attr('id'), function (e) {
-				if (e.keyCode == 9) {
-					_watchTab(e, dialog);
-				}
-			});
-		}
-
-		// bind ESC key to the close function, if enabled
-		if (dialog.options.escClose) {
-			$(window).bind('keydown.esc-' + dialog.overlay.attr('id'), function (e) {
-				if (e.keyCode == 27) {
-					dialog.close();
-				}
-			});
-		}
+		// bind keydown events
+		$(document).bind('keydown.' + dialog.overlay.attr('id'), function (e) {
+			if (dialog.options.focus && e.keyCode == 9) { // TAB
+				_watchTab(e, dialog);
+			}
+			else if (dialog.options.escClose && e.keyCode == 27) { // ESC
+				dialog.close();
+			}
+		});
 
 		// update window size
 		$(window).bind('resize.' + dialog.overlay.attr('id'), function () {
@@ -405,8 +398,7 @@ TODO:
 			!ie6 && dialog.overlay.css({height: wProps[0], width: wProps[1]});
 		});
 		
-		// save the list of tabbable elements
-		dialog.links = $('a:first, a:last', dialog.wrap);
+		// save the list of inputs
 		dialog.inputs = $(':input:enabled:visible:first, :input:enabled:visible:last', dialog.wrap);
 	}
 
@@ -434,7 +426,7 @@ TODO:
 	function _focus (dialog, pos) {
 		pos = pos || 'first';
 		// focus on dialog or the first visible/enabled input element
-		var input = $('a:' + pos + ', :input:enabled:visible:' + pos, dialog.wrap);
+		var input = $(':input:enabled:visible:' + pos, dialog.wrap);
 		input.length > 0 ? input.focus() : dialog.wrap.focus();
 	}
 
@@ -473,19 +465,18 @@ TODO:
 	function _watchTab (e, dialog) {
 		if ($(e.target).parents('.simplemodal-container').length > 0) {
 			// if it's the first or last tabbable element, refocus
-			if (!e.shiftKey && e.target == dialog.links[dialog.links.length -1] ||
-					!e.shiftKey && e.target == dialog.inputs[dialog.inputs.length -1] ||
-					e.shiftKey && e.target == dialog.links[0] ||
-					e.shiftKey && e.target == dialog.inputs[0]) {
+			if (!e.shiftKey && e.target == dialog.inputs[dialog.inputs.length -1] ||
+					e.shiftKey && e.target == dialog.inputs[0] ||
+					dialog.inputs.length == 0) {
 				e.preventDefault();
 				var pos = e.shiftKey ? 'last' : 'first';
-				_focus(dialog, pos);
+				setTimeout(function () {_focus(dialog, pos);}, 10);
 			}
 		}
 		else {
 			// just to be sure (might be necessary when custom onShow callback is used)
 			e.preventDefault();
-			_focus(dialog);
+			setTimeout(function () {_focus(dialog);}, 10);
 		}
 	}
 })(jQuery);
