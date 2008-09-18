@@ -1,0 +1,21 @@
+<?php
+// $Id$
+
+/**
+ * @file
+ * Installation functions for SMCF.
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function smcf_uninstall() {
+	// Delete the variables we created.
+	variable_del('smcf_simplemodal_js');
+	variable_del('smcf_form_subject');
+	variable_del('smcf_form_cc_sender');
+	variable_del('smcf_to_email');
+	variable_del('smcf_subject');
+	variable_del('smcf_ip');
+	variable_del('smcf_ua');
+}
