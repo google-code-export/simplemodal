@@ -19,64 +19,57 @@ function smcf_access($op, $node, $account) {
 }
 
 /**
- * Custom form creation
- */
-
-function smcf_contact_form() {
-	$form['smcf_name'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Name'),
-		'#attributes' => array('class' => 'smcf-input')
-	);
-
-	$form['smcf_email'] = array(
-		'#type' => 'textfield',
-		'#title' => t('Email'),
-		'#attributes' => array('class' => 'smcf-input')
-	);
-
-	if (variable_get('smcf_form_subject', TRUE)) {
-		$form['smcf_email'] = array(
-			'#type' => 'textfield',
-			'#title' => t('Subject'),
-		'#attributes' => array('class' => 'smcf-input')
-		);
-	}
-
-	$form['smcf_message'] = array(
-		'#type' => 'textarea',
-		'#title' => t('Message'),
-		'#attributes' => array('class' => 'smcf-input'),
-		'#cols' => 40,
-		'#rows' => 4
-	);
-	
-	if (variable_get('smcf_form_cc_sender', TRUE)) {
-		$form['smcf_cc'] = array(
-			'#type' => 'checkbox'
-		);
-	}
-
-	$form['smcf_send'] = array(
-		'#type' => 'submit',
-		'#value' => t('Send')
-	);
-
-	$form['smcf_cancel'] = array(
-		'#type' => 'button',
-		'#value' => t('Cancel')
-	);
-
-	$form['#theme'] = 'smcf_contact_form';
-
-	return $form;
-}
-
-/**
  * Implementation of hook_footer().
  */
 function smcf_footer() {
-	return drupal_get_form('smcf_contact_form');
+	$output = "<div id='smcf-content' style='display:none'>
+	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
+	<div class='smcf-top'></div>
+	<div class='smcf-content'>
+		<h1 class='smcf-title'>" .  variable_get('smcf_form_title', 'Contact Me') . "</h1>
+		<div class='smcf-loading' style='display:none'></div>
+		<div class='smcf-message' style='display:none'></div>
+		<form action='" . base_path() . "smcf/send' method='post' accept-charset='UTF-8'>
+		<div>";
+
+	// create the contact form HTML
+	$output .= "
+		<label for='smcf-name'>*" . t('Name') . ":</label>
+		<input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
+		<label for='smcf-email'>*" . t('Email') . ":</label>
+		<input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
+
+	if (variable_get('smcf_form_subject', TRUE)) {
+		$output .= "<label for='smcf-subject'>" . t('Subject') . ":</label>
+		<input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
+	}
+
+	$output .= "<label for='smcf-message'>*" . t('Message') . ":</label>
+		<textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
+
+	if (variable_get('smcf_form_cc_sender', TRUE)) {
+		$output .= "<br/>
+		<label>&nbsp;</label>
+		<input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
+		<br/>";
+	}
+	else {
+		$output .= "<br/>";
+	}
+
+	$output .= "<label>&nbsp;</label>
+		<button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
+		<button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
+		<input type='hidden' name='token' value=''/>
+		<br/>
+		</div>
+		</form>";
+
+	$output .= "</div>
+	<div class='smcf-bottom'><a href='http://www.ericmmartin.com/projects/smcf-drupal/'>" . t('Powered by') . " SimpleModal Contact Form</a></div>
+</div>";
+
+	return $output;
 }
 
 /**
@@ -103,7 +96,15 @@ function smcf_init() {
 	$js_settings = array(
 		'images_url' => base_path() . $path . '/images/',
 		'messages' => array(
-		
+			'loading' => t('Loading...'),
+			'sending' => t('Sending...'),
+			'thankyou' => t('Thank You!'),
+			'error' => t('Uh oh...'),
+			'goodbye' => t('Goodbye...'),
+			'namerequired' => t('Name is required.'),
+			'emailrequired' => t('Email is required.'),
+			'emailinvalid' => t('Email is invalid.'),
+			'messagerequired' => t('Message is required.')
 		)
 	);
 	drupal_add_js(array('smcf' => $js_settings), 'setting');
@@ -131,7 +132,9 @@ function smcf_menu() {
 		'description' => 'Sends the contact form.',
 		'page callback' => 'smcf_send_mail',
 		'access arguments' => array('send email'),
+		'type' => MENU_CALLBACK
 	);
+
 	$items['admin/settings/smcf'] = array(
 		'title' => 'SMCF',
 		'description' => 'Allows the user to configure the smcf settings',
@@ -156,64 +159,6 @@ function smcf_perm() {
  * Custom menu callback
  */
 function smcf_send_mail() {
-	drupal_mail('example', 'notify', $account->mail, user_preferred_language($account), $params);
-}
-
-/**
- * Implementation of hook_theme().
- */
-function smcf_theme() {
-  return array(
-    'smcf_contact_form' => array(
-      'arguments' => array('form' => NULL)
-	  )
-  );
-}
-
-function theme_smcf_contact_form($form) {
-	// create the contact form HTML
-	$output = "<div id='smcf-content' style='display:none'>
-	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
-	<div class='smcf-top'></div>
-	<div class='smcf-content'>
-		<h1 class='smcf-title'>" .  variable_get('smcf_form_title', 'Contact Me') . "</h1>
-		<div class='smcf-loading' style='display:none'></div>
-		<div class='smcf-message' style='display:none'></div>
-		<form action='/smcf_data.php' style='display:none'>
-			<div>
-			<label for='smcf-name'>*" . t('Name') . ":</label>
-			<input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
-			<label for='smcf-email'>*" . t('Email') . ":</label>
-			<input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
-
-	if (variable_get('smcf_form_subject', TRUE)) {
-		$output .= "<label for='smcf-subject'>" . t('Subject') . ":</label>
-			<input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
-	}
-
-	$output .= "<label for='smcf-message'>*" . t('Message') . ":</label>
-			<textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
-
-	if (variable_get('smcf_form_cc_sender', TRUE)) {
-		$output .= "<br/>
-			<label>&nbsp;</label>
-			<input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
-			<br/>";
-	}
-	else {
-		$output .= "<br/>";
-	}
-
-	$output .= "<label>&nbsp;</label>
-			<button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
-			<button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
-			<input type='hidden' name='token' value=''/>
-			<br/>
-			</div>
-		</form>
-	</div>
-	<div class='smcf-bottom'><a href='http://www.ericmmartin.com/projects/smcf/'>" . t('Powered by') . " SimpleModal Contact Form</a></div>
-</div>";
-
-	return $output;
+	//drupal_mail('smcf', 'notify', $account->mail, user_preferred_language($account), $params);
+	print "woo whoo";
 }

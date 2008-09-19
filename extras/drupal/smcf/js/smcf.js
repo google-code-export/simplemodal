@@ -1,7 +1,7 @@
 // make sure jQuery is loaded
 if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 	jQuery(document).ready(function () {
-		var smcf_url = jQuery('#smcf-content form').attr('action');
+		var smcf_url = jQuery('#smcf-content form').hide().attr('action');
 		jQuery('.smcf_link, .smcf-link').click(function (e) { // added .smcf_link for previous version
 			e.preventDefault();
 			// display the contact form
@@ -17,12 +17,9 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 
 		// preload images
 		var img = ['cancel.png','form_bottom.gif','form_top.gif','form_top_ie.gif','loading.gif','send.png'];
-		var form = jQuery('#smcf-content form');
-		var url = form.length > 0 ? form.attr('action').replace(/smcf_data\.php/, 'img/') : '';
-
 		jQuery(img).each(function () {
 			var i = new Image();
-			i.src = url + this;
+			i.src = Drupal.settings.smcf.images_url + this;
 		});
 	});
 
@@ -53,7 +50,7 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 			}
 
 			var title = jQuery('#smcf-container .smcf-title').html();
-			jQuery('#smcf-container .smcf-title').html('Loading...');
+			jQuery('#smcf-container .smcf-title').html(Drupal.settings.smcf.messages.loading);
 			dialog.overlay.fadeIn(200, function () {
 				dialog.container.fadeIn(200, function () {
 					dialog.data.fadeIn(200, function () {
@@ -95,7 +92,7 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 					jQuery('#smcf-container .smcf-message').fadeOut(function () {
 						jQuery('#smcf-container .smcf-message').removeClass('smcf-error').empty();
 					});
-					jQuery('#smcf-container .smcf-title').html('Sending...');
+					jQuery('#smcf-container .smcf-title').html(Drupal.settings.smcf.messages.sending);
 					jQuery('#smcf-container form').fadeOut(200);
 					jQuery('#smcf-container .smcf-content').animate({
 						height: '80px'
@@ -109,13 +106,13 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 								dataType: 'html',
 								success: function (data) {
 									jQuery('#smcf-container .smcf-loading').fadeOut(200, function () {
-										jQuery('#smcf-container .smcf-title').html('Thank You!');
+										jQuery('#smcf-container .smcf-title').html(Drupal.settings.smcf.messages.thankyou);
 										jQuery('#smcf-container .smcf-message').html(data).fadeIn(200);
 									});
 								},
 								error: function (xhr) {
 									jQuery('#smcf-container .smcf-loading').fadeOut(200, function () {
-										jQuery('#smcf-container .smcf-title').html('Uh oh...');
+										jQuery('#smcf-container .smcf-title').html(Drupal.settings.smcf.messages.error);
 										jQuery('#smcf-container .smcf-message').html(xhr.status + ': ' + xhr.statusText).fadeIn(200);
 									});
 								}
@@ -143,7 +140,7 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 		},
 		close: function (dialog) {
 			jQuery('#smcf-container .smcf-message').fadeOut();
-			jQuery('#smcf-container .smcf-title').html('Goodbye...');
+			jQuery('#smcf-container .smcf-title').html(Drupal.settings.smcf.messages.goodbye);
 			jQuery('#smcf-container form').fadeOut(200);
 			jQuery('#smcf-container .smcf-content').animate({
 				height: '40px'
@@ -159,22 +156,26 @@ if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
 		},
 		validate: function () {
 			contact.message = '';
-			if (!jQuery('#smcf-container #smcf-name').val()) {
-				contact.message += 'Name is required. ';
+
+			var name = jQuery('#smcf-container #smcf-name');
+			if (!name.val()) {
+				contact.message += Drupal.settings.smcf.messages.namerequired + " ";
+				//name.
 			}
 
-			var email = jQuery('#smcf-container #smcf-email').val();
-			if (!email) {
-				contact.message += 'Email is required. ';
+			var email = jQuery('#smcf-container #smcf-email');
+			if (!email.val()) {
+				contact.message += Drupal.settings.smcf.messages.emailrequired + " ";
 			}
 			else {
-				if (!contact.validateEmail(email)) {
-					contact.message += 'Email is invalid. ';
+				if (!contact.validateEmail(email.val())) {
+					contact.message += Drupal.settings.smcf.messages.emailinvalid + " ";
 				}
 			}
 
-			if (!jQuery('#smcf-container #smcf-message').val()) {
-				contact.message += 'Message is required.';
+			var message = jQuery('#smcf-container #smcf-message');
+			if (!message.val()) {
+				contact.message += Drupal.settings.smcf.messages.messagerequired;
 			}
 
 			if (contact.message.length > 0) {
