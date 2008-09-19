@@ -30,39 +30,39 @@ function smcf_footer() {
 		<div class='smcf-loading' style='display:none'></div>
 		<div class='smcf-message' style='display:none'></div>
 		<form action='" . base_path() . "smcf/send' method='post' accept-charset='UTF-8'>
-		<div>";
+			<div>";
 
 	// create the contact form HTML
 	$output .= "
-		<label for='smcf-name'>*" . t('Name') . ":</label>
-		<input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
-		<label for='smcf-email'>*" . t('Email') . ":</label>
-		<input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
+			<label for='smcf-name'>*" . t('Name') . ":</label>
+			<input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
+			<label for='smcf-email'>*" . t('Email') . ":</label>
+			<input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
 
 	if (variable_get('smcf_form_subject', TRUE)) {
 		$output .= "<label for='smcf-subject'>" . t('Subject') . ":</label>
-		<input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
+			<input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
 	}
 
 	$output .= "<label for='smcf-message'>*" . t('Message') . ":</label>
-		<textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
+			<textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
 
 	if (variable_get('smcf_form_cc_sender', TRUE)) {
 		$output .= "<br/>
-		<label>&nbsp;</label>
-		<input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
-		<br/>";
+			<label>&nbsp;</label>
+			<input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
+			<br/>";
 	}
 	else {
 		$output .= "<br/>";
 	}
 
 	$output .= "<label>&nbsp;</label>
-		<button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
-		<button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
-		<input type='hidden' name='token' value=''/>
-		<br/>
-		</div>
+			<button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
+			<button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
+			<input type='hidden' name='token' value=''/>
+			<br/>
+			</div>
 		</form>";
 
 	$output .= "</div>
@@ -119,6 +119,13 @@ function smcf_init() {
 		drupal_add_js($path .'/js/jquery.simplemodal.js', 'module', $js_location);
 	}
 	drupal_add_js($path .'/js/smcf.js', 'module', $js_location);
+}
+
+/**
+ * Implementation of hook_mail().
+ */
+function smcf_mail() {
+
 }
 
 /**
