@@ -15,7 +15,7 @@
  * Implementation of hook_access().
  */
 function smcf_access($op, $node, $account) {
-	return user_access('administer SMCF');
+	return user_access('administer smcf');
 }
 
 /**
@@ -136,10 +136,9 @@ function smcf_menu() {
 
 	$items['smcf/send'] = array(
 		'title' => 'SMCF',
-		'description' => 'Sends the contact form.',
 		'page callback' => 'smcf_send_mail',
-		'access arguments' => array('send email'),
-		'type' => MENU_CALLBACK
+		'access arguments' => array('administer smcf'),
+		'type' => MENU_CALLBACK,
 	);
 
 	$items['admin/settings/smcf'] = array(
@@ -158,7 +157,7 @@ function smcf_menu() {
  * Implementation of hook_perm().
  */
 function smcf_perm() {
-	return array('administer SMCF');
+	return array('administer smcf');
 }
 
 
