@@ -15,149 +15,199 @@
  * Implementation of hook_access().
  */
 function smcf_access($op, $node, $account) {
-	return user_access('administer smcf');
+  return user_access('administer smcf');
+}
+
+// Remove any un-safe values to prevent email injection
+function smcf_filter($value) {
+  $pattern = array("/\n/", "/\r/", "/content-type:/i", "/to:/i", "/from:/i", "/cc:/i");
+  $value = preg_replace($pattern, "", $value);
+  return $value;
 }
 
 /**
  * Implementation of hook_footer().
  */
 function smcf_footer() {
-	$output = "<div id='smcf-content' style='display:none'>
-	<a href='#' title='Close' class='modalCloseX modalClose'>x</a>
-	<div class='smcf-top'></div>
-	<div class='smcf-content'>
-		<h1 class='smcf-title'>" .  variable_get('smcf_form_title', 'Contact Me') . "</h1>
-		<div class='smcf-loading' style='display:none'></div>
-		<div class='smcf-message' style='display:none'></div>
-		<form action='" . base_path() . "smcf/send' method='post' accept-charset='UTF-8'>
-			<div>";
+  $to = variable_get('smcf_to_email', NULL);
+  if (isset($to)) {
+    $output = "<div id='smcf-content' style='display:none'>
+    <a href='#' title='Close' class='modalCloseX modalClose'>x</a>
+    <div class='smcf-top'></div>
+    <div class='smcf-content'>
+      <h1 class='smcf-title'>" . variable_get('smcf_form_title', 'Contact Me') . "</h1>
+      <div class='smcf-loading' style='display:none'></div>
+      <div class='smcf-message' style='display:none'></div>
+      <form action='" . base_path() . "smcf/send' method='post' accept-charset='UTF-8' style='display:none'>
+        <div>";
 
-	// create the contact form HTML
-	$output .= "
-			<label for='smcf-name'>*" . t('Name') . ":</label>
-			<input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
-			<label for='smcf-email'>*" . t('Email') . ":</label>
-			<input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
+    // create the contact form HTML
+    $output .= "
+        <label for='smcf-name'>*" . t('Name') . ":</label>
+        <input type='text' id='smcf-name' class='smcf-input' name='name' value='' tabindex='1001' />
+        <label for='smcf-email'>*" . t('Email') . ":</label>
+        <input type='text' id='smcf-email' class='smcf-input' name='email' value='' tabindex='1002' />";
 
-	if (variable_get('smcf_form_subject', TRUE)) {
-		$output .= "<label for='smcf-subject'>" . t('Subject') . ":</label>
-			<input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
-	}
+    if (variable_get('smcf_form_subject', TRUE)) {
+      $output .= "<label for='smcf-subject'>" . t('Subject') . ":</label>
+        <input type='text' id='smcf-subject' class='smcf-input' name='subject' value='' tabindex='1003' />";
+    }
 
-	$output .= "<label for='smcf-message'>*" . t('Message') . ":</label>
-			<textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
+    $output .= "<label for='smcf-message'>*" . t('Message') . ":</label>
+        <textarea id='smcf-message' class='smcf-input' name='message' cols='40' rows='4' tabindex='1004'></textarea>";
 
-	if (variable_get('smcf_form_cc_sender', TRUE)) {
-		$output .= "<br/>
-			<label>&nbsp;</label>
-			<input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
-			<br/>";
-	}
-	else {
-		$output .= "<br/>";
-	}
+    if (variable_get('smcf_form_cc_sender', TRUE)) {
+      $output .= "<br/>
+        <label>&nbsp;</label>
+        <input type='checkbox' id='smcf-cc' name='cc' value='1' tabindex='1005' /> <span class='smcf-cc'>" . t('Send me a copy') . "</span>
+        <br/>";
+    }
+    else {
+      $output .= "<br/>";
+    }
 
-	$output .= "<label>&nbsp;</label>
-			<button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
-			<button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
-			<input type='hidden' name='token' value=''/>
-			<br/>
-			</div>
-		</form>";
+    $output .= "<label>&nbsp;</label>
+        <button type='submit' class='smcf-button smcf-send' tabindex='1006'>" . t('Send') . "</button>
+        <button type='submit' class='smcf-button smcf-cancel modalClose' tabindex='1007'>" . t('Cancel') . "</button>
+        <input type='hidden' name='action' value='send'/>
+        <input type='hidden' name='token' value='" . drupal_get_token() . "'/>
+        <br/>
+        </div>
+      </form>";
 
-	$output .= "</div>
-	<div class='smcf-bottom'><a href='http://www.ericmmartin.com/projects/smcf-drupal/'>" . t('Powered by') . " SimpleModal Contact Form</a></div>
-</div>";
-
-	return $output;
+    $output .= "</div>
+    <div class='smcf-bottom'><a href='http://www.ericmmartin.com/projects/smcf-drupal/'>" . t('Powered by') . " SimpleModal Contact Form</a></div>
+  </div>";
+  }
+  else {
+    $output = '<!-- SMCF will not work until it has been configured -->';
+  }
+  return $output;
 }
 
 /**
  * Implementation of hook_help().
  */
 function smcf_help($path, $arg) {
-	switch ($path) {
-		case 'admin/modules#description':
-			return t('Enables SMCF for Drupal');
-		case 'admin/help#smcf':
-			return t('<h3>Overview</h3>');
-			break;
-	}
+  switch ($path) {
+    case 'admin/modules#description':
+      return t('Enables SMCF for Drupal');
+    case 'admin/help#smcf':
+      return t('<h3>Overview</h3>');
+      break;
+  }
 }
 
 /**
  * Implementation of hook_init().
  */
 function smcf_init() {
-	// Load required js and css files.
-	$path = drupal_get_path('module', 'smcf');
+  $to = variable_get('smcf_to_email', NULL);
+  if (isset($to)) {
+    // Load required js and css files.
+    $path = drupal_get_path('module', 'smcf');
 
-	// Load the javascript settings.
-	$js_settings = array(
-		'images_url' => base_path() . $path . '/images/',
-		'messages' => array(
-			'loading' => t('Loading...'),
-			'sending' => t('Sending...'),
-			'thankyou' => t('Thank You!'),
-			'error' => t('Uh oh...'),
-			'goodbye' => t('Goodbye...'),
-			'namerequired' => t('Name is required.'),
-			'emailrequired' => t('Email is required.'),
-			'emailinvalid' => t('Email is invalid.'),
-			'messagerequired' => t('Message is required.')
-		)
-	);
-	drupal_add_js(array('smcf' => $js_settings), 'setting');
+    // Load the javascript settings.
+    $js_settings = array(
+      'images_url' => base_path() . $path . '/images/',
+      'messages' => array(
+        'loading' => t('Loading...'),
+        'sending' => t('Sending...'),
+        'thankyou' => t('Thank You!'),
+        'error' => t('Uh oh...'),
+        'goodbye' => t('Goodbye...'),
+        'namerequired' => t('Name is required.'),
+        'emailrequired' => t('Email is required.'),
+        'emailinvalid' => t('Email is invalid.'),
+        'messagerequired' => t('Message is required.')
+      )
+    );
+    drupal_add_js(array('smcf' => $js_settings), 'setting');
 
-	// load the CSS
-	$css = $path .'/css/smcf.css';
-	drupal_add_css($css);
+    // load the CSS
+    $css = $path .'/css/smcf.css';
+    drupal_add_css($css);
 
-	// Check where we should load the javascript files - header or footer.
-	$js_location = variable_get('smcf_js_location', 'footer');
-	if (variable_get('smcf_simplemodal_js', TRUE)) {
-		drupal_add_js($path .'/js/jquery.simplemodal.js', 'module', $js_location);
-	}
-	drupal_add_js($path .'/js/smcf.js', 'module', $js_location);
+    // Check where we should load the javascript files - header or footer.
+    $js_location = variable_get('smcf_js_location', 'footer');
+    if (variable_get('smcf_simplemodal_js', TRUE)) {
+      drupal_add_js($path .'/js/jquery.simplemodal.js', 'module', $js_location);
+    }
+    drupal_add_js($path .'/js/smcf.js', 'module', $js_location);
+  }
 }
 
 /**
  * Implementation of hook_mail().
  */
-function smcf_mail() {
+function smcf_mail($key, &$message, $params) {
+  switch ($key) {
+    case 'smcf_contact_email':
+      $error = '';
 
+      // make sure sender email is valid
+      if (!valid_email_address($params['email'])) {
+        $params['subject'] .= ' - invalid email';
+        $error = t('Bad email: !email', array('!email' => $params['email']));
+        $params['email'] = $message['to'];
+        $params['cc'] = FALSE; // do not CC "sender"
+      }
+
+      // add cc header, if enabled and selected
+      if (variable_get('smcf_form_cc_sender', TRUE) && $params['cc']) {
+        $message['headers']['cc'] = $params['email'];
+      }
+
+      $message['headers']['from'] = $params['email'];
+      $message['subject'] = $params['subject'];
+      $message['body'][] = t('From: !name', array('!name' => $params['name']));
+      $message['body'][] = t('Message: !message', array('!message' => $params['message']));
+      
+      if ($error) {
+        $message['body'][] = $error;
+      }
+
+      // extra information
+      if (variable_get('smcf_ip', FALSE)) {
+        $message['body'][] = t('IP: !ip', array('!ip' => $_SERVER['REMOTE_ADDR']));
+      }
+      if (variable_get('smcf_ua', FALSE)) {
+        $message['body'][] = t('USER AGENT: !ua', array('!ua' => $_SERVER['HTTP_USER_AGENT']));
+      }
+      break;
+  }
 }
 
 /**
  * Implementation of hook_menu().
  */
 function smcf_menu() {
-	$items = array();
+  $items = array();
 
-	$items['smcf/send'] = array(
-		'title' => 'SMCF',
-		'page callback' => 'smcf_send_mail',
-		'access arguments' => array('administer smcf'),
-		'type' => MENU_CALLBACK,
-	);
+  $items['smcf/send'] = array(
+    'title' => 'SMCF',
+    'page callback' => 'smcf_send_mail',
+    'access arguments' => array('administer smcf'),
+    'type' => MENU_CALLBACK,
+  );
 
-	$items['admin/settings/smcf'] = array(
-		'title' => 'SMCF',
-		'description' => 'Allows the user to configure the smcf settings',
-		'file' => 'smcf.admin.inc',
-		'page callback' => 'smcf_settings_page',
-		'access callback' => 'user_access',
-		'access arguments' => array('administer smcf'),
-	);
+  $items['admin/settings/smcf'] = array(
+    'title' => 'SMCF',
+    'description' => 'Allows the user to configure the smcf settings',
+    'file' => 'smcf.admin.inc',
+    'page callback' => 'smcf_settings_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer smcf'),
+  );
 
-	return $items;
+  return $items;
 }
 
 /**
  * Implementation of hook_perm().
  */
 function smcf_perm() {
-	return array('administer smcf');
+  return array('administer smcf');
 }
 
 
@@ -165,6 +215,39 @@ function smcf_perm() {
  * Custom menu callback
  */
 function smcf_send_mail() {
-	//drupal_mail('smcf', 'notify', $account->mail, user_preferred_language($account), $params);
-	print "woo whoo";
+  $result = '';
+
+  $action = isset($_POST['action']) ? $_POST['action'] : '';
+  if ($action == 'send') {
+    // validate mail
+    $token = isset($_POST['token']) ? $_POST['token'] : NULL;
+    if (drupal_valid_token($token)) {
+      // get post variables
+      $params = array();
+      $params['name'] = isset($_POST['name']) ? smcf_filter($_POST['name']) : NULL;
+      $params['email'] = isset($_POST['email']) ? smcf_filter($_POST['email']) : NULL;
+      $params['subject'] = isset($_POST['subject']) ? smcf_filter($_POST['subject']) : variable_get('smcf_subject', 'SimpleModal Contact Form');
+      $params['message'] = isset($_POST['message']) ? $_POST['message'] : NULL;
+      $params['cc'] = isset($_POST['cc']) ? $_POST['cc'] : NULL;
+
+      $to = variable_get('smcf_to_email', NULL);
+      if (isset($to)) {
+        $mail = drupal_mail('smcf', 'smcf_contact_email', $to, language_default(), $params, $params['email']);
+        $result = $mail['result'] ? 
+          t('Your message was successfully sent.') : 
+          t('Unfortunately, a server issue prevented delivery of your message.');
+      }
+      else {
+        watchdog('smcf', "Invalid email: $to");
+        $result = t('Unfortunately, a configuration issue prevented delivery of your message.');
+      }
+    }
+    else {
+      $result = t('Unfortunately, your message could not be verified.');
+    }
+  }
+  else {
+    // intentionally left blank in case someone tries to directly access this url
+  }
+  echo $result;
 }
