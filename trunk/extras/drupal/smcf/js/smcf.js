@@ -2,7 +2,7 @@
 if (typeof jQuery !== "undefined" && typeof jQuery.modal !== "undefined") {
   jQuery(document).ready(function () {
     var smcf_url = jQuery('#smcf-content form').attr('action');
-    jQuery('.smcf_link, .smcf-link').click(function (e) { // added .smcf_link for previous version
+    jQuery('.smcf-link' + Drupal.settings.smcf.selector).click(function (e) { // added .smcf_link for previous version
       e.preventDefault();
       // display the contact form
       jQuery('#smcf-content').modal({

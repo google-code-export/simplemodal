@@ -34,13 +34,20 @@ function smcf_general_settings_form() {
   // Add radio buttons for the location to insert the JavaScript files
   $page_options = array(
     'header' => t('Header'),
-    'footer' => t('Footer'),
+    'footer' => t('Footer (recommended)'),
   );
   $form['javascript_fieldset']['smcf_js_location'] = array(
     '#type' => 'radios',
     '#options' => $page_options,
-    '#title' => t('Insert SimpleModal JavaScript files in the header or footer. Footer is the recommended choice.'),
+    '#title' => t('Insert SimpleModal JavaScript files in the header or footer.'),
     '#default_value' => variable_get('smcf_js_location', 'footer'),
+  );
+  // Add field for the menu id
+  $form['javascript_fieldset']['smcf_menu_id'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Drupal Menu ID'),
+    '#description' => t('By default, SMCF will attach itself to any element with a class of "smcf-link". However, if you create a Drupal Menu item, you may not have control over the class. So, this field allows you to enter the numeric ID of the menu that you would like SMCF to attach to. For example, if you enter 112, SMCF will look for ".menu-112 a".'),
+    '#default_value' => variable_get('smcf_menu_id', ''),
   );
 
   $form['contact_form_fieldset'] = array(
