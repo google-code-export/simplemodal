@@ -4,7 +4,7 @@
  * http://plugins.jquery.com/project/SimpleModal
  * http://code.google.com/p/simplemodal/
  *
- * Copyright (c) 2008 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2007-2008 Eric Martin - http://ericmmartin.com
  * Ideas, inspiration and code contributions from:
  *		- Myself =)
  * 	- jQuery UI Dialog, BlockUI, jqModal
