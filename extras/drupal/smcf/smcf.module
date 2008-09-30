@@ -93,7 +93,39 @@ function smcf_help($path, $arg) {
     case 'admin/modules#description':
       return t('Enables SMCF for Drupal');
     case 'admin/help#smcf':
-      return t('<h3>Overview</h3>');
+      return t('<h3>Overview</h3>
+      <p align="justify">SimpleModal Contact Form (SMCF) is an Ajax powered modal contact form.</p>
+      <p align="justify">It utilizes the jQuery JavaScript library and the SimpleModal jQuery plugin.</p>
+      <p align="justify">SMCF has options to include the jQuery and SimpleModal files as well as whether to include certain contact form elements, like a Subject field and "Send me a copy" option for the sender.</p>
+      <p align="justify">This module will include the CSS and JS files in your Drupal Installation without the need to edit your theme.</p>
+
+      <h3>Requirements</h3>
+      <ul>
+		  <li>PHP mail()</li>
+		  <li>jQuery 1.2 or greater</li>
+		</ul>
+
+      <h3>Installation</h3>
+      <ol>
+		  <li>Copy smcf folder to modules directory.</li>
+		  <li>At admin/build/modules enable the SMCF module.</li>
+		  <li>Enable permissions at admin/user/permissions.</li>
+		  <li>Configure the module at admin/settings/smcf.</li>
+		  <li>See "Adding SMCF Functionality to your site".</li>
+		</ol>
+
+      <h3>Adding SMCF Functionality To Your Site</h3>
+      <p align="justify">After you\'ve installed, enabled and configured SMCF, you still need to integrate it into your site. There are two ways to make this happen:</p>
+      <p align="justify">1. Add the class "smcf-link" to any element that you want to open SMCF (when clicked). For example: <br/>
+<pre><code>&lt;a href="/contact" class="smcf-link"&gt;Contact&lt;/a&gt;</code></pre></p>
+      <p align="justify">2. On the SMCF settings page, under Drupal Menu ID, enter the numeric ID for the menu item that you want SMCF to attach to (Do not include menu-). For example, if your theme produces:<br/>
+<pre><code>&lt;ul class="links primary-links"&gt;
+  &lt;li class="menu-112 first"&gt;&lt;a title="Contact" href="/drupal/node/1"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+
+You would enter <code>112</code> under Drupal Menu ID.</p>
+<p>&nbsp;</p>
+		');
       break;
   }
 }
@@ -106,10 +138,13 @@ function smcf_init() {
   if (isset($to)) {
     // Load required js and css files.
     $path = drupal_get_path('module', 'smcf');
+    $menu_id = variable_get('smcf_menu_id', NULL);
+    $selector = $menu_id ? ", .menu-$menu_id a" : "";
 
     // Load the javascript settings.
     $js_settings = array(
       'images_url' => base_path() . $path . '/images/',
+      'selector' => $selector,
       'messages' => array(
         'loading' => t('Loading...'),
         'sending' => t('Sending...'),
