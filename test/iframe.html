@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title> IFRAME </title>
+
+<meta name='author' content='Eric Martin' />
+<meta name='copyright' content='2008 - Eric Martin' />
+<meta name='description' content='SimpleModal is a lightweight jQuery plugin that provides a simple interface to create a modal dialog.' />
+<meta name='keywords' content='simplemodal jquery plugin modal dialog css javascript dom' />
+
+<script type='text/javascript'>
+$ = parent.$;
+window.onload = function () {
+	var iframe = $('.simplemodal-data iframe').contents().find('body');
+	$('.simplemodal-close', iframe).bind('click', function () {
+		parent.dialog.modal('close');
+	});
+}
+</script>
+
+<style type='text/css'>
+	@import "css/simplemodal.css";
+	body {background:#fff;}
+	#content p {padding:0 4px 0 8px;}
+</style>
+
+<!--[if IE]>
+<style type='text/css'>
+	ul{margin: 0;}
+</style>
+<![endif]-->
+<!--[if lt IE 7]>
+<style type='text/css'>
+	@import "css/simplemodal-ie.css";
+</style>
+<![endif]-->
+</head>
+<body>
+<div id='container'>
+	<div id='header'><h1>IFRAME Test</h1></div>
+	<div id='content'>
+	   <p>Close the modal dialog from a link inside the IFRAME:</p>
+	   <p><pre><code>$ = parent.$;
+window.onload = function () {
+	var iframe = $('.simplemodal-data iframe').contents().find('body');
+	$('.simplemodal-close', iframe).bind('click', function () {
+		parent.dialog.modal('close');
+	});
+}
+
+&lt;a href='#' class='simplemodal-close'&gt;Close&lt;/a&gt;
+</code></pre></p>
+	   <p><a href='#' class='simplemodal-close'>Close</a></p>
+	   <div style='height:100px;'>&nbsp;</div>
+	</div>
+</div>
+<div style='height: 50px;'>&nbsp;</div>
+</body>
+</html>
