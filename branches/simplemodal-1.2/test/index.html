@@ -97,12 +97,10 @@ function modalShow (dialog) {
 		});
 	});
 }</code></pre></li>
-   <li><a href='#' id='test15'>IFRAME test</a> <pre><code>$.modal('&lt;iframe src="http://www.ericmmartin.com/" height="480" width="854" style="border:3px solid #fff;"&gt;', {
+   <li><a href='#' id='test15'>IFRAME test</a> <pre><code>$.modal('&lt;iframe src="iframe.html" height="450" width="830" style="border:0;"&gt;', {
+	close:false,
 	height:500, 
 	width:860,
-	containerCss: {border:0, background:'transparent'},
-	dataCss: {padding:0},
-	closeCss: {background:'#fff', paddingRight:0}
 });</code></pre></li>
 	<li><a href='#' id='test13'>Multiple modal dialog test</a> <pre><code>$('#modalContentMultipleTest').modal();</code></pre></li>
    <li><a href='#' id='test14'>Data overflow test</a> <pre><code>$('#modalContentOverflowTest').modal();</code></pre></li>
@@ -194,18 +192,5 @@ function modalShow (dialog) {
    mollit anim id est laborum.</p>
 </div>
 <div style='height: 50px;'>&nbsp;</div>
-<script type="text/javascript">
-if (document.location.protocol != 'file:') {
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-}
-</script>
-<script type="text/javascript">
-if (document.location.protocol != 'file:') {
-var pageTracker = _gat._getTracker("UA-2691485-4");
-pageTracker._initData();
-pageTracker._trackPageview();
-}
-</script>
 </body>
 </html>

@@ -8,6 +8,7 @@
  * Revision: $Id$
  *
  */
+var dialog;
 $(document).ready(function () {
 	// default theme
 	$.modal.defaults.theme = 'common';
@@ -117,12 +118,10 @@ $(document).ready(function () {
 	});
 	$('a#test15').click(function (e) {
 		e.preventDefault();
-		$.modal('<iframe src="http://www.ericmmartin.com/" height="480" width="854" style="border:3px solid #fff;">', {
+		dialog = $.modal('<iframe src="iframe.html" id="iframeTest" name="iframeTest" height="450" width="830" style="border:0" />', {
+			close:false,
 			height:500, 
-			width:860,
-			containerCss: {border:0, background:'transparent'},
-			dataCss: {padding:0},
-			closeCss: {background:'#fff', paddingRight:0}
+			width:860
 		});
 	});
    $('a#test16').click(function (e) {
