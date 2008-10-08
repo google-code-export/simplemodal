@@ -130,16 +130,11 @@
 	};
 
 	$.modal.dataCss = {};
-	$.modal.closeCss = {
-		float: 'right',
-		fontSize: '.8em',
-		padding: '4px'
-	};
+	$.modal.closeCss = {};
 	$.modal.containerCss = {
 		position: 'fixed'
 	};
 	$.modal.overlayCss = {
-		background: '#000',
 		left: 0,
 		opacity: .6,
 		position: 'fixed',

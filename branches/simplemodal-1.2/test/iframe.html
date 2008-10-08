@@ -22,6 +22,7 @@ window.onload = function () {
 	@import "css/simplemodal.css";
 	body {background:#fff;}
 	#content p {padding:0 4px 0 8px;}
+	pre {margin-left:8px;}
 </style>
 
 <!--[if IE]>
@@ -40,7 +41,7 @@ window.onload = function () {
 	<div id='header'><h1>IFRAME Test</h1></div>
 	<div id='content'>
 	   <p>Close the modal dialog from a link inside the IFRAME:</p>
-	   <p><pre><code>$ = parent.$;
+	   <pre><code>$ = parent.$;
 window.onload = function () {
 	var iframe = $('.simplemodal-data iframe').contents().find('body');
 	$('.simplemodal-close', iframe).bind('click', function () {
@@ -49,9 +50,8 @@ window.onload = function () {
 }
 
 &lt;a href='#' class='simplemodal-close'&gt;Close&lt;/a&gt;
-</code></pre></p>
+</code></pre>
 	   <p><a href='#' class='simplemodal-close'>Close</a></p>
-	   <div style='height:100px;'>&nbsp;</div>
 	</div>
 </div>
 <div style='height: 50px;'>&nbsp;</div>

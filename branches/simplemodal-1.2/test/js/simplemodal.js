@@ -11,18 +11,7 @@
 var dialog;
 $(document).ready(function () {
 	// default theme
-	$.modal.defaults.theme = 'common';
-
-	// add common styles
-	$.modal.theme.common = {
-		containerCss: {
-			background: '#fff',
-			border: '3px solid #ccc'
-		},
-		dataCss: {
-			padding: '10px'
-		}
-	};
+	$.modal.defaults.theme = 'basic';
 	
 	$.modal.theme.test = {
 		closeCss: {
