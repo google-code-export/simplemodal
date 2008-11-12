@@ -126,7 +126,7 @@
 		overlayClose: true,
 		escClose: true,
 		close: true,
-		closeElement: '<div>ESC or <a href="#" class="simplemodal-close">Close</a></div>'
+		closeElement: '<div class="simplemodal-close-container">ESC or <a href="#" class="simplemodal-close">Close</a></div>'
 	};
 
 	$.modal.dataCss = {};
