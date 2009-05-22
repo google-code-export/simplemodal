@@ -1,0 +1,115 @@
+==== SimpleModal ChangeLog ====
+
+== 1.3-b1 ==
+ * Date: May 22, 2009
+ * Added appendTo option, primarily for .NET users to enable appendTo('form')
+ * Added focus option which forces focus to remain in the dialog
+ * Added dataId option which allows a unique id to be set for the data div if 
+		one does not already exists
+ * Added minHeight/minWidth options to allow minimum dimensions to be enforced
+ * Added maxHeight/maxWidth options to allow maximum dimensions to be enforced.
+		SimpleModal will always contain the modal dialog within the browser window.
+ * Added escClose option to bind modal close to the ESC key
+ * Added overlayClose option to bind modal close to a click on the overlay div
+ * Added a wrapper div to allow for easier overflow capabilities
+ * Changed meaning of close option. If false, the closeHTML, escClose and overlayClose
+		values will be ingored.
+ * Fixed auto-centering issues when container dimensions were not provided
+ * Fixed Opera screen painting issues by adding .hide() before .remove()
+ * Fixed Opera 9.2.x issue with jQuery 1.3.x and $(window).height()
+
+
+== 1.2.3 ==
+ * Date: Mar 02, 2009
+ * Fixed IE6 positioning issue (position: [,20] did not work)
+ * Fixed IE issue with jQuery 1.3+ (issue with $.boxModel property)
+
+
+== 1.2.2 ==
+ * Date: Dec 15, 2008
+ * Removed iframe option (use wmode property for object and embed elements)
+ * Fixed IE positioning issues (including horizontal scrolling)
+ * Updated jQuery version requirement to 1.2.2
+ * Added horizontal scrolling test and more position option tests
+
+
+== 1.2.1 ==
+ * Date: Dec 5, 2008
+ * Fixed iframe errors when iframe option set to false
+ * Changed default iframe option to false
+ * Fixed auto centering to use data width/height if container width/height is not set
+
+
+== 1.2 ==
+ * Date: Dec 4, 2008
+ * Added new internal variables (ie6, ieQuirks and w)
+ * Added better IE6 detection (preventing false positives with IE7)
+ * Fixed $.modal.close() function to correctly utilize an onClose callback
+   without causing a infinite recursion crash
+ * Added new options (iframe, dataCss, zIndex, closeHTML and position)
+ * Renamed overlay option to opacity
+ * Removed closeTitle option
+ * Renamed default class and id names from modalXxx to simplemodal-xxx
+ * Added better z-index handling
+ * Fixed element creation to be XHTML compliant
+ * Added window dimension detection
+ * Added iframe to every modal dialog to prevent object bleed-through (can be disabled by the {iframe:false} option)
+ * Fixed Safari issue (directly setting display:'none' as opposed to using .hide())
+ * Changed width/height setting for overlay and iframe
+ * Fixed IE7 positioning issue in quirks mode 
+ * Added IE6 expression for elements - eliminating the need for an external stylesheet
+ * Added dynamic centering of container as well as a position option for manual positioning
+ * Added namespacing on events
+ * Added window resize listener to resize dialog elements
+ * Updated contact form demo
+   * Added subject and cc fields
+	* Added UTF-8 support
+	* Added token security
+	* Updated CSS
+	* Removed unnecessary files
+ * Updated test/examples page
+   * Added radio buttons and checkboxes to persist test
+
+
+== 1.1.1 ==
+ * Date: Jan 15, 2008
+ * Fixed overlay height and width detection in IE6
+ * Added a modalData class attribute to dialog.data
+ * Added check for dialog object in close()
+   - Prevents JS errors if called when dialog is already closed
+ * Updated tests and demos to jQuery 1.2.2 and SimpleModal 1.1.1
+ * Updated test and demo css
+
+
+== 1.1 ==
+ * Date: Jan 3, 2008
+ * Changed dialog.content to dialog.data
+ * Changed remove() function to close()
+   - Added a parameter to close() for external calls
+ * Removed iframeId option
+ * Removed cloneContent option
+   - Completely changed the way SimpleModal handles the data (see below)
+ * Added overlayCss and containerCss options to allow styling through SimpleModal
+ * Added persist option to allow data to be "saved" across modal dialog calls
+ * Changed the handling of data. SimpleModal will now keep track of whether the 
+   data came from the DOM and if it did, when the dialog is closed, it will re-insert it.
+   If persist is true, SimpleModal will re-insert the data in the state it was in when
+   closed, otherwise, it will re-insert a cloned value of the data.
+ * Added more CSS attributes to the overlay, container and iframe.
+   - There were a number of CSS attributes that were necessary for the modal dialog
+     to display correctly, so I moved them from the CSS, into SimpleModal.
+ * Added a test page (http://www.ericmmartin.com/simplemodal-test/)
+
+
+== 1.0.1 ==
+ * Date: Oct 23, 2007
+ * Removed containerTop function
+   - Positioning is now handled through CSS
+ * Added a demo page (http://www.ericmmartin.com/simplemodal/)
+   - Added contact form demo
+   - Added download feature for demos
+
+
+== 1.0 ==
+ * Date: Oct 19, 2007
+ * Initial Release
