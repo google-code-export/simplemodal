@@ -8,4 +8,4 @@ var script = readFile(inFile);
 var header = script.match(/\/\*(.|\n)*?\*\//)[0];
 var minifiedScript = jsmin('', script, 3);
 
-writeFile( outFile, header + minifiedScript );
+writeFile( outFile, header + "\n" + minifiedScript );
