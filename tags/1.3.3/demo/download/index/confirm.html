@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title> SimpleModal Confirm Modal Dialog </title>
+<meta name='author' content='Eric Martin' />
+<meta name='copyright' content='2009 - Eric Martin' />
+
+<!-- Confirm CSS files -->
+<link type='text/css' href='css/confirm.css' rel='stylesheet' media='screen' />
+
+<!-- JS files are loaded at the bottom of the page -->
+</head>
+<body>
+<div id='confirm-dialog'><h2>Confirm Override</h2>
+	<p>A modal dialog override of the JavaScript confirm function. Demonstrates the use of <code>onShow</code> as well as how to display a modal dialog confirmation instead of the default JavaScript confirm dialog.</p>
+		<input type='button' name='confirm' class='confirm' value='Demo'/> or <a href='#' class='confirm'>Demo</a>
+	</form>
+</div>
+<div id='confirm'>
+	<div class='header'><span>Confirm</span></div>
+	<p class='message'></p>
+	<div class='buttons'>
+		<div class='no simplemodal-close'>No</div><div class='yes'>Yes</div>
+	</div>
+</div>
+<!-- Load JavaScript files -->
+<script type='text/javascript' src='js/jquery.js'></script>
+<script type='text/javascript' src='js/jquery.simplemodal.js'></script>
+<script type='text/javascript' src='js/confirm.js'></script>
+</body>
+</html>
