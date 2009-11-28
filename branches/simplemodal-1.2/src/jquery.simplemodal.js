@@ -44,9 +44,9 @@
 
 	// private variables
 	var ie6 = $.browser.msie && parseInt($.browser.version) == 6 && !window['XMLHttpRequest'],
-		ieQuirks = $.browser.msie && !$.boxModel,
+		ieQuirks = null,
 		smid = 0,
-		wProps = [],
+		w = [],
 		zIndex = 1;
 
 	// action function
@@ -98,20 +98,20 @@
 
 	$.modal.defaults = {
 		/* callback functions */
-		onOpen: null,			// called after the dialog elements are created - usually used for custom opening effects
-		onShow: null,			// called after the dialog is opened - usually used for binding events to the dialog
-		onClose: null,			// called when the close event is fired - usually used for custom closing effects
+		onOpen: null,		// called after the dialog elements are created - usually used for custom opening effects
+		onShow: null,		// called after the dialog is opened - usually used for binding events to the dialog
+		onClose: null,		// called when the close event is fired - usually used for custom closing effects
 		/* dialog options */
 		autoOpen: true,		// open when instantiated or open after 'open' call
 		autoDestroy: true,	// destroy/remove SimpleModal elements from DOM when closed
-		focus: true,			// forces focus to remain on the modal dialog
+		focus: true,		// forces focus to remain on the modal dialog
 		persist: false,		// elements taken from the DOM will be re-inserted with changes made
 		position: null,		// position of the dialog - [left, top] or will auto center
-		zIndex: null,			// the starting z-index value
+		zIndex: null,		// the starting z-index value
 		/* element id's */
-		overlayId: null,		// if not provided, a unique id (simplemodal-overlay-#) will be generated
+		overlayId: null,	// if not provided, a unique id (simplemodal-overlay-#) will be generated
 		containerId: null,	// if not provided, a unique id (simplemodal-container-#) will be generated
-		dataId: null,			// if not provided, a unique id (simplemodal-data-#) will be generated
+		dataId: null,		// if not provided, a unique id (simplemodal-data-#) will be generated
 		iframeId: null,		// if not provided, a unique id (simplemodal-ifram-#) will be generated
 		/* css properties */
 		dataCss: null,
@@ -152,6 +152,9 @@
 	$.modal.dialog = function (element, options) {
 		// alias this
 		var self = this;
+		
+		// $.boxModel is undefined if checked earlier
+		ieQuirks = $.browser.msie && !$.boxModel;
 
 		// merge user options with the defaults
 		this.options = $.extend({}, $.modal.defaults, options);
@@ -192,7 +195,7 @@
 		element.hide();
 
 		// set the window properties
-		wProps = _getDimensions();
+		w = _getDimensions();
 
 		// create the iframe
 		this.iframe = $('<iframe src="javascript:false;"/>')
@@ -200,8 +203,8 @@
 			.addClass('simplemodal-iframe')
 			.css($.extend({
 					display: 'none',
-					height: wProps[0],
-					width: wProps[1],
+					height: w[0],
+					width: w[1],
 					zIndex: zIndex
 				},
 				$.modal.iframeCss,
@@ -215,8 +218,8 @@
 			.addClass('simplemodal-overlay')
 			.css($.extend({
 					display: 'none',
-					height: wProps[0],
-					width: wProps[1],
+					height: w[0],
+					width: w[1],
 					zIndex: zIndex + 1
 				},
 				$.modal.overlayCss,
@@ -386,14 +389,14 @@
 		// update window size
 		$(window).bind('resize.simplemodal', function () {
 			// redetermine the window width/height
-			wProps = _getDimensions();
+			w = _getDimensions();
 
 			// reposition the dialog
 			_setPosition(dialog);
 
 			// update the iframe && overlay
-			!ie6 && dialog.iframe.css({height: wProps[0], width: wProps[1]})
-				&& dialog.overlay.css({height: wProps[0], width: wProps[1]});
+			!ie6 && dialog.iframe.css({height: w[0], width: w[1]})
+				&& dialog.overlay.css({height: w[0], width: w[1]});
 		});
 
 		// save the list of inputs
@@ -451,8 +454,8 @@
 			top += dialog.options.position[1];
 			left += dialog.options.position[0];
 		} else {
-			top += (wProps[0]/2) - (dialog.container.height()/2);
-			left += (wProps[1]/2) - (dialog.container.width()/2);
+			top += (w[0]/2) - (dialog.container.height()/2);
+			left += (w[1]/2) - (dialog.container.width()/2);
 		}
 		dialog.container.css({left: left, top: top});
 	}
