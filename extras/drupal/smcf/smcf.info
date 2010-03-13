@@ -1,5 +1,0 @@
-; $Id$
-name = SMCF
-description = Enables SimpleModal Contact Form (SMCF) for Drupal
-package = Mail
-core = 6.x
