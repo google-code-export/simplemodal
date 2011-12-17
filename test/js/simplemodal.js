@@ -188,6 +188,10 @@ $(document).ready(function () {
 		e.preventDefault();
 		$('#modalContentOverflowTest').modal({autoResize:true, containerCss:{height:'1000px', width:'1000px'}});
 	});
+	$('a#test34').click(function (e) {
+		e.preventDefault();
+		$('#modalContentTest').modal({fixed:false});
+	});
 });
 
 /**
