@@ -14,6 +14,8 @@
  *
  */
 
+date_default_timezone_set('America/Los_Angeles');
+
 // User settings
 $to = "user@yourdomain.com";
 $subject = "SimpleModal Contact Form";
