@@ -1,9 +1,9 @@
 /*
  * SimpleModal @VERSION - jQuery Plugin
- * http://www.ericmmartin.com/projects/simplemodal/
- * Copyright (c) 2010 Eric Martin (http://twitter.com/ericmmartin)
- * Dual licensed under the MIT and GPL licenses
- * Revision: $Id$
+ * http://simplemodal.com/
+ * Copyright (c) 2011 Eric Martin
+ * Licensed under MIT and GPL
+ * Date:
  */
 
 /**
@@ -47,11 +47,11 @@
  * overlayCss, containerCss, and dataCss options.
  *
  * SimpleModal has been tested in the following browsers:
- * - IE 6, 7, 8, 9
- * - Firefox 2, 3, 4
- * - Opera 9, 10
- * - Safari 3, 4, 5
- * - Chrome 1 - 12
+ * - IE 6+
+ * - Firefox 2+
+ * - Opera 9+
+ * - Safari 3+
+ * - Chrome 1+
  *
  * @name SimpleModal
  * @type jQuery
@@ -60,7 +60,17 @@
  * @author Eric Martin (http://ericmmartin.com)
  * @version @VERSION
  */
-;(function ($) {
+
+;(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		// AMD. Register as an anonymous module.
+		define(['jquery'], factory);
+	} else {
+		// Browser globals
+		factory(jQuery);
+	}
+}
+(function ($) {
 	var d = [],
 		doc = $(document),
 		ie6 = $.browser.msie && parseInt($.browser.version) === 6 && typeof window['XMLHttpRequest'] !== 'object',
@@ -325,7 +335,7 @@
 				.attr('id', s.o.containerId)
 				.addClass('simplemodal-container')
 				.css($.extend(
-					{position: s.o.fixed ? 'fixed' : 'absolute'},	
+					{position: s.o.fixed ? 'fixed' : 'absolute'},
 					s.o.containerCss,
 					{display: 'none', zIndex: s.o.zIndex + 2}
 				))
@@ -616,8 +626,8 @@
 		/*
 		 * Open the modal dialog elements
 		 * - Note: If you use the onOpen callback, you must "show" the
-		 *	        overlay and container elements manually
-		 *         (the iframe will be handled by SimpleModal)
+		 *			overlay and container elements manually
+		 *		 (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
 			var s = this;
@@ -699,4 +709,4 @@
 			}
 		}
 	};
-})(jQuery);
+}));
