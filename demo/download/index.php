@@ -2,7 +2,7 @@
 
 $demo = isset($_POST['demo']) ? $_POST['demo'] : '';
 $valid = array("basic", "contact", "confirm", "gallery", "osx");
-$version = '1.4.1';
+$version = '1.4.2';
 
 // don't allow hackers in
 if (in_array($demo, $valid)) {
@@ -86,9 +86,9 @@ if (in_array($demo, $valid)) {
 	//unlink($file);
 
 	/* Send to browser */
-	Header("Content-type: application/octet-stream");
-	Header ("Content-disposition: attachment; filename=SimpleModal-$demo.zip");
-	echo $contents;
+	//Header("Content-type: application/octet-stream");
+	//Header ("Content-disposition: attachment; filename=SimpleModal-$demo.zip");
+	//echo $contents;
 
 }
 else {
