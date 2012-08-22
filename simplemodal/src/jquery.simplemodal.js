@@ -1,7 +1,7 @@
 /*
  * SimpleModal @VERSION - jQuery Plugin
  * http://simplemodal.com/
- * Copyright (c) 2011 Eric Martin
+ * Copyright (c) 2012 Eric Martin
  * Licensed under MIT and GPL
  * Date:
  */
@@ -55,7 +55,7 @@
  *
  * @name SimpleModal
  * @type jQuery
- * @requires jQuery v1.2.4
+ * @requires jQuery v1.3
  * @cat Plugins/Windows and Overlays
  * @author Eric Martin (http://ericmmartin.com)
  * @version @VERSION
@@ -231,8 +231,8 @@
 				return false;
 			}
 
-			// $.boxModel is undefined if checked earlier
-			ieQuirks = $.browser.msie && !$.boxModel;
+			// $.support.boxModel is undefined if checked earlier
+			ieQuirks = $.browser.msie && !$.support.boxModel;
 
 			// merge defaults and user options
 			s.o = $.extend({}, $.modal.defaults, options);
@@ -626,8 +626,8 @@
 		/*
 		 * Open the modal dialog elements
 		 * - Note: If you use the onOpen callback, you must "show" the
-		 *			overlay and container elements manually
-		 *		 (the iframe will be handled by SimpleModal)
+		 *         overlay and container elements manually
+		 *         (the iframe will be handled by SimpleModal)
 		 */
 		open: function () {
 			var s = this;
