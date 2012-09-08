@@ -1,11 +1,9 @@
 <?php
 
-$demo = isset($_POST['demo']) ? $_POST['demo'] : '';
 $valid = array("basic", "contact", "confirm", "gallery", "osx");
 $version = '1.4.3';
 
-// don't allow hackers in
-if (in_array($demo, $valid)) {
+foreach ($valid as $demo) {
 
 	$dir = dirname(dirname(__FILE__));
 	$dir = str_replace('\\', '/', $dir);
@@ -31,7 +29,9 @@ if (in_array($demo, $valid)) {
 		);
 
 	/* Create the zip file */
-	$filename = strtolower("simplemodal-demo-$demo-$version.zip");
+	$filename = strtolower("simplemodal-demo-$demo-$version.zip");	
+	$file = dirname(__FILE__) . '/' . $filename;
+	@unlink($file);
 	$now = time();
 	$zip = new ZipArchive();
 	$res = $zip->open($filename, ZipArchive::CREATE);
@@ -71,7 +71,6 @@ if (in_array($demo, $valid)) {
 	}
 
 	/* Open for download */
-	$file = dirname(__FILE__) . '/' . $filename;
 	$fp = fopen($file, 'r');
 	if (!$fp) {
 		 exit("cannot open\n");
@@ -82,17 +81,7 @@ if (in_array($demo, $valid)) {
 	}
 	fclose($fp);
 
-	/* Delete file */
-	unlink($file);
-
-	/* Send to browser */
-	Header("Content-type: application/octet-stream");
-	Header ("Content-disposition: attachment; filename=SimpleModal-$demo.zip");
-	echo $contents;
-
-}
-else {
-	echo "DENIED";
+	echo "Built $filename<br/>";
 }
 
 exit;

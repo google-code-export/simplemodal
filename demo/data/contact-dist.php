@@ -2,10 +2,10 @@
 
 /*
  * SimpleModal Contact Form
- * http://www.ericmmartin.com/projects/simplemodal/
+ * http://simplemodal.com/
  * http://code.google.com/p/simplemodal/
  *
- * Copyright (c) 2009 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2012 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
