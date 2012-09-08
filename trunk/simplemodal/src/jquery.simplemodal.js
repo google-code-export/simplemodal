@@ -246,7 +246,7 @@
 			// determine how to handle the data based on its type
 			if (typeof data === 'object') {
 				// convert DOM object to a jQuery object
-				data = data instanceof jQuery ? data : $(data);
+				data = data instanceof $ ? data : $(data);
 				s.d.placeholder = false;
 
 				// if the object came from the DOM, keep track of its parent
@@ -492,11 +492,9 @@
 			}, 10);
 		},
 		getDimensions: function () {
-			// fix a jQuery/Opera bug with determining the window height
+			// fix a jQuery bug with determining the window height - use innerHeight if available
 			var s = this,
-				h = $.browser.opera && $.browser.version > '9.5' && $.fn.jquery < '1.3'
-						|| $.browser.opera && $.browser.version < '9.5' && $.fn.jquery > '1.2.6'
-				? wndw[0].innerHeight : wndw.height();
+				h = typeof window.innerHeight === 'undefined' ? wndw.height() : window.innerHeight;
 
 			d = [doc.height(), doc.width()];
 			w = [h, wndw.width()];
