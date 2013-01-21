@@ -1,18 +1,15 @@
 /*
  * SimpleModal Contact Form
- * http://www.ericmmartin.com/projects/simplemodal/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2010 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
  */
 
 /* Overlay */
-#contact-overlay {background-color:#000; cursor:wait;}
+#contact-overlay {background-color:#000;}
 
 /* Container */
 #contact-container {font: 16px/22px 'Trebuchet MS', Verdana, Arial; text-align:left; width:450px;}

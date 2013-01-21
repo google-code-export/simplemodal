@@ -2,16 +2,12 @@
 
 /*
  * SimpleModal Contact Form
- * http://simplemodal.com/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2012 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
- *
  */
 
 date_default_timezone_set('America/Los_Angeles');
@@ -25,7 +21,7 @@ $subject = "SimpleModal Contact Form";
 $extra = array(
 	"form_subject"	=> true,
 	"form_cc"		=> true,
-	"ip"				=> true,
+	"ip"			=> true,
 	"user_agent"	=> true
 );
 
@@ -71,7 +67,7 @@ if (empty($action)) {
 			<input type='hidden' name='token' value='" . smcf_token($to) . "'/>
 		</form>
 	</div>
-	<div class='contact-bottom'><a href='http://www.ericmmartin.com/projects/simplemodal/'>Powered by SimpleModal</a></div>
+	<div class='contact-bottom'><a href='http://simplemodal.com'>Powered by SimpleModal</a></div>
 </div>";
 
 	echo $output;

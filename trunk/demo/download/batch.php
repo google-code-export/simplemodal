@@ -1,7 +1,7 @@
 <?php
 
 $valid = array("basic", "contact", "confirm", "gallery", "osx");
-$version = '1.4.3';
+$version = '1.4.4';
 
 foreach ($valid as $demo) {
 

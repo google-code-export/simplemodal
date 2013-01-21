@@ -2,16 +2,12 @@
 
 /*
  * SimpleModal Contact Form
- * http://simplemodal.com/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2012 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
- *
  */
 
 date_default_timezone_set('America/Los_Angeles');
