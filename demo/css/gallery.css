@@ -1,17 +1,14 @@
 /*
  * SimpleModal Image Gallery
- * http://www.ericmmartin.com/projects/simplemodal/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2010 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
  */
 
-#gallery-overlay {background-color:#000; cursor:wait;}
+#gallery-overlay {background-color:#000;}
 #gallery-container {font: 16px/22px verdana, arial, sans-serif; margin:0 auto;}
 #gallery {background:#fff url(../img/gallery/loading.gif) center 100px no-repeat; color:#999; display:none; height:200px;margin:0 auto; position:relative; width:300px; box-shadow:0 0 64px #000; -moz-box-shadow:0 0 64px #000; -webkit-box-shadow:0 0 64px #000;}
 #gallery-image-container {display:none; height:100%;}

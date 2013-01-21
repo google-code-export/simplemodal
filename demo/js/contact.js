@@ -1,14 +1,11 @@
 /*
  * SimpleModal Contact Form
- * http://www.ericmmartin.com/projects/simplemodal/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2010 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
  */
 
 jQuery(function ($) {
@@ -34,19 +31,6 @@ jQuery(function ($) {
 			});
 		},
 		open: function (dialog) {
-			// add padding to the buttons in firefox/mozilla
-			if ($.browser.mozilla) {
-				$('#contact-container .contact-button').css({
-					'padding-bottom': '2px'
-				});
-			}
-			// input field font size
-			if ($.browser.safari) {
-				$('#contact-container .contact-input').css({
-					'font-size': '.9em'
-				});
-			}
-
 			// dynamically determine height
 			var h = 280;
 			if ($('#contact-subject').length) {
@@ -72,19 +56,6 @@ jQuery(function ($) {
 									var cc = $('#contact-container #contact-cc');
 									cc.is(':checked') ? cc.attr('checked', '') : cc.attr('checked', 'checked');
 								});
-
-								// fix png's for IE 6
-								if ($.browser.msie && $.browser.version < 7) {
-									$('#contact-container .contact-button').each(function () {
-										if ($(this).css('backgroundImage').match(/^url[("']+(.*\.png)[)"']+$/i)) {
-											var src = RegExp.$1;
-											$(this).css({
-												backgroundImage: 'none',
-												filter: 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="' +  src + '", sizingMethod="crop")'
-											});
-										}
-									});
-								}
 							});
 						});
 					});

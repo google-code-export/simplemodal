@@ -2,7 +2,7 @@
 
 $demo = isset($_POST['demo']) ? $_POST['demo'] : '';
 $valid = array("basic", "contact", "confirm", "gallery", "osx");
-$version = '1.4.3';
+$version = '1.4.4';
 
 // don't allow hackers in
 if (in_array($demo, $valid)) {

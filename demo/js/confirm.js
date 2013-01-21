@@ -1,14 +1,11 @@
 /*
  * SimpleModal Confirm Modal Dialog
- * http://www.ericmmartin.com/projects/simplemodal/
- * http://code.google.com/p/simplemodal/
+ * http://simplemodal.com
  *
- * Copyright (c) 2010 Eric Martin - http://ericmmartin.com
+ * Copyright (c) 2013 Eric Martin - http://ericmmartin.com
  *
  * Licensed under the MIT license:
  *   http://www.opensource.org/licenses/mit-license.php
- *
- * Revision: $Id$
  */
 
 jQuery(function ($) {
@@ -18,7 +15,7 @@ jQuery(function ($) {
 		// example of calling the confirm function
 		// you must use a callback function to perform the "yes" action
 		confirm("Continue to the SimpleModal Project page?", function () {
-			window.location.href = 'http://www.ericmmartin.com/projects/simplemodal/';
+			window.location.href = 'http://simplemodal.com';
 		});
 	});
 });
